@@ -1,0 +1,65 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/welcome_text"
+        android:id="@+id/welcome"
+        android:background="@drawable/background_welcome"
+     />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/active_events"
+                android:id="@+id/active_events"
+                android:layout_gravity="left" />
+
+            <CalendarView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/calendarView"
+                android:layout_gravity="right"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/past_events"
+                android:id="@+id/past_events" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/listView"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/personal_stats"
+                android:id="@+id/personal_stats" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
