@@ -37,4 +37,19 @@ public class Event {
         this.mDateTime = mDateTime;
     }
 
+    public Location getmLocation() {
+        return mLocation;
+    }
+
+    public void setmLocation(Location mLocation) {
+        this.mLocation = mLocation;
+    }
+
+    public ArrayList<Person> getPeople() {
+        return people;
+    }
+
+    public void setPeople(ArrayList<Person> people) {
+        this.people = people;
+    }
 }
