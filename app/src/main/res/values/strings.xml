@@ -34,6 +34,6 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="login">Login</string>
     <string name="app_id">1626127007605862</string>
-
+    <string name="server_address">SERVER ADDRESS GOES HERE</string>
 
 </resources>
