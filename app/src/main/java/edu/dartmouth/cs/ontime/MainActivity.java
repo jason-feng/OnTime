@@ -123,20 +123,20 @@ public class MainActivity extends Activity {
 
         // If notification pressed but not a button
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, InviteActivity.class), 0);
 
         // If accept is pressed
         PendingIntent acceptIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, InviteActivity.class), 0);
 
         // If decline is pressed
         PendingIntent declineIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, InviteActivity.class), 0);
 
         Notification notification = new Notification.Builder(this)
                 .setContentTitle(this.getString(R.string.service_label))
                 .setContentText(
-                        getResources().getString(R.string.service_started) + inviter + "!")
+                        getResources().getString(R.string.service_started) + " " + inviter + "!")
                 .setSmallIcon(R.drawable.notify)
                 .setOngoing(true)
                 .setAutoCancel(true)
