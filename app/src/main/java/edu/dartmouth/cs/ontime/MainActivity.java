@@ -57,8 +57,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LinearLayout layout =(LinearLayout)findViewById(R.id.background);
-
         upcomingEvents = new ArrayList<Event>();
         mContext = getApplicationContext();
 
