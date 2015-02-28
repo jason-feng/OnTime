@@ -14,14 +14,10 @@
     <string name="comment_prompt">Add a comment here</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
-    <string name="duration_prompt">Set duration:</string>
-    <string name="distance_prompt">Set distance:</string>
-    <string name="calories_prompt">Set calories:</string>
     <string name="ahr_prompt">Set heart rate:</string>
     <string name="pick_toppings">Pick friends</string>
     <string name="pick_friends">Pick yo friends!</string>
     <string name="location_prompt">Location</string>
-
     <string name="social_pref">Social</string>
     <string name="locations_pref">Locations</string>
     <string name="home_address">Home Address</string>
@@ -32,6 +28,11 @@
     <string name="notify_me">Notify me</string>
     <string name="notify_others">Allow others to send me notifications</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="login">Login with Facebook</string>
+    <string name="login">Login</string>
+    <string name="app_id">99217053083</string>
+    <string name="server_address">http://1-dot-mindful-quasar-86906.appspot.com</string>
+    <string name="service_label">OnTime</string>
+    <string name="service_started">You have a pending invite from</string>
+    <string name="title_activity_invite">InviteActivity</string>
 
 </resources>

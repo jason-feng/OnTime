@@ -1,10 +1,5 @@
 package edu.dartmouth.cs.ontime;
 
-/**
- * Created by danignibus on 2/17/15.
- */
-
-
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
@@ -35,6 +30,9 @@ public class Settings extends PreferenceFragment {
         addPreferencesFromResource(R.xml.settings);
 
 
+
+
+
+
     }
 }
-
