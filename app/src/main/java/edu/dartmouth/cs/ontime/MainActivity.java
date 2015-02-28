@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
         mMessageIntentFilter.addAction(GCM_FILTER);
 
         //get person based on regId of phone (from server); for now this and events are hard-coded
+        /*
         if (checkPlayServices()){
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(mContext);
@@ -71,6 +72,7 @@ public class MainActivity extends Activity {
                 registerInBackground();
             }
         }
+        **/
 
         //sample event 1
         Event event1 = new Event();
