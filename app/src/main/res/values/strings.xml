@@ -33,5 +33,6 @@
     <string name="notify_others">Allow others to send me notifications</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="login">Login with Facebook</string>
+    <string name="server_address">SERVER ADDRESS GOES HERE</string>
 
 </resources>

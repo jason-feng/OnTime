@@ -2,18 +2,30 @@ package edu.dartmouth.cs.ontime;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -22,12 +34,31 @@ import edu.dartmouth.cs.ontime.view.SlidingTabLayout;
 
 public class MainActivity extends Activity {
 
+    private static final String GCM_FILTER = "GCM_NOTIFY";
+    private static final String SENDER_ID = "10622142242";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static final String REG_ID_KEY = "registration_id";
+    private static final String APP_VERSION_KEY = "appVersion";
 
     private SlidingTabLayout slidingTabLayout;
     private ViewPager viewPager;
     private ArrayList<Event> upcomingEvents;
     private Settings settingsFrag;
 
+    GoogleCloudMessaging gcm;
+    String regid;
+    Context mContext;
+
+    private IntentFilter mMessageIntentFilter;
+    private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String id_string = intent.getStringExtra("id_key");
+            if (id_string != null) {
+                // Do Stuff Here
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +67,18 @@ public class MainActivity extends Activity {
 
         LinearLayout layout =(LinearLayout)findViewById(R.id.background);
 
+        mMessageIntentFilter = new IntentFilter();
+        mMessageIntentFilter.addAction(GCM_FILTER);
+
         //get person based on regId of phone (from server); for now this and events are hard-coded
+        if (checkPlayServices()){
+            gcm = GoogleCloudMessaging.getInstance(this);
+            regid = getRegistrationId(mContext);
+
+            if (regid.isEmpty()) {
+                registerInBackground();
+            }
+        }
 
         //sample event 1
         Event event1 = new Event();
@@ -80,6 +122,108 @@ public class MainActivity extends Activity {
 
 
     }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.d("", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = prefs.getString(REG_ID_KEY, "");
+        if (registrationId.isEmpty()) {
+            Log.i("", "Registration not found.");
+            return "";
+        }
+        // Check if app was updated; if so, it must clear the registration ID
+        // since the existing registration ID is not guaranteed to work with
+        // the new app version.
+        int registeredVersion = prefs.getInt(APP_VERSION_KEY, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion) {
+            Log.i("", "App version changed.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    private SharedPreferences getGCMPreferences(Context context) {
+        return getSharedPreferences(MainActivity.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+    }
+
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    private void storeRegistrationId(Context context, String regId) {
+        final SharedPreferences prefs = getGCMPreferences(mContext);
+        int appVersion = getAppVersion(context);
+        Log.d("", "Saving regId on app version " + appVersion);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(REG_ID_KEY, regId);
+        editor.putInt(APP_VERSION_KEY, appVersion);
+        editor.commit();
+    }
+
+    private void registerInBackground() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(mContext);
+                    }
+                    regid = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration ID=" + regid;
+
+                    // You should send the registration ID to your server over HTTP, so it
+                    // can use GCM/HTTP or CCS to send messages to your app.
+                    ServerUtilities.sendRegistrationIdToBackend(mContext, regid);
+
+                    // Persist the regID - no need to register again.
+                    storeRegistrationId(mContext, regid);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                Log.d("", "gcm register msg: " + msg);
+            }
+        }.execute(null, null, null);
+    }
+
+    @Override
+    protected void onResume() {
+        registerReceiver(mMessageUpdateReceiver, mMessageIntentFilter);
+        super.onResume();
+        checkPlayServices();
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
