@@ -28,7 +28,6 @@ import java.util.Calendar;
 public class MainActivity extends Activity {
 
     private static final String GCM_FILTER = "GCM_NOTIFY";
-    private static final String SENDER_ID = "99217053083";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
@@ -217,7 +216,7 @@ public class MainActivity extends Activity {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(mContext);
                     }
-                    regid = gcm.register(SENDER_ID);
+                    regid = gcm.register(getString(R.string.app_id));
                     msg = "Device registered, registration ID=" + regid;
 
                     // You should send the registration ID to your server over HTTP, so it
