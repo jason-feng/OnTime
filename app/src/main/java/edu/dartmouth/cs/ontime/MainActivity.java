@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.LinearLayout;
 
@@ -23,8 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import edu.dartmouth.cs.ontime.view.SlidingTabLayout;
-
 public class MainActivity extends Activity {
 
     private static final String GCM_FILTER = "GCM_NOTIFY";
@@ -33,14 +30,10 @@ public class MainActivity extends Activity {
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
 
-    private SlidingTabLayout slidingTabLayout;
-    private ViewPager viewPager;
     private ArrayList<Event> upcomingEvents;
-    private Settings settingsFrag;
-
-    GoogleCloudMessaging gcm;
-    String regid;
-    Context mContext;
+    private GoogleCloudMessaging gcm;
+    private String regid;
+    private Context mContext;
 
     private IntentFilter mMessageIntentFilter;
     private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
@@ -59,6 +52,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         LinearLayout layout =(LinearLayout)findViewById(R.id.background);
+
+        upcomingEvents = new ArrayList<Event>();
+        mContext = getApplicationContext();
 
         mMessageIntentFilter = new IntentFilter();
         mMessageIntentFilter.addAction(GCM_FILTER);
