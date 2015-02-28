@@ -4,15 +4,6 @@
     android:layout_height="match_parent"
     android:id="@+id/background">
 
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -31,6 +22,13 @@
             android:id="@+id/textView2"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id= "@android:id/list"
+            android:drawSelectorOnTop="true"
+            />
 
     </LinearLayout>
 </LinearLayout>
