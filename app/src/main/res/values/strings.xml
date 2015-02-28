@@ -32,6 +32,8 @@
     <string name="notify_me">Notify me</string>
     <string name="notify_others">Allow others to send me notifications</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="login">Login with Facebook</string>
+    <string name="login">Login</string>
+    <string name="app_id">1626127007605862</string>
+
 
 </resources>

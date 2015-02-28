@@ -1,18 +1,10 @@
 package edu.dartmouth.cs.ontime;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,13 +18,19 @@ public class MainActivity extends Activity {
     private SlidingTabLayout slidingTabLayout;
     private ViewPager viewPager;
     private ArrayList<Event> upcomingEvents;
-    private Settings settingsFrag;
+    private SettingsFragment settingsFrag;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        if (savedInstanceState == null) {
+//            getFragmentManager().beginTransaction()
+//                    .add(R.id.container, new Settings())
+//                    .commit();
+//        }
+        // how do you want me to do this if we are no longer doing fragments?
 
         LinearLayout layout =(LinearLayout)findViewById(R.id.background);
 
