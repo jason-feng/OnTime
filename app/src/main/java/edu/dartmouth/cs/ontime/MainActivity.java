@@ -28,7 +28,7 @@ import java.util.Calendar;
 public class MainActivity extends Activity {
 
     private static final String GCM_FILTER = "GCM_NOTIFY";
-    private static final String SENDER_ID = "10622142242";
+    private static final String SENDER_ID = "99217053083";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
