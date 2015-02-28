@@ -14,7 +14,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.widget.LinearLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,7 +43,7 @@ public class MainActivity extends Activity {
     private SlidingTabLayout slidingTabLayout;
     private ViewPager viewPager;
     private ArrayList<Event> upcomingEvents;
-    private SettingsFragment settingsFrag;
+    private Settings settingsFrag;
 
     GoogleCloudMessaging gcm;
     String regid;
@@ -65,12 +64,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        if (savedInstanceState == null) {
-//            getFragmentManager().beginTransaction()
-//                    .add(R.id.container, new Settings())
-//                    .commit();
-//        }
-        // how do you want me to do this if we are no longer doing fragments?
 
         LinearLayout layout =(LinearLayout)findViewById(R.id.background);
 
