@@ -1,6 +1,9 @@
 package edu.dartmouth.cs.ontime;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,19 +38,22 @@ public class MainActivity extends Activity {
     private String regid;
     private Context mContext;
 
+    private NotificationManager mNotificationManager;
     private IntentFilter mMessageIntentFilter;
     private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String id_string = intent.getStringExtra("id_key");
-            if (id_string != null) {
-                // Do Stuff Here
+            String inviter_name = intent.getStringExtra("invite_key");
+            if (inviter_name != null) {
+                showNotification(inviter_name);
             }
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -110,6 +116,38 @@ public class MainActivity extends Activity {
 
 
 
+    }
+
+    /**
+     * Display a notification in the notification bar.
+     */
+    private void showNotification(String inviter) {
+
+        // If notification pressed but not a button
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), 0);
+
+        // If accept is pressed
+        PendingIntent acceptIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), 0);
+
+        // If decline is pressed
+        PendingIntent declineIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(this.getString(R.string.service_label))
+                .setContentText(
+                        getResources().getString(R.string.service_started) + inviter + "!")
+                .setSmallIcon(R.drawable.notify)
+                .setOngoing(true)
+                .setAutoCancel(true)
+                .addAction(R.drawable.ic_accept, "Accept", acceptIntent)
+                .addAction(R.drawable.ic_cancel, "Decline", declineIntent)
+                .setContentIntent(contentIntent).build();
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(0, notification);
     }
 
     private boolean checkPlayServices() {
