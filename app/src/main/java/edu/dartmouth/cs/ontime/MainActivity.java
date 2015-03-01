@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -69,6 +70,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
+=======
+        LinearLayout layout =(LinearLayout)findViewById(R.id.background);
+        layout.setBackgroundResource(R.drawable.background_welcome);
+>>>>>>> 4bae09328d336d9ea7749353738fa5a8a9555cb4
 
         ParseObject testObject = new ParseObject("TestObject");
         testObject.put("foo", "bar");
