@@ -14,23 +14,18 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.util.Log;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import java.text.SimpleDateFormat;
+
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -63,7 +58,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LinearLayout layout =(LinearLayout)findViewById(R.id.background);
+        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
         layout.setBackgroundResource(R.drawable.background_welcome);
 
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
@@ -86,7 +81,6 @@ public class MainActivity extends Activity {
             }
         }
         **/
-
 
         //sample event 1
         Event event1 = new Event();
@@ -202,6 +196,11 @@ public class MainActivity extends Activity {
             }
 
         }
+    }
+
+    public void createEvent() {
+        Intent intent = new Intent(this, CreateEvent.class);
+        startActivity(intent);
     }
 
     //from stackoverflow
@@ -359,6 +358,12 @@ public class MainActivity extends Activity {
         registerReceiver(mMessageUpdateReceiver, mMessageIntentFilter);
         super.onResume();
         checkPlayServices();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mMessageUpdateReceiver);
     }
 
     @Override
