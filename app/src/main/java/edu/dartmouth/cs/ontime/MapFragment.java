@@ -55,9 +55,11 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
 
     public void onStartSaveClicked(View v) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("MARKER_LATITUDE", mMarker.getPosition().latitude);
-        resultIntent.putExtra("MARKER_LONGITUDE", mMarker.getPosition().longitude);
-        setResult(Activity.RESULT_OK, resultIntent);
+        if (mMarker != null) {
+            resultIntent.putExtra("MARKER_LATITUDE", mMarker.getPosition().latitude);
+            resultIntent.putExtra("MARKER_LONGITUDE", mMarker.getPosition().longitude);
+            setResult(Activity.RESULT_OK, resultIntent);
+        }
         finish();
     }
 

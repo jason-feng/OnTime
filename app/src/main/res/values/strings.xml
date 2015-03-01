@@ -41,5 +41,9 @@
     <string name="action_search">Search</string>
     <string name="search_hint">Search for a location</string>
     <string name="search_settings">Search Places</string>
+    <string name="hint_title">Enter name of event</string>
+    <string name="ui_title">Event name</string>
+    <string name="dialog_fragment_positive_button">Save</string>
+    <string name="dialog_fragment_negative_button">Cancel</string>
 
 </resources>

@@ -17,12 +17,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.parse.Parse;
 import com.parse.ParseObject;
 
 import java.io.IOException;
@@ -45,6 +45,7 @@ public class MainActivity extends Activity {
     private String regid;
     private Context mContext;
     private ImageButton createEventButton, settingsButton, invitesButton;
+    private Button createEvent;
     private NotificationManager mNotificationManager;
     private IntentFilter mMessageIntentFilter;
     private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
@@ -59,10 +60,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Init parse
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "mpKUYS0VHcJR1KQiVDQ8EUC0RDb5WRqB1gwUOuT4", "lP5IoGEkvcqBG9I3IxtXU5EtnEJiE2yHzX1bbZuq");
-
         Log.d(TAG, "oncreate");
 
         showNotification("Nick");
@@ -90,10 +87,20 @@ public class MainActivity extends Activity {
         mMessageIntentFilter = new IntentFilter();
         mMessageIntentFilter.addAction(GCM_FILTER);
 
+        createEvent = (Button)findViewById(R.id.createEvent);
+        createEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "createEvent");
+                Intent intent = new Intent(mContext, CreateEvent.class);
+                startActivity(intent);
+            }
+        });
         settingsButton = (ImageButton)findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log .d(TAG, "settings");
                 Intent intent = new Intent(mContext, SettingsActivity.class);
                 startActivity(intent);
             }
@@ -103,6 +110,7 @@ public class MainActivity extends Activity {
         invitesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "invites");
                 Intent intent = new Intent(mContext, InviteActivity.class);
                 startActivity(intent);
             }
@@ -112,12 +120,11 @@ public class MainActivity extends Activity {
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "createEvent");
-                Intent intent = new Intent(mContext, CreateEvent.class);
-                startActivity(intent); 
+                Log.d(TAG, "CreateEvent");
             }
         });
 
+        Log.d(TAG, "createEvent init");
         //get person based on regId of phone (from server); for now this and events are hard-coded
         /*
         if (checkPlayServices()){
