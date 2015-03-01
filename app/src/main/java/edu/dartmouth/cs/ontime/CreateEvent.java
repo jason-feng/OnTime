@@ -9,6 +9,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -37,7 +38,19 @@ public class CreateEvent extends ListActivity {
         public static int[] intCal;
         public String actType;
         private Context context;
+        private Location mLocation;
 
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+            else {
+                Log.d(TAG, "onActivityResult");
+                mLocation.setLatitude(data.getDoubleExtra("MARKER_LATITUDE", 0.0));
+                mLocation.setLongitude(data.getDoubleExtra("MARKER_LONGITUDE", 0.0));
+            }
+        }
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);

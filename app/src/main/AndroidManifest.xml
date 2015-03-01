@@ -5,9 +5,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,6 +17,19 @@
         android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE" />
     <uses-permission android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE" />
 
+
+    <permission
+        android:name="edu.dartmouth.cs.ontime.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="edu.dartmouth.cs.ontime.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <!-- Google Maps Android API V2 requires OpenGL ES version 2 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -54,6 +64,17 @@
         <activity
             android:name=".MapFragment"
             android:label="Select Location" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <!-- Points to searchable activity -->
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".MapFragment" />
+
+            <!-- Points to searchable meta data -->
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -99,6 +120,10 @@
                 <category android:name="edu.dartmouth.cs.ontime" />
             </intent-filter>
         </receiver>
+        <provider
+            android:name="edu.dartmouth.cs.ontime.PlaceProvider"
+            android:authorities="edu.dartmouth.cs.ontime.PlaceProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

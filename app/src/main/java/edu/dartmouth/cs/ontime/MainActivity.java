@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -73,7 +72,7 @@ public class MainActivity extends Activity {
         testObject.put("foo", "bar");
         testObject.saveInBackground();
 
-        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
+//        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
 //        layout.setBackgroundResource(R.drawable.background_welcome);
 //
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
