@@ -7,16 +7,13 @@
 
     android:background="@drawable/background_welcome">
 
-<<<<<<< HEAD
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/createEvent"
         android:text="@string/create_event"
         android:layout_gravity="top|right" />
-=======
->>>>>>> 4bae09328d336d9ea7749353738fa5a8a9555cb4
-
+    
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
