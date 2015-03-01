@@ -1,15 +1,12 @@
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/background">
+    android:orientation="vertical"
+    android:id="@+id/background"
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="createEvent"
-        android:text="@string/create_event"
-        android:layout_gravity="top|right" />
+    android:background="@drawable/background_welcome">
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -30,13 +27,33 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id= "@android:id/list"
-            android:drawSelectorOnTop="true"
-            />
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/settingsButton"
+            android:src="@drawable/settings"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/invitesButton" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:onClick="createEvent"
+            android:id="@+id/createEventButton" />
+
 
     </LinearLayout>
 
-</FrameLayout>
+    <ListView
+
+
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id= "@android:id/list"
+    android:drawSelectorOnTop="true"
+    />
+</LinearLayout>

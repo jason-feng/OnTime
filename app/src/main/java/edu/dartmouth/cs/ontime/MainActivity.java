@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -58,7 +59,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
+        LinearLayout layout =(LinearLayout)findViewById(R.id.background);
         layout.setBackgroundResource(R.drawable.background_welcome);
 
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
