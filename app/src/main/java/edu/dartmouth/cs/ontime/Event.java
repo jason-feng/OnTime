@@ -58,4 +58,5 @@ public class Event {
     public void setPeople(ArrayList<Person> people) {
         this.people = people;
     }
+
 }

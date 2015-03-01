@@ -15,11 +15,15 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.parse.Parse;
+import com.parse.ParseObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -28,6 +32,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends Activity {
+
+    public static final String TAG = "MainActivity";
 
     private static final String GCM_FILTER = "GCM_NOTIFY";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -38,7 +44,7 @@ public class MainActivity extends Activity {
     private GoogleCloudMessaging gcm;
     private String regid;
     private Context mContext;
-
+    private Button createEventButton;
     private NotificationManager mNotificationManager;
     private IntentFilter mMessageIntentFilter;
     private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
@@ -53,14 +59,24 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Init parse
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this, "mpKUYS0VHcJR1KQiVDQ8EUC0RDb5WRqB1gwUOuT4", "lP5IoGEkvcqBG9I3IxtXU5EtnEJiE2yHzX1bbZuq");
+
+        Log.d(TAG, "oncreate");
 
         showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
-        layout.setBackgroundResource(R.drawable.background_welcome);
 
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
+
+        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
+//        layout.setBackgroundResource(R.drawable.background_welcome);
+//
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
@@ -69,6 +85,15 @@ public class MainActivity extends Activity {
 
         mMessageIntentFilter = new IntentFilter();
         mMessageIntentFilter.addAction(GCM_FILTER);
+
+        createEventButton = (Button)findViewById(R.id.createEvent);
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CreateEvent.class);
+                startActivity(intent);
+            }
+        });
 
         //get person based on regId of phone (from server); for now this and events are hard-coded
         /*
@@ -82,7 +107,6 @@ public class MainActivity extends Activity {
         }
         **/
 
-        //sample event 1
         Event event1 = new Event();
         Calendar newDateTime = Calendar.getInstance();
         newDateTime.set(2015, 3, 2, 12, 25);
@@ -198,15 +222,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void createEvent() {
-        Intent intent = new Intent(this, CreateEvent.class);
-        startActivity(intent);
-    }
-
-    //from stackoverflow
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
-    //enterWeek is week number
-    //enterYear is year
+
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
         calendar.set(Calendar.WEEK_OF_YEAR, enterWeek);

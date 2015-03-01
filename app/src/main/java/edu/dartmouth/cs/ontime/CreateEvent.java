@@ -6,8 +6,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -18,8 +21,13 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,37 +35,28 @@ import java.util.Calendar;
 
 public class CreateEvent extends ListActivity {
 
-//this view lists manual entry buttons for user input
-//list activity code adapted from Layouts code provided in class
-
-        static final String[] FACULTY = new String[] { "Date",
-                "Time", "Location", "Invitees",
-                "Message"};
+        static final String[] FACULTY = new String[] { "Title","Date", "Time", "Location", "Invitees"};
         private static final String TAG = "CreateEvent";
 
         public ArrayList mSelectedItems;
         public ListView list;
         public static int[] intCal;
         public String actType;
+        private Context context;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
-
-
             super.onCreate(savedInstanceState);
-
             setContentView(R.layout.activity_create_event);
 
-            intCal = new int[6];
+            context = this;
 
+            intCal = new int[6];
             list = (ListView)this.findViewById(android.R.id.list);
 
             //setContentView(R.layout.activity_manual_entry);
-            // Define a new adapter
             ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, FACULTY);
-
-            // Assign the adapter to ListView
             setListAdapter(mAdapter);
 
             // Define the listener interface
@@ -65,38 +64,30 @@ public class CreateEvent extends ListActivity {
             AdapterView.OnItemClickListener mListener = new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    if (position == 0) {
-                        //date
-                        DialogFragment newFragment = new DatePickerFragment();
-                        newFragment.show(getFragmentManager(), "datePicker");
-                    }
-                    if (position ==1) {
-                        //time
-                        DialogFragment newFragment = new TimePickerFragment();
-                        newFragment.show(getFragmentManager(), "timePicker");
-                    }
-                    if (position == 2) {
-                        //duration
-                        //DialogFragment newFragment = new MyAlertDialogFragment();
-                        //showDurationDialog();
-                        DialogFragment newFragment = CommentDialogFragment
-                                .newInstance(R.string.location_prompt);
-                        newFragment.show(getFragmentManager(), "dialog");
-                    }
-
-                    if (position == 3) {
-                        //calories
-                        DialogFragment newFragment = new NewListUsersDialogFragment()
-                                .newInstance(R.string.pick_friends);
-                        newFragment.show(getFragmentManager(), "dialog");
-                    }
-
-                    if (position == 4) {
-                        //send message
-                        DialogFragment newFragment = new MyAlertDialogFragment();
-                        commentDialog();
-
-
+                    DialogFragment newFragment;
+                    switch (position) {
+                        case 0: // Title
+                            newFragment = CommentDialogFragment.newInstance(R.string.title);
+                            newFragment.show(getFragmentManager(), "dialog");
+                            break;
+                        case 1: //date
+                            newFragment = new DatePickerFragment();
+                            newFragment.show(getFragmentManager(), "datePicker");
+                            break;
+                        case 2: // time
+                            newFragment = new TimePickerFragment();
+                            newFragment.show(getFragmentManager(), "timePicker");
+                            break;
+                        case 3: //location
+//                            MapFragment fragment = new MapFragment();
+//                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            startActivity(new Intent(context, MapDialogFragment.class));
+                            break;
+                        case 4: //Invites
+                            newFragment = new NewListUsersDialogFragment()
+                                    .newInstance(R.string.pick_friends);
+                            newFragment.show(getFragmentManager(), "dialog");
+                            break;
                     }
                 }
             };
@@ -130,6 +121,68 @@ public class CreateEvent extends ListActivity {
         }
 
         // ******************** Fragment Classes *************************//
+
+    public class MapDialogFragment extends FragmentActivity
+            implements GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+
+        private GoogleMap mMap;
+        private TextView mTapTextView;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+//            setContentView(R.layout.events_demo);
+
+//            mTapTextView = (TextView) findViewById(R.id.tap_text);
+
+            setUpMapIfNeeded();
+        }
+
+        /**
+         * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
+         * installed) and the map has not already been instantiated.. This will ensure that we only ever
+         * call {@link #setUpMap()} once when {@link #mMap} is not null.
+         * <p/>
+         * If it isn't installed {@link com.google.android.gms.maps.SupportMapFragment} (and
+         * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
+         * install/update the Google Play services APK on their device.
+         * <p/>
+         * A user can return to this FragmentActivity after following the prompt and correctly
+         * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
+         * have been completely destroyed during this process (it is likely that it would only be
+         * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
+         * method in {@link #onResume()} to guarantee that it will be called.
+         */
+        private void setUpMapIfNeeded() {
+            // Do a null check to confirm that we have not already instantiated the map.
+            if (mMap == null) {
+                // Try to obtain the map from the SupportMapFragment.
+                mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                        .getMap();
+                // Check if we were successful in obtaining the map.
+                if (mMap != null) {
+                    setUpMap();
+                }
+            }
+        }
+
+
+        private void setUpMap() //If the setUpMapIfNeeded(); is needed then...
+        {
+            mMap.setOnMapClickListener(this);
+            mMap.setOnMapLongClickListener(this);
+        }
+
+        @Override
+        public void onMapClick(LatLng point) {
+            mTapTextView.setText("tapped, point=" + point);
+        }
+
+        @Override
+        public void onMapLongClick(LatLng point) {
+            mTapTextView.setText("long pressed, point=" + point);
+        }
+    }
 
         //provided by Android Developers for Date Picker Fragment
         public static class DatePickerFragment extends DialogFragment
@@ -300,27 +353,22 @@ public class CreateEvent extends ListActivity {
                 final EditText input = new EditText(getActivity().getApplicationContext());
 
                 return new AlertDialog.Builder(getActivity())
-                        //.setIcon(R.drawable.alert_dialog_dart_icon)
                         .setView(input)
-
                         .setTitle(title)
-                                // Set an EditText view to get user input
-                        .setPositiveButton(R.string.alert_dialog_ok,
-                                new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,
                                                         int whichButton) {
-                                        ((CreateEvent) getActivity())
-                                                .doPositiveClick(input, title);
+                            ((CreateEvent) getActivity()).doPositiveClick(input, title);
                                     }
                                 })
                         .setNegativeButton(R.string.alert_dialog_cancel,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        ((CreateEvent) getActivity())
-                                                .doNegativeClick();
-                                    }
-                                }).create();
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    ((CreateEvent) getActivity())
+                                            .doNegativeClick();
+                                }
+                        }).create();
             }
         }
 

@@ -35,5 +35,6 @@
     <string name="service_started">You have a pending invite from</string>
     <string name="title_activity_invite">InviteActivity</string>
     <string name="create_event">Create Event</string>
+    <string name="title">Title</string>
 
 </resources>
