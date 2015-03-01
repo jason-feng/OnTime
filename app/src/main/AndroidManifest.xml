@@ -52,6 +52,10 @@
             android:label="Create an Event" >
         </activity>
         <activity
+            android:name=".MapFragment"
+            android:label="Select Location" >
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/login" >
             <intent-filter>
