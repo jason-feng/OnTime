@@ -70,11 +70,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
-=======
         LinearLayout layout =(LinearLayout)findViewById(R.id.background);
         layout.setBackgroundResource(R.drawable.background_welcome);
->>>>>>> 4bae09328d336d9ea7749353738fa5a8a9555cb4
 
         ParseObject testObject = new ParseObject("TestObject");
         testObject.put("foo", "bar");
