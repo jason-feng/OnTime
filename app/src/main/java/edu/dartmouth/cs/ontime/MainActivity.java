@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,12 +13,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -44,7 +47,7 @@ public class MainActivity extends Activity {
     private GoogleCloudMessaging gcm;
     private String regid;
     private Context mContext;
-    private Button createEventButton;
+    private ImageButton createEventButton, settingsButton, invitesButton;
     private NotificationManager mNotificationManager;
     private IntentFilter mMessageIntentFilter;
     private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
@@ -76,6 +79,11 @@ public class MainActivity extends Activity {
         FrameLayout layout =(FrameLayout)findViewById(R.id.background);
 //        layout.setBackgroundResource(R.drawable.background_welcome);
 //
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
@@ -85,11 +93,29 @@ public class MainActivity extends Activity {
         mMessageIntentFilter = new IntentFilter();
         mMessageIntentFilter.addAction(GCM_FILTER);
 
-        createEventButton = (Button)findViewById(R.id.createEvent);
+        createEventButton = (ImageButton)findViewById(R.id.createEventButton);
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, CreateEvent.class);
+                startActivity(intent);
+            }
+        });
+
+        settingsButton = (ImageButton)findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        invitesButton = (ImageButton)findViewById(R.id.invitesButton);
+        invitesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, InviteActivity.class);
                 startActivity(intent);
             }
         });
