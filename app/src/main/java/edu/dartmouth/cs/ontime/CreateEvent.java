@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -54,7 +55,14 @@ public class CreateEvent extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
         getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
 
         mLocation = null;
         context = this;

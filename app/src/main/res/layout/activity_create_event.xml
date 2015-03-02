@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/create_background"
+    >
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
+        android:text="    CREATE EVENT     "
+        android:layout_marginTop="50dip"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:id="@+id/create_event_text_view"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
     <ListView
         android:id="@android:id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
         android:background="@color/white"/>
 
     <LinearLayout
@@ -38,4 +50,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
