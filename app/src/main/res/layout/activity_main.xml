@@ -7,12 +7,12 @@
 
     <!--android:background="@drawable/background_welcome">-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/createEvent"
-        android:text="@string/create_event"
-        android:layout_gravity="top|right" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createEvent"
+            android:text="@string/create_event"
+            android:layout_gravity="top|right" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -40,7 +40,8 @@
             android:src="@drawable/settings"
             android:scaleType="fitCenter"
             android:padding="10dp"
-            android:background="@null"/>
+            android:background="@null"
+            />
 
         <ImageButton
             android:layout_width="50dp"
@@ -65,10 +66,57 @@
 
     </LinearLayout>
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="4dip"
+        >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:text="@string/today"/>
+
     <ListView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id= "@android:id/list"
+        android:layout_height="wrap_content"
+        android:id= "@+id/listTd"
+        android:layout_marginTop="10dip"
         android:drawSelectorOnTop="true"
     />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="@string/tomorrow"/>
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id= "@+id/listTm"
+            android:layout_marginTop="10dip"
+            android:drawSelectorOnTop="true"
+            />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="@string/thisweek"/>
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id= "@+id/listTw"
+            android:layout_marginTop="10dip"
+            android:drawSelectorOnTop="true"
+            />
+    </LinearLayout>
+    </ScrollView>
 </FrameLayout>
