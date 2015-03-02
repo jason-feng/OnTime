@@ -7,22 +7,16 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -38,15 +32,8 @@ public class MainActivity extends Activity {
 
     public static final String TAG = "MainActivity";
 
-    private static final String GCM_FILTER = "GCM_NOTIFY";
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    public static final String REG_ID_KEY = "registration_id";
-    private static final String APP_VERSION_KEY = "appVersion";
-
     private List<com.parse.ParseObject> upcomingEvents;
     private ListView mListToday,mListTomorrow,mListThisweek;
-    private GoogleCloudMessaging gcm;
-    private String regid;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
     private NotificationManager mNotificationManager;
@@ -63,7 +50,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
-
 
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
@@ -241,21 +227,6 @@ public class MainActivity extends Activity {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(0, notification);
-    }
-    private SharedPreferences getGCMPreferences(Context context) {
-        return getSharedPreferences(MainActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
-    }
-
-    private static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
     }
 
     public static class ListUtils {
