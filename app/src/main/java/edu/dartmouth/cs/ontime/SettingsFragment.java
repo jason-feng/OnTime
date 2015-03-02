@@ -9,15 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphObject;
 import com.facebook.widget.LoginButton;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -27,6 +24,7 @@ public class SettingsFragment extends Fragment {
     private static final String TAG = "SettingsFragment";
     private UiLifecycleHelper uiHelper;
     private Context mContext;
+    public ArrayList<FacebookFriend> friends;
 
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -60,19 +58,52 @@ public class SettingsFragment extends Fragment {
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
-            new Request(
-                    session,
-                    "/me/friends",
-                    null,
-                    HttpMethod.GET,
-                    new Request.Callback() {
-                        public void onCompleted(Response response) {
-                                /* handle the result */
-                            GraphObject graphObject = response.getGraphObject();
-
-                        }
-                    }
-            ).executeAsync();
+//            new Request(
+//                    session,
+//                    "/me",
+//                    null,
+//                    HttpMethod.GET,
+//                    new Request.Callback() {
+//                        public void onCompleted(Response response) {
+//                            GraphObject graphObject = response.getGraphObject();
+//                            JSONArray dataArray = (JSONArray) graphObject.getProperty("data");
+//                            if (dataArray.length() > 0) {
+//
+//                                // Ensure the user has at least one friend ...
+//                                for (int i = 0; i < dataArray.length(); i++) {
+//
+//                                    JSONObject jsonObject = dataArray.optJSONObject(i);
+//                                    FacebookFriend me = new FacebookFriend(jsonObject);
+//                                    Log.d("me",me.name);
+//                                }
+//                            }
+//                        }
+//                    }
+//            ).executeAsync();
+//            new Request(
+//                    session,
+//                    "/me/friends",
+//                    null,
+//                    HttpMethod.GET,
+//                    new Request.Callback() {
+//                        public void onCompleted(Response response) {
+//                                /* handle the result */
+//                            GraphObject graphObject = response.getGraphObject();
+//                            JSONArray dataArray = (JSONArray) graphObject.getProperty("data");
+//                            if (dataArray.length() > 0) {
+//
+//                                // Ensure the user has at least one friend ...
+//                                for (int i = 0; i < dataArray.length(); i++) {
+//
+//                                    JSONObject jsonObject = dataArray.optJSONObject(i);
+//                                    FacebookFriend facebookFriend = new FacebookFriend(jsonObject);
+//                                    friends.add(facebookFriend);
+//                                }
+//                            }
+//
+//                        }
+//                    }
+//            ).executeAsync();
 
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
