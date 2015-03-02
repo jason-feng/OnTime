@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,7 +43,7 @@ public class MainActivity extends Activity {
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
 
-    private ArrayList<Event> upcomingEvents;
+    private List<com.parse.ParseObject> upcomingEvents;
     private ListView mListToday,mListTomorrow,mListThisweek;
     private GoogleCloudMessaging gcm;
     private String regid;
@@ -82,7 +81,7 @@ public class MainActivity extends Activity {
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
-        upcomingEvents = new ArrayList<Event>();
+        upcomingEvents = new ArrayList<ParseObject>();
         mContext = this;
 
         mMessageIntentFilter = new IntentFilter();
@@ -128,28 +127,36 @@ public class MainActivity extends Activity {
 
         Log.d(TAG, "createEvent init");
 
-        upcomingEvents = Event.query();
+        query();
+//        loadEvents();
+    }
+
+    public void loadEvents() {
+        Log.d(TAG, "loadEvents");
         ArrayList<String> todayArray = new ArrayList<>();
         ArrayList<String> tomorrowArray = new ArrayList<>();
         ArrayList<String> thisWeekArray = new ArrayList<>();
 
+        Log.d(TAG, "list size: " + upcomingEvents.size());
         //for each event in upcoming events list
         for (int i = 0; i < upcomingEvents.size(); i++) {
             ParseObject event = upcomingEvents.get(i);
-            Log.d(TAG, "EVENT ID: " + event.get("objectId"));
             Calendar date = new GregorianCalendar();
             date.setTime(event.getDate("date"));
             long currentTime = System.currentTimeMillis();
             Calendar today = Calendar.getInstance();
             today.setTimeInMillis(currentTime);
             if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
+                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
                 todayArray.add(event.getString("title"));
             }
             else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
+                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
                 tomorrowArray.add(event.getString("title"));
             }
             //this line will return -1 if today.getTime is before the last day of the week
             else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+                thisWeekArray.add(event.getString("title"));
             }
             else {
                 //else, add to "upcoming events" field at bottom
@@ -168,7 +175,28 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListToday);
         ListUtils.setDynamicHeight(mListTomorrow);
         ListUtils.setDynamicHeight(mListThisweek);
+    }
 
+    public void query() {
+        Log.d(TAG, "query()");
+        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery("event");
+        query.findInBackground(new FindCallback<com.parse.ParseObject>() {
+            @Override
+            public void done(List<com.parse.ParseObject> objects, com.parse.ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "ParseQuery");
+                    upcomingEvents = new ArrayList<ParseObject>();
+                    for (ParseObject event : objects) {
+                        Log.d(TAG, "Title : " + event.get("title"));
+                        Log.d(TAG, "Date : " + event.get("date"));
+                        upcomingEvents.add(event);
+                    }
+                    loadEvents();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
