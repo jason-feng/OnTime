@@ -12,6 +12,7 @@ public class Settings extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
 //        ListPreference listPreference = (ListPreference) findPreference("list_preference");
 //        if (listPreference.getValue() == null) {
 //            listPreference.setValueIndex(1);

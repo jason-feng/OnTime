@@ -17,8 +17,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -40,11 +44,12 @@ public class MainActivity extends Activity {
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
 
+    private ListView mListToday,mListTomorrow,mListThisweek;
     private ArrayList<Event> upcomingEvents;
     private GoogleCloudMessaging gcm;
     private String regid;
     private Context mContext;
-    private ImageButton createEventButton, settingsButton, invitesButton;
+    private ImageButton createEventButton, invitesButton, settingsButton;
     private Button createEvent;
     private NotificationManager mNotificationManager;
     private IntentFilter mMessageIntentFilter;
@@ -100,8 +105,7 @@ public class MainActivity extends Activity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log .d(TAG, "settings");
-                Intent intent = new Intent(mContext, SettingsActivity.class);
+                Intent intent = new Intent(mContext, SettingsPage.class);
                 startActivity(intent);
             }
         });
@@ -139,7 +143,7 @@ public class MainActivity extends Activity {
 
         Event event1 = new Event();
         Calendar newDateTime = Calendar.getInstance();
-        newDateTime.set(2015, 3, 2, 12, 25);
+        newDateTime.set(2015, 3, 1, 12, 25);
         event1.setmDateTime(newDateTime);
         Location loc = new Location("");
         loc.setLatitude(43.704441);
@@ -150,7 +154,7 @@ public class MainActivity extends Activity {
 
         Event event2 = new Event();
         Calendar newDateTime2 = Calendar.getInstance();
-        newDateTime2.set(2015, 3, 3, 12, 25);
+        newDateTime2.set(2015, 3, 2, 12, 25);
         event2.setmDateTime(newDateTime2);
         Location loc2 = new Location("");
         loc2.setLatitude(43.701728);
@@ -161,7 +165,7 @@ public class MainActivity extends Activity {
 
         Event event3 = new Event();
         Calendar newDateTime3 = Calendar.getInstance();
-        newDateTime3.set(2015, 3, 3, 12, 25);
+        newDateTime3.set(2015, 3, 2, 12, 25);
         event3.setmDateTime(newDateTime3);
         Location loc3 = new Location("");
         loc3.setLatitude(43.704451);
@@ -172,7 +176,7 @@ public class MainActivity extends Activity {
 
         Event event4 = new Event();
         Calendar newDateTime4 = Calendar.getInstance();
-        newDateTime4.set(2015, 3, 5, 12, 25);
+        newDateTime4.set(2015, 3, 3, 12, 25);
         event4.setmDateTime(newDateTime4);
         Location loc4 = new Location("");
         loc4.setLatitude(43.702451);
@@ -183,7 +187,7 @@ public class MainActivity extends Activity {
 
         Event event5 = new Event();
         Calendar newDateTime5 = Calendar.getInstance();
-        newDateTime5.set(2015, 3, 6, 12, 25);
+        newDateTime5.set(2015, 3, 3, 11, 25);
         event5.setmDateTime(newDateTime5);
         Location loc5 = new Location("");
         loc5.setLatitude(43.703451);
@@ -194,8 +198,8 @@ public class MainActivity extends Activity {
 
         Event event6 = new Event();
         Calendar newDateTime6 = Calendar.getInstance();
-        newDateTime6.set(2015, 3, 7, 12, 25);
-        event6.setmDateTime(newDateTime3);
+        newDateTime6.set(2015, 3, 5, 12, 25);
+        event6.setmDateTime(newDateTime6);
         Location loc6 = new Location("");
         loc6.setLatitude(43.704451);
         loc6.setLongitude(-72.286653);
@@ -205,20 +209,33 @@ public class MainActivity extends Activity {
 
         Event event7 = new Event();
         Calendar newDateTime7 = Calendar.getInstance();
-        newDateTime7.set(2015, 3, 8, 12, 25);
-        event7.setmDateTime(newDateTime3);
+        newDateTime7.set(2015, 3, 6, 12, 25);
+        event7.setmDateTime(newDateTime7);
         Location loc7 = new Location("");
         loc7.setLatitude(43.704451);
         loc7.setLongitude(-72.286643);
         event7.setmLocation(loc7);
-        event5.setmTitle("Sledding");
+        event7.setmTitle("Sledding");
         upcomingEvents.add(event7);
+
+        Event event8 = new Event();
+        Calendar newDateTime8 = Calendar.getInstance();
+        newDateTime8.set(2015, 3, 6, 12, 25);
+        event8.setmDateTime(newDateTime8);
+        Location loc8 = new Location("");
+        loc8.setLatitude(43.704451);
+        loc8.setLongitude(-72.286643);
+        event8.setmLocation(loc8);
+        event8.setmTitle("Group Project");
+        upcomingEvents.add(event8);
 
         String[] todayArray = new String[1];
         String[] tomorrowArray = new String[2];
-        String[] thisWeekArray = new String[4];
+        String[] thisWeekArray = new String[5];
         //for each event in upcoming events list
         for (int i = 0; i < upcomingEvents.size(); i++) {
+            Log.d("an","even");
+            Log.d("event",upcomingEvents.get(i).getmTitle());
             Calendar date = upcomingEvents.get(i).getmDateTime();
             long currentTime = System.currentTimeMillis();
             Calendar today = Calendar.getInstance();
@@ -226,6 +243,7 @@ public class MainActivity extends Activity {
             if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
                 //add to today's text
                // String[] todayArray = new String[1];
+                Log.d("today",upcomingEvents.get(0).getmTitle());
                 todayArray[0] = upcomingEvents.get(0).getmTitle();
 
             }
@@ -242,6 +260,7 @@ public class MainActivity extends Activity {
                 thisWeekArray[1] = upcomingEvents.get(4).getmTitle();
                 thisWeekArray[2] = upcomingEvents.get(5).getmTitle();
                 thisWeekArray[3] = upcomingEvents.get(6).getmTitle();
+                thisWeekArray[4] = upcomingEvents.get(7).getmTitle();
 
             }
 
@@ -250,7 +269,31 @@ public class MainActivity extends Activity {
             }
 
         }
+        int i;
+        for (i=0;i<todayArray.length;i++) {
+            Log.d("today", todayArray[i]);
+        }
+        for (i=0;i<tomorrowArray.length;i++) {
+            Log.d("tomorrow", tomorrowArray[i]);
+        }
+        for (i=0;i<thisWeekArray.length;i++) {
+            Log.d("thisweek", thisWeekArray[i]);
+        }
+
+        mListToday = (ListView)findViewById(R.id.listTd);
+        mListTomorrow = (ListView)findViewById(R.id.listTm);
+        mListThisweek = (ListView)findViewById(R.id.listTw);
+
+        mListToday.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todayArray));
+        mListTomorrow.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tomorrowArray));
+        mListThisweek.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, thisWeekArray));
+
+        ListUtils.setDynamicHeight(mListToday);
+        ListUtils.setDynamicHeight(mListTomorrow);
+        ListUtils.setDynamicHeight(mListThisweek);
+
     }
+
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
 
@@ -417,6 +460,29 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+    }
+
+    public static class ListUtils {
+        public static void setDynamicHeight(ListView mListView) {
+            ListAdapter mListAdapter = mListView.getAdapter();
+            if (mListAdapter == null) {
+                // when adapter is null
+                return;
+            }
+            else {
+                int height = 0;
+                int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+                for (int i = 0; i < mListAdapter.getCount(); i++) {
+                    View listItem = mListAdapter.getView(i, null, mListView);
+                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                    height += listItem.getMeasuredHeight();
+                }
+                ViewGroup.LayoutParams params = mListView.getLayoutParams();
+                params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+                mListView.setLayoutParams(params);
+                mListView.requestLayout();
+            }
+        }
     }
 
 }

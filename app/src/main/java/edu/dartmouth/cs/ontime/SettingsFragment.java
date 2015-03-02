@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.ontime;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,8 @@ import java.util.Arrays;
 public class SettingsFragment extends Fragment {
     private static final String TAG = "SettingsFragment";
     private UiLifecycleHelper uiHelper;
+    private Context mContext;
+
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
         @Override
@@ -53,6 +56,7 @@ public class SettingsFragment extends Fragment {
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
+
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
         }
