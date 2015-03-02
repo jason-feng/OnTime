@@ -81,7 +81,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
-        android:text="@string/today"/>
+        android:text="@string/today"
+        android:textStyle="bold"/>
 
     <ListView
         android:layout_width="fill_parent"
@@ -94,7 +95,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dip"
-            android:text="@string/tomorrow"/>
+            android:text="@string/tomorrow"
+            android:textStyle="bold"/>
 
         <ListView
             android:layout_width="fill_parent"
@@ -107,7 +109,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dip"
-            android:text="@string/thisweek"/>
+            android:text="@string/thisweek"
+            android:textStyle="bold"/>
 
         <ListView
             android:layout_width="fill_parent"
