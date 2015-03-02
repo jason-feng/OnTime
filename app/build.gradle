@@ -24,7 +24,7 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:support-v13:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.facebook.android:facebook-android-sdk:3.23.0'
+    compile ('com.facebook.android:facebook-android-sdk:3.23.0') {exclude group: 'com.parse.bolts', module: 'bolts-android'}
     compile 'com.parse.bolts:bolts-android:1.+'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
 }
