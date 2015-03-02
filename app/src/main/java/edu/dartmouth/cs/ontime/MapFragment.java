@@ -5,8 +5,8 @@ package edu.dartmouth.cs.ontime;
  * A fragment that launches other parts of the demo application.
  */
 
-import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -28,14 +28,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
 public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MapFragment";
+    private static final int MENU_ID_SEARCH = 0;
     private GoogleMap mMap;
-    private boolean markerClicked;
     private Marker mMarker;
+    private Context context;
+    private boolean markerClicked;
     private Button save_button;
     private Button cancel_button;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,39 +53,76 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
             handleIntent(intent);
         }
         mMarker = null;
+        context = this;
         save_button = (Button)findViewById(R.id.startSaveButton);
         cancel_button = (Button)findViewById(R.id.startCancelButton);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        else {
+            Log.d(TAG, "onActivityResult");
+            Intent intent = new Intent(this, CreateEvent.class);
+            intent.putExtra("MARKER_LATITUDE", data.getDoubleExtra("MARKER_LATITUDE", 0.0));
+            intent.putExtra("MARKER_LONGITUDE", data.getDoubleExtra("MARKER_LONGITUDE", 0.0));
+            startActivity(intent);
+        }
+    }
+
     public void onStartSaveClicked(View v) {
-        Intent resultIntent = new Intent();
+        Log.d(TAG, "onStartSaveClicked");
         if (mMarker != null) {
-            resultIntent.putExtra("MARKER_LATITUDE", mMarker.getPosition().latitude);
-            resultIntent.putExtra("MARKER_LONGITUDE", mMarker.getPosition().longitude);
-            setResult(Activity.RESULT_OK, resultIntent);
+            Intent intent = new Intent();
+            intent.putExtra("LAT", mMarker.getPosition().latitude);
+            intent.putExtra("LONG", mMarker.getPosition().longitude);
+            setResult(RESULT_OK, intent);
         }
         finish();
     }
 
     public void onStartCancelClicked(View v) {
+        Log.d(TAG, "onStartCancelClicked");
         finish();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
-        // Inflate the menu
-        getMenuInflater().inflate(R.menu.menu_map, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu);
+        MenuItem item = menu.add(Menu.NONE, MENU_ID_SEARCH, MENU_ID_SEARCH, "Search");
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         return true;
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        switch(item.getItemId()){
-            case R.id.action_search:
-                onSearchRequested();
-                break;
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
+        String searchText = ((App)this.getApplicationContext()).getSearchText();
+        if (searchText != null) {
+            doSearch(searchText);
         }
-        return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == MENU_ID_SEARCH) {
+            onSearchRequested();
+            return true;
+        }
+
+        finish();
+        return false;
     }
 
    /**
@@ -112,7 +153,6 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
         }
     }
 
-
     private void setUpMap() //If the setUpMapIfNeeded(); is needed then...
     {
         mMap.setMyLocationEnabled(true);
@@ -127,10 +167,12 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
         });
     }
 
-
     private void handleIntent(Intent intent){
-        if(intent.getAction().equals(Intent.ACTION_SEARCH)){
-            doSearch(intent.getStringExtra(SearchManager.QUERY));
+        Log.d(TAG, "handleIntent");
+        if(intent.getAction().equals(Intent.ACTION_SEARCH)) {
+            String searchText = intent.getStringExtra(SearchManager.QUERY);
+            ((App)this.getApplicationContext()).setSearchText(searchText);
+            this.finish();
         }
         else if(intent.getAction().equals(Intent.ACTION_VIEW)){
             getPlace(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
@@ -139,12 +181,14 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
 
     @Override
     protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent");
+//        super.onNewIntent(intent);
         setIntent(intent);
         handleIntent(intent);
     }
 
     private void doSearch(String query){
+        Log.d(TAG, "doSearch");
         Bundle data = new Bundle();
         data.putString("query", query);
         getSupportLoaderManager().restartLoader(0, data, this);
@@ -158,6 +202,7 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle query) {
+        Log.d(TAG, "onCreateLoader");
         CursorLoader cLoader = null;
         if(arg0==0)
             cLoader = new CursorLoader(getBaseContext(), PlaceProvider.SEARCH_URI, null, null, new String[]{ query.getString("query") }, null);
@@ -168,6 +213,7 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
 
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
+        Log.d(TAG, "onLoadFinished");
         showLocations(c);
     }
 
@@ -177,6 +223,7 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
     }
 
     private void showLocations(Cursor c){
+        Log.d(TAG, "showLocations");
         MarkerOptions markerOptions = null;
         LatLng position = null;
         mMap.clear();

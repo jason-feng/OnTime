@@ -45,6 +45,8 @@
     <string name="ui_title">Event name</string>
     <string name="dialog_fragment_positive_button">Save</string>
     <string name="dialog_fragment_negative_button">Cancel</string>
+    <string name="marker_latitude">MARKER_LATITUDE</string>
+    <string name="marker_longitude">MARKER_LONGITUDE</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="thisweek">Later this week</string>

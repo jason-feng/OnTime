@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+
 import java.util.ArrayList;
 
 
@@ -20,46 +23,49 @@ public class CreateEvent extends ListActivity {
     public static final String[] FACULTY = new String[] { "Title","Date", "Time", "Location", "Invitees"};
     private static final String TAG = "CreateEvent";
     public static final String INDEX = "CreateEvent.java";
-
+    public static final int MAP_REQUEST = 1;
     public ArrayList mSelectedItems;
     public ListView list;
     public static int[] intCal;
     public String actType;
-    private Event event;
+    private ParseObject event;
     private Context context;
     private Location mLocation;
 
-    public Event getEvent() {
-    return event;
-}
+    public ParseObject getEvent() { return event; }
 
-@Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        else {
-            Log.d(TAG, "onActivityResult");
-            mLocation.setLatitude(data.getDoubleExtra("MARKER_LATITUDE", 0.0));
-            mLocation.setLongitude(data.getDoubleExtra("MARKER_LONGITUDE", 0.0));
+        if (requestCode == MAP_REQUEST) {
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+            else {
+                Log.d(TAG, "onActivityResult Success");
+                ParseGeoPoint point = new ParseGeoPoint(
+                        data.getDoubleExtra("LAT", 0),
+                        data.getDoubleExtra("LONG", 0)
+                );
+                event.put("location", point);
+            }
         }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
-
+        mLocation = null;
         context = this;
         intCal = new int[6];
         list = (ListView)this.findViewById(android.R.id.list);
-        event = new Event();
-        //setContentView(R.layout.activity_manual_entry);
+        event = new ParseObject("event");
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, FACULTY);
         setListAdapter(mAdapter);
     }
 
     public void onSaveClicked(View v) {
+        event.saveInBackground();
         finish();
     }
 
@@ -79,7 +85,7 @@ public class CreateEvent extends ListActivity {
         }
         else {
             Intent intent = new Intent(this, MapFragment.class);
-            startActivity(intent);
+            startActivityForResult(intent, MAP_REQUEST);
         }
     }
 

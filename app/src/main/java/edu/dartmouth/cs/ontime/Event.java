@@ -1,62 +1,36 @@
 package edu.dartmouth.cs.ontime;
 
-import android.location.Location;
+import android.util.Log;
+
+import com.parse.FindCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
 /**
- * Created by jasonfeng on 1/27/15.
+ * Created by jasonfeng on 3/1/15.
  */
-public class Event {
+public class Event extends ParseObject {
 
-    private Long id;
-    private Calendar mDateTime;
-    private Location mLocation;
-    private String mTitle;
-    private ArrayList<Person> people;
+    public static final String TAG = "event";
 
-    public Event() {
-        this.mDateTime = Calendar.getInstance();
-        this.mLocation = null;
-        this.mTitle = "";
-        this.people = null;
+    private static List<Event> events;
+
+    public static ArrayList<Event> query() {
+        ParseQuery<Event> query = ParseQuery.getQuery("event");
+        query.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> objects, com.parse.ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "ParseQuery");
+                    events = objects;
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return (ArrayList) events;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Calendar getmDateTime() {
-        return mDateTime;
-    }
-
-    public String getmTitle() { return mTitle; }
-
-    public void setmTitle(String mTitle) { this.mTitle = mTitle; }
-
-    public void setmDateTime(Calendar mDateTime) {
-        this.mDateTime = mDateTime;
-    }
-
-    public Location getmLocation() {
-        return mLocation;
-    }
-
-    public void setmLocation(Location mLocation) {
-        this.mLocation = mLocation;
-    }
-
-    public ArrayList<Person> getPeople() {
-        return people;
-    }
-
-    public void setPeople(ArrayList<Person> people) {
-        this.people = people;
-    }
-
 }

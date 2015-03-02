@@ -68,12 +68,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
             <!-- Points to searchable activity -->
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".MapFragment" />
-
             <!-- Points to searchable meta data -->
             <meta-data
                 android:name="android.app.searchable"
@@ -128,7 +126,7 @@
 
         <provider
             android:name=".PlaceProvider"
-            android:authorities="edu.dartmouth.cs.ontime.PlaceProvider"
+            android:authorities="edu.dartmouth.cs.ontime.provider.PlaceProvider"
             android:exported="false" />
 
         <activity

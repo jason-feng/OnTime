@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,16 +23,17 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.parse.FindCallback;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -44,8 +44,8 @@ public class MainActivity extends Activity {
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
 
-    private ListView mListToday,mListTomorrow,mListThisweek;
     private ArrayList<Event> upcomingEvents;
+    private ListView mListToday,mListTomorrow,mListThisweek;
     private GoogleCloudMessaging gcm;
     private String regid;
     private Context mContext;
@@ -70,10 +70,6 @@ public class MainActivity extends Activity {
         showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
 
 //        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
 //        layout.setBackgroundResource(R.drawable.background_welcome);
@@ -125,159 +121,40 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "CreateEvent");
+                Intent intent = new Intent(mContext, CreateEvent.class);
+                startActivity(intent);
             }
         });
 
         Log.d(TAG, "createEvent init");
-        //get person based on regId of phone (from server); for now this and events are hard-coded
-        /*
-        if (checkPlayServices()){
-            gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(mContext);
 
-            if (regid.isEmpty()) {
-                registerInBackground();
-            }
-        }
-        **/
+        upcomingEvents = Event.query();
+        ArrayList<String> todayArray = new ArrayList<>();
+        ArrayList<String> tomorrowArray = new ArrayList<>();
+        ArrayList<String> thisWeekArray = new ArrayList<>();
 
-        Event event1 = new Event();
-        Calendar newDateTime = Calendar.getInstance();
-        newDateTime.set(2015, 3, 1, 12, 25);
-        event1.setmDateTime(newDateTime);
-        Location loc = new Location("");
-        loc.setLatitude(43.704441);
-        loc.setLongitude(-72.288693);
-        event1.setmLocation(loc);
-        event1.setmTitle("Dinner at Pine");
-        upcomingEvents.add(event1);
-
-        Event event2 = new Event();
-        Calendar newDateTime2 = Calendar.getInstance();
-        newDateTime2.set(2015, 3, 2, 12, 25);
-        event2.setmDateTime(newDateTime2);
-        Location loc2 = new Location("");
-        loc2.setLatitude(43.701728);
-        loc2.setLongitude(-72.288848);
-        event2.setmLocation(loc);
-        event2.setmTitle("Dinner w/ CS65");
-        upcomingEvents.add(event2);
-
-        Event event3 = new Event();
-        Calendar newDateTime3 = Calendar.getInstance();
-        newDateTime3.set(2015, 3, 2, 12, 25);
-        event3.setmDateTime(newDateTime3);
-        Location loc3 = new Location("");
-        loc3.setLatitude(43.704451);
-        loc3.setLongitude(-72.286643);
-        event3.setmLocation(loc3);
-        event3.setmTitle("DALI Group Meeting");
-        upcomingEvents.add(event3);
-
-        Event event4 = new Event();
-        Calendar newDateTime4 = Calendar.getInstance();
-        newDateTime4.set(2015, 3, 3, 12, 25);
-        event4.setmDateTime(newDateTime4);
-        Location loc4 = new Location("");
-        loc4.setLatitude(43.702451);
-        loc4.setLongitude(-72.286243);
-        event4.setmLocation(loc4);
-        event4.setmTitle("Lunch w/ Tim");
-        upcomingEvents.add(event4);
-
-        Event event5 = new Event();
-        Calendar newDateTime5 = Calendar.getInstance();
-        newDateTime5.set(2015, 3, 3, 11, 25);
-        event5.setmDateTime(newDateTime5);
-        Location loc5 = new Location("");
-        loc5.setLatitude(43.703451);
-        loc5.setLongitude(-72.286643);
-        event5.setmLocation(loc5);
-        event5.setmTitle("Work session");
-        upcomingEvents.add(event5);
-
-        Event event6 = new Event();
-        Calendar newDateTime6 = Calendar.getInstance();
-        newDateTime6.set(2015, 3, 5, 12, 25);
-        event6.setmDateTime(newDateTime6);
-        Location loc6 = new Location("");
-        loc6.setLatitude(43.704451);
-        loc6.setLongitude(-72.286653);
-        event6.setmLocation(loc6);
-        event6.setmTitle("Movie night");
-        upcomingEvents.add(event6);
-
-        Event event7 = new Event();
-        Calendar newDateTime7 = Calendar.getInstance();
-        newDateTime7.set(2015, 3, 6, 12, 25);
-        event7.setmDateTime(newDateTime7);
-        Location loc7 = new Location("");
-        loc7.setLatitude(43.704451);
-        loc7.setLongitude(-72.286643);
-        event7.setmLocation(loc7);
-        event7.setmTitle("Sledding");
-        upcomingEvents.add(event7);
-
-        Event event8 = new Event();
-        Calendar newDateTime8 = Calendar.getInstance();
-        newDateTime8.set(2015, 3, 6, 12, 25);
-        event8.setmDateTime(newDateTime8);
-        Location loc8 = new Location("");
-        loc8.setLatitude(43.704451);
-        loc8.setLongitude(-72.286643);
-        event8.setmLocation(loc8);
-        event8.setmTitle("Group Project");
-        upcomingEvents.add(event8);
-
-        String[] todayArray = new String[1];
-        String[] tomorrowArray = new String[2];
-        String[] thisWeekArray = new String[5];
         //for each event in upcoming events list
         for (int i = 0; i < upcomingEvents.size(); i++) {
-            Log.d("an","even");
-            Log.d("event",upcomingEvents.get(i).getmTitle());
-            Calendar date = upcomingEvents.get(i).getmDateTime();
+            ParseObject event = upcomingEvents.get(i);
+            Log.d(TAG, "EVENT ID: " + event.get("objectId"));
+            Calendar date = new GregorianCalendar();
+            date.setTime(event.getDate("date"));
             long currentTime = System.currentTimeMillis();
             Calendar today = Calendar.getInstance();
             today.setTimeInMillis(currentTime);
             if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
-                //add to today's text
-               // String[] todayArray = new String[1];
-                Log.d("today",upcomingEvents.get(0).getmTitle());
-                todayArray[0] = upcomingEvents.get(0).getmTitle();
-
+                todayArray.add(event.getString("title"));
             }
             else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
-               // String[] tomorrowArray = new String[2];
-                tomorrowArray[0] = upcomingEvents.get(1).getmTitle();
-                tomorrowArray[1] = upcomingEvents.get(2).getmTitle();
+                tomorrowArray.add(event.getString("title"));
             }
             //this line will return -1 if today.getTime is before the last day of the week
             else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
-                //so add to this week text
-              //  String[] thisWeekArray = new String[4];
-                thisWeekArray[0] = upcomingEvents.get(3).getmTitle();
-                thisWeekArray[1] = upcomingEvents.get(4).getmTitle();
-                thisWeekArray[2] = upcomingEvents.get(5).getmTitle();
-                thisWeekArray[3] = upcomingEvents.get(6).getmTitle();
-                thisWeekArray[4] = upcomingEvents.get(7).getmTitle();
-
             }
-
             else {
                 //else, add to "upcoming events" field at bottom
             }
 
-        }
-        int i;
-        for (i=0;i<todayArray.length;i++) {
-            Log.d("today", todayArray[i]);
-        }
-        for (i=0;i<tomorrowArray.length;i++) {
-            Log.d("tomorrow", tomorrowArray[i]);
-        }
-        for (i=0;i<thisWeekArray.length;i++) {
-            Log.d("thisweek", thisWeekArray[i]);
         }
 
         mListToday = (ListView)findViewById(R.id.listTd);
@@ -293,7 +170,6 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListThisweek);
 
     }
-
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
 
@@ -315,8 +191,6 @@ public class MainActivity extends Activity {
         return enddate;
 
     }
-
-
     /**
      * Display a notification in the notification bar.
      */
@@ -348,41 +222,6 @@ public class MainActivity extends Activity {
 
         mNotificationManager.notify(0, notification);
     }
-
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.d("", "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    private String getRegistrationId(Context context) {
-        final SharedPreferences prefs = getGCMPreferences(context);
-        String registrationId = prefs.getString(REG_ID_KEY, "");
-        if (registrationId.isEmpty()) {
-            Log.i("", "Registration not found.");
-            return "";
-        }
-        // Check if app was updated; if so, it must clear the registration ID
-        // since the existing registration ID is not guaranteed to work with
-        // the new app version.
-        int registeredVersion = prefs.getInt(APP_VERSION_KEY, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion) {
-            Log.i("", "App version changed.");
-            return "";
-        }
-        return registrationId;
-    }
-
     private SharedPreferences getGCMPreferences(Context context) {
         return getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
@@ -397,69 +236,6 @@ public class MainActivity extends Activity {
             // should never happen
             throw new RuntimeException("Could not get package name: " + e);
         }
-    }
-
-    private void storeRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs = getGCMPreferences(mContext);
-        int appVersion = getAppVersion(context);
-        Log.d("", "Saving regId on app version " + appVersion);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(REG_ID_KEY, regId);
-        editor.putInt(APP_VERSION_KEY, appVersion);
-        editor.commit();
-    }
-
-    private void registerInBackground() {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(mContext);
-                    }
-                    regid = gcm.register(getString(R.string.app_id));
-                    msg = "Device registered, registration ID=" + regid;
-
-                    // You should send the registration ID to your server over HTTP, so it
-                    // can use GCM/HTTP or CCS to send messages to your app.
-                    ServerUtilities.sendRegistrationIdToBackend(mContext, regid);
-
-                    // Persist the regID - no need to register again.
-                    storeRegistrationId(mContext, regid);
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                    // If there is an error, don't just keep trying to register.
-                    // Require the user to click a button again, or perform
-                    // exponential back-off.
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                Log.d("", "gcm register msg: " + msg);
-            }
-        }.execute(null, null, null);
-    }
-
-    @Override
-    protected void onResume() {
-        registerReceiver(mMessageUpdateReceiver, mMessageIntentFilter);
-        super.onResume();
-        checkPlayServices();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mMessageUpdateReceiver);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
     }
 
     public static class ListUtils {
@@ -484,5 +260,4 @@ public class MainActivity extends Activity {
             }
         }
     }
-
 }
