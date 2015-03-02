@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -35,8 +34,6 @@ public class MainActivity extends Activity {
 
     private List<com.parse.ParseObject> upcomingEvents;
     private ListView mListToday,mListTomorrow,mListThisweek;
-    private GoogleCloudMessaging gcm;
-    private String regid;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
     private NotificationManager mNotificationManager;
