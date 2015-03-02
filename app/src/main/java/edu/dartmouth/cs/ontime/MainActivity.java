@@ -5,10 +5,8 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -17,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -49,18 +46,10 @@ public class MainActivity extends Activity {
     private String regid;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
-    private Button createEvent;
     private NotificationManager mNotificationManager;
-    private IntentFilter mMessageIntentFilter;
-    private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String inviter_name = intent.getStringExtra("invite_key");
-            if (inviter_name != null) {
-                showNotification(inviter_name);
-            }
-        }
-    };
+    private ArrayList<String> todayArray = new ArrayList<>();
+    private ArrayList<String> tomorrowArray = new ArrayList<>();
+    private ArrayList<String> thisWeekArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,18 +73,6 @@ public class MainActivity extends Activity {
         upcomingEvents = new ArrayList<ParseObject>();
         mContext = this;
 
-        mMessageIntentFilter = new IntentFilter();
-        mMessageIntentFilter.addAction(GCM_FILTER);
-
-        createEvent = (Button)findViewById(R.id.createEvent);
-        createEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "createEvent");
-                Intent intent = new Intent(mContext, CreateEvent.class);
-                startActivity(intent);
-            }
-        });
         settingsButton = (ImageButton)findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,17 +105,27 @@ public class MainActivity extends Activity {
         Log.d(TAG, "createEvent init");
 
         query();
-//        loadEvents();
+
+        todayArray = new ArrayList<>();
+        tomorrowArray = new ArrayList<>();
+        thisWeekArray = new ArrayList<>();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        query();
     }
 
     public void loadEvents() {
         Log.d(TAG, "loadEvents");
-        ArrayList<String> todayArray = new ArrayList<>();
-        ArrayList<String> tomorrowArray = new ArrayList<>();
-        ArrayList<String> thisWeekArray = new ArrayList<>();
-
         Log.d(TAG, "list size: " + upcomingEvents.size());
         //for each event in upcoming events list
+
+        todayArray.clear();
+        tomorrowArray.clear();
+        thisWeekArray.clear();
+
         for (int i = 0; i < upcomingEvents.size(); i++) {
             ParseObject event = upcomingEvents.get(i);
             Calendar date = new GregorianCalendar();
