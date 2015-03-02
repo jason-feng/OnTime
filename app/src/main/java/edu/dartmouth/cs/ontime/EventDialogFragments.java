@@ -8,7 +8,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -29,7 +28,6 @@ public class EventDialogFragments extends DialogFragment {
     public static final int DIALOG_ID_LOCATION = 3;
     public static final int DIALOG_ID_INVITES = 4;
 
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG, "onCreateDialog()");
@@ -37,22 +35,22 @@ public class EventDialogFragments extends DialogFragment {
         final Activity parent = getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(parent);
         final EditText et = new EditText(parent);
+        final Calendar c = Calendar.getInstance();
+        final Calendar cal = new GregorianCalendar();
+
         switch(currentPosition) {
             case DIALOG_ID_LOCATION:
-                Intent intent = new Intent(getActivity(), MapFragment.class);
-                startActivity(intent);
                 break;
             case DIALOG_ID_DATE:
                 DatePickerDialog.OnDateSetListener onDateSet = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         Log.d(TAG, "onDateSet()");
-                        Calendar cal = new GregorianCalendar();
                         cal.set(year, month, day);
+                        ((CreateEvent)getActivity()).getEvent().put("date", cal.getTime());
                     }
                 };
 
-                final Calendar c = Calendar.getInstance();
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
@@ -64,15 +62,13 @@ public class EventDialogFragments extends DialogFragment {
                     @Override
                     public void onTimeSet(TimePicker view, int hour, int minute) {
                         Log.d(TAG, "onTimeSet()");
-                        Calendar cal = new GregorianCalendar();
                         cal.set(hour, minute);
-                        ((CreateEvent)getActivity()).getEvent().setmDateTime(cal);
+                        ((CreateEvent)getActivity()).getEvent().put("time", cal.getTime());
                     }
                 };
                 // Use the current date as the default date in the picker
-                final Calendar cal = Calendar.getInstance();
-                int hour = cal.get(Calendar.HOUR);
-                int minute = cal.get(Calendar.MINUTE);
+                int hour = c.get(Calendar.HOUR);
+                int minute = c.get(Calendar.MINUTE);
                 boolean twentyfour = false;
                 // Create a new instance of DatePickerDialog and return it
                 return new TimePickerDialog(getActivity(), onTimeSet, hour, minute, twentyfour);
@@ -85,7 +81,7 @@ public class EventDialogFragments extends DialogFragment {
                 builder.setPositiveButton(R.string.dialog_fragment_positive_button,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((CreateEvent)getActivity()).getEvent().setmTitle(et.getText().toString());
+                                ((CreateEvent)getActivity()).getEvent().put("title", et.getText().toString());
                                 dialog.cancel();
                             }
                         });

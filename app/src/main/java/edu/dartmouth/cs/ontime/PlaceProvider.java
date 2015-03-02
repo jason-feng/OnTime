@@ -28,7 +28,7 @@ import java.util.List;
 
 public class PlaceProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "edu.dartmouth.cs.ontime.PlaceProvider";
+    public static final String AUTHORITY = "edu.dartmouth.cs.ontime.provider.PlaceProvider";
 
     public static final Uri SEARCH_URI = Uri.parse("content://"+AUTHORITY+"/search");
 

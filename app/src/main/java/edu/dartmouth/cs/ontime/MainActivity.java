@@ -23,7 +23,6 @@ import android.widget.ImageButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.parse.ParseObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -65,10 +64,6 @@ public class MainActivity extends Activity {
         showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
 
 //        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
 //        layout.setBackgroundResource(R.drawable.background_welcome);
