@@ -6,7 +6,6 @@ import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,14 +14,14 @@ import java.util.List;
 public class Event extends ParseObject {
 
     public static final String TAG = "event";
+    private static List<ParseObject> events;
 
-    private static List<Event> events;
-
-    public static ArrayList<Event> query() {
-        ParseQuery<Event> query = ParseQuery.getQuery("event");
-        query.findInBackground(new FindCallback<Event>() {
+    public static List<ParseObject> query() {
+        Log.d(TAG, "query()");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
+        query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<Event> objects, com.parse.ParseException e) {
+            public void done(List<ParseObject> objects, com.parse.ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "ParseQuery");
                     events = objects;
@@ -31,6 +30,7 @@ public class Event extends ParseObject {
                 }
             }
         });
-        return (ArrayList) events;
+        Log.d(TAG, Integer.toString(events.size()));
+        return events;
     }
 }
