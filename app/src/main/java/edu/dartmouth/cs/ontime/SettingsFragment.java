@@ -9,9 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphObject;
 import com.facebook.widget.LoginButton;
 
 import java.util.Arrays;
@@ -56,6 +60,19 @@ public class SettingsFragment extends Fragment {
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
+            new Request(
+                    session,
+                    "/me/friends",
+                    null,
+                    HttpMethod.GET,
+                    new Request.Callback() {
+                        public void onCompleted(Response response) {
+                                /* handle the result */
+                            GraphObject graphObject = response.getGraphObject();
+
+                        }
+                    }
+            ).executeAsync();
 
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
@@ -82,6 +99,8 @@ public class SettingsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data);
+        /* make the API call */
+
     }
 
     @Override
