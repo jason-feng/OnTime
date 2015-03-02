@@ -2,6 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical"
     android:id="@+id/background">
 
@@ -36,6 +37,17 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:onClick="createEvent"
+            android:src="@drawable/create_event"
+            android:id="@+id/createEventButton"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:background="@null"
+            />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:id="@+id/settingsButton"
             android:src="@drawable/settings"
             android:scaleType="fitCenter"
@@ -53,15 +65,7 @@
             android:padding="10dp"
             android:background="@null"/>
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:onClick="createEvent"
-            android:src="@drawable/create_event"
-            android:id="@+id/createEventButton"
-            android:scaleType="fitCenter"
-            android:padding="10dp"
-            android:background="@null"/>
+
 
 
     </LinearLayout>

@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -71,9 +72,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
-//        layout.setBackgroundResource(R.drawable.background_welcome);
-//
+        getWindow().setBackgroundDrawableResource(R.drawable.background_welcome2);
+
+
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
@@ -134,29 +135,29 @@ public class MainActivity extends Activity {
         ArrayList<String> thisWeekArray = new ArrayList<>();
 
         //for each event in upcoming events list
-        for (int i = 0; i < upcomingEvents.size(); i++) {
-            ParseObject event = upcomingEvents.get(i);
-            Log.d(TAG, "EVENT ID: " + event.get("objectId"));
-            Calendar date = new GregorianCalendar();
-            date.setTime(event.getDate("date"));
-            long currentTime = System.currentTimeMillis();
-            Calendar today = Calendar.getInstance();
-            today.setTimeInMillis(currentTime);
-            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
-                todayArray.add(event.getString("title"));
-            }
-            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
-                tomorrowArray.add(event.getString("title"));
-            }
-            //this line will return -1 if today.getTime is before the last day of the week
-            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
-            }
-            else {
-                //else, add to "upcoming events" field at bottom
-            }
-
-        }
-
+//        for (int i = 0; i < upcomingEvents.size(); i++) {
+//            ParseObject event = upcomingEvents.get(i);
+//            Log.d(TAG, "EVENT ID: " + event.get("objectId"));
+//            Calendar date = new GregorianCalendar();
+//            date.setTime(event.getDate("date"));
+//            long currentTime = System.currentTimeMillis();
+//            Calendar today = Calendar.getInstance();
+//            today.setTimeInMillis(currentTime);
+//            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
+//                todayArray.add(event.getString("title"));
+//            }
+//            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
+//                tomorrowArray.add(event.getString("title"));
+//            }
+//            //this line will return -1 if today.getTime is before the last day of the week
+//            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+//            }
+//            else {
+//                //else, add to "upcoming events" field at bottom
+//            }
+//
+//        }
+//
         mListToday = (ListView)findViewById(R.id.listTd);
         mListTomorrow = (ListView)findViewById(R.id.listTm);
         mListThisweek = (ListView)findViewById(R.id.listTw);
