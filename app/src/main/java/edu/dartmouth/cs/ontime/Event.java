@@ -13,11 +13,13 @@ public class Event {
     private Long id;
     private Calendar mDateTime;
     private Location mLocation;
+    private String mTitle;
     private ArrayList<Person> people;
 
     public Event() {
         this.mDateTime = Calendar.getInstance();
         this.mLocation = null;
+        this.mTitle = "";
         this.people = null;
     }
 
@@ -32,6 +34,10 @@ public class Event {
     public Calendar getmDateTime() {
         return mDateTime;
     }
+
+    public String getmTitle() { return mTitle; }
+
+    public void setmTitle(String mTitle) { this.mTitle = mTitle; }
 
     public void setmDateTime(Calendar mDateTime) {
         this.mDateTime = mDateTime;
@@ -52,4 +58,5 @@ public class Event {
     public void setPeople(ArrayList<Person> people) {
         this.people = people;
     }
+
 }

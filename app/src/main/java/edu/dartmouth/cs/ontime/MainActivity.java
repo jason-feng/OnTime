@@ -1,7 +1,10 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,75 +12,121 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.widget.LinearLayout;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import edu.dartmouth.cs.ontime.view.SlidingTabLayout;
-
+import java.util.Date;
 
 public class MainActivity extends Activity {
 
+    public static final String TAG = "MainActivity";
+
     private static final String GCM_FILTER = "GCM_NOTIFY";
-    private static final String SENDER_ID = "10622142242";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final String REG_ID_KEY = "registration_id";
     private static final String APP_VERSION_KEY = "appVersion";
 
-    private SlidingTabLayout slidingTabLayout;
-    private ViewPager viewPager;
     private ArrayList<Event> upcomingEvents;
-    private SettingsFragment settingsFrag;
-
-    GoogleCloudMessaging gcm;
-    String regid;
-    Context mContext;
-
+    private GoogleCloudMessaging gcm;
+    private String regid;
+    private Context mContext;
+    private ImageButton createEventButton, settingsButton, invitesButton;
+    private Button createEvent;
+    private NotificationManager mNotificationManager;
     private IntentFilter mMessageIntentFilter;
     private BroadcastReceiver mMessageUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String id_string = intent.getStringExtra("id_key");
-            if (id_string != null) {
-                // Do Stuff Here
+            String inviter_name = intent.getStringExtra("invite_key");
+            if (inviter_name != null) {
+                showNotification(inviter_name);
             }
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "oncreate");
+
+        showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        if (savedInstanceState == null) {
-//            getFragmentManager().beginTransaction()
-//                    .add(R.id.container, new Settings())
-//                    .commit();
-//        }
-        // how do you want me to do this if we are no longer doing fragments?
 
-        LinearLayout layout =(LinearLayout)findViewById(R.id.background);
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
+
+//        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
+//        layout.setBackgroundResource(R.drawable.background_welcome);
+//
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
+        //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
+
+        //upcomingEvents = person.getEvents()
+        upcomingEvents = new ArrayList<Event>();
+        mContext = this;
 
         mMessageIntentFilter = new IntentFilter();
         mMessageIntentFilter.addAction(GCM_FILTER);
 
+        createEvent = (Button)findViewById(R.id.createEvent);
+        createEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "createEvent");
+                Intent intent = new Intent(mContext, CreateEvent.class);
+                startActivity(intent);
+            }
+        });
+        settingsButton = (ImageButton)findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log .d(TAG, "settings");
+                Intent intent = new Intent(mContext, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        invitesButton = (ImageButton)findViewById(R.id.invitesButton);
+        invitesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "invites");
+                Intent intent = new Intent(mContext, InviteActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        createEventButton = (ImageButton)findViewById(R.id.createEventButton);
+        createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "CreateEvent");
+            }
+        });
+
+        Log.d(TAG, "createEvent init");
         //get person based on regId of phone (from server); for now this and events are hard-coded
+        /*
         if (checkPlayServices()){
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(mContext);
@@ -86,48 +135,175 @@ public class MainActivity extends Activity {
                 registerInBackground();
             }
         }
+        **/
 
-        //sample event 1
         Event event1 = new Event();
         Calendar newDateTime = Calendar.getInstance();
-        newDateTime.set(2015, 3, 1, 12, 25);
+        newDateTime.set(2015, 3, 2, 12, 25);
         event1.setmDateTime(newDateTime);
         Location loc = new Location("");
         loc.setLatitude(43.704441);
         loc.setLongitude(-72.288693);
         event1.setmLocation(loc);
+        event1.setmTitle("Dinner at Pine");
         upcomingEvents.add(event1);
 
         Event event2 = new Event();
         Calendar newDateTime2 = Calendar.getInstance();
-        newDateTime2.set(2015, 3, 2, 12, 25);
+        newDateTime2.set(2015, 3, 3, 12, 25);
         event2.setmDateTime(newDateTime2);
         Location loc2 = new Location("");
         loc2.setLatitude(43.701728);
         loc2.setLongitude(-72.288848);
         event2.setmLocation(loc);
+        event2.setmTitle("Dinner w/ CS65");
         upcomingEvents.add(event2);
 
         Event event3 = new Event();
         Calendar newDateTime3 = Calendar.getInstance();
-        newDateTime3.set(2015, 3, 5, 12, 25);
+        newDateTime3.set(2015, 3, 3, 12, 25);
         event3.setmDateTime(newDateTime3);
         Location loc3 = new Location("");
         loc3.setLatitude(43.704451);
         loc3.setLongitude(-72.286643);
         event3.setmLocation(loc3);
+        event3.setmTitle("DALI Group Meeting");
         upcomingEvents.add(event3);
 
-        //TODO: iterate through upcomingEvents
+        Event event4 = new Event();
+        Calendar newDateTime4 = Calendar.getInstance();
+        newDateTime4.set(2015, 3, 5, 12, 25);
+        event4.setmDateTime(newDateTime4);
+        Location loc4 = new Location("");
+        loc4.setLatitude(43.702451);
+        loc4.setLongitude(-72.286243);
+        event4.setmLocation(loc4);
+        event4.setmTitle("Lunch w/ Tim");
+        upcomingEvents.add(event4);
 
+        Event event5 = new Event();
+        Calendar newDateTime5 = Calendar.getInstance();
+        newDateTime5.set(2015, 3, 6, 12, 25);
+        event5.setmDateTime(newDateTime5);
+        Location loc5 = new Location("");
+        loc5.setLatitude(43.703451);
+        loc5.setLongitude(-72.286643);
+        event5.setmLocation(loc5);
+        event5.setmTitle("Work session");
+        upcomingEvents.add(event5);
+
+        Event event6 = new Event();
+        Calendar newDateTime6 = Calendar.getInstance();
+        newDateTime6.set(2015, 3, 7, 12, 25);
+        event6.setmDateTime(newDateTime3);
+        Location loc6 = new Location("");
+        loc6.setLatitude(43.704451);
+        loc6.setLongitude(-72.286653);
+        event6.setmLocation(loc6);
+        event6.setmTitle("Movie night");
+        upcomingEvents.add(event6);
+
+        Event event7 = new Event();
+        Calendar newDateTime7 = Calendar.getInstance();
+        newDateTime7.set(2015, 3, 8, 12, 25);
+        event7.setmDateTime(newDateTime3);
+        Location loc7 = new Location("");
+        loc7.setLatitude(43.704451);
+        loc7.setLongitude(-72.286643);
+        event7.setmLocation(loc7);
+        event5.setmTitle("Sledding");
+        upcomingEvents.add(event7);
+
+        String[] todayArray = new String[1];
+        String[] tomorrowArray = new String[2];
+        String[] thisWeekArray = new String[4];
         //for each event in upcoming events list
-            //if it's today, add it to the today text
-            //if it's tomorrow add it to tomorrow text
-            //if it's this week, add it to this week text
-            //else add it to upcoming events overall
+        for (int i = 0; i < upcomingEvents.size(); i++) {
+            Calendar date = upcomingEvents.get(i).getmDateTime();
+            long currentTime = System.currentTimeMillis();
+            Calendar today = Calendar.getInstance();
+            today.setTimeInMillis(currentTime);
+            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
+                //add to today's text
+               // String[] todayArray = new String[1];
+                todayArray[0] = upcomingEvents.get(0).getmTitle();
+
+            }
+            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
+               // String[] tomorrowArray = new String[2];
+                tomorrowArray[0] = upcomingEvents.get(1).getmTitle();
+                tomorrowArray[1] = upcomingEvents.get(2).getmTitle();
+            }
+            //this line will return -1 if today.getTime is before the last day of the week
+            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+                //so add to this week text
+              //  String[] thisWeekArray = new String[4];
+                thisWeekArray[0] = upcomingEvents.get(3).getmTitle();
+                thisWeekArray[1] = upcomingEvents.get(4).getmTitle();
+                thisWeekArray[2] = upcomingEvents.get(5).getmTitle();
+                thisWeekArray[3] = upcomingEvents.get(6).getmTitle();
+
+            }
+
+            else {
+                //else, add to "upcoming events" field at bottom
+            }
+
+        }
+    }
+
+    public Date getStartEndOFWeek(int enterWeek, int enterYear){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.WEEK_OF_YEAR, enterWeek);
+        calendar.set(Calendar.YEAR, enterYear);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMM yyyy"); // PST`
+        Date startDate = calendar.getTime();
+        String startDateInStr = formatter.format(startDate);
+        System.out.println("...date..."+startDateInStr);
+
+        calendar.add(Calendar.DATE, 6);
+        Date enddate = calendar.getTime();
+        String endDaString = formatter.format(enddate);
+        System.out.println("...date..."+endDaString);
+
+        return enddate;
+
+    }
 
 
+    /**
+     * Display a notification in the notification bar.
+     */
+    private void showNotification(String inviter) {
 
+        // If notification pressed but not a button
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, InviteActivity.class), 0);
+
+        // If accept is pressed
+        PendingIntent acceptIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, InviteActivity.class), 0);
+
+        // If decline is pressed
+        PendingIntent declineIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, InviteActivity.class), 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(this.getString(R.string.service_label))
+                .setContentText(
+                        getResources().getString(R.string.service_started) + " " + inviter + "!")
+                .setSmallIcon(R.drawable.notify)
+                .setOngoing(true)
+                .setAutoCancel(true)
+                .addAction(R.drawable.ic_accept, "Accept", acceptIntent)
+                .addAction(R.drawable.ic_cancel, "Decline", declineIntent)
+                .setContentIntent(contentIntent).build();
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(0, notification);
     }
 
     private boolean checkPlayServices() {
@@ -199,7 +375,7 @@ public class MainActivity extends Activity {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(mContext);
                     }
-                    regid = gcm.register(SENDER_ID);
+                    regid = gcm.register(getString(R.string.app_id));
                     msg = "Device registered, registration ID=" + regid;
 
                     // You should send the registration ID to your server over HTTP, so it
@@ -231,10 +407,16 @@ public class MainActivity extends Activity {
         checkPlayServices();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mMessageUpdateReceiver);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
     }
+
 }
