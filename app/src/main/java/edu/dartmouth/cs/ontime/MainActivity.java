@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -61,7 +62,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getWindow().setBackgroundDrawableResource(R.drawable.background_welcome2);
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
 
 
         final ActionBar actionBar = getActionBar();
@@ -153,8 +154,11 @@ public class MainActivity extends Activity {
         }
 
         mListToday = (ListView)findViewById(R.id.listTd);
+        mListToday.setBackgroundColor(Color.WHITE);
         mListTomorrow = (ListView)findViewById(R.id.listTm);
+        mListTomorrow.setBackgroundColor(Color.WHITE);
         mListThisweek = (ListView)findViewById(R.id.listTw);
+        mListThisweek.setBackgroundColor(Color.WHITE);
 
         mListToday.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todayArray));
         mListTomorrow.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tomorrowArray));
