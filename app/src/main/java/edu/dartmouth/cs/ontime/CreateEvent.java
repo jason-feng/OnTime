@@ -54,6 +54,8 @@ public class CreateEvent extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
         mLocation = null;
         context = this;
         intCal = new int[6];

@@ -13,6 +13,8 @@ public class SettingsPage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_page);
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new Settings())
