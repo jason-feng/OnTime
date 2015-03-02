@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -59,9 +61,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        FrameLayout layout =(FrameLayout)findViewById(R.id.background);
-//        layout.setBackgroundResource(R.drawable.background_welcome);
-//
+        getWindow().setBackgroundDrawableResource(R.drawable.background_welcome2);
+
+
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
@@ -125,7 +127,6 @@ public class MainActivity extends Activity {
         todayArray.clear();
         tomorrowArray.clear();
         thisWeekArray.clear();
-
         for (int i = 0; i < upcomingEvents.size(); i++) {
             ParseObject event = upcomingEvents.get(i);
             Calendar date = new GregorianCalendar();
