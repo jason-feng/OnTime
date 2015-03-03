@@ -43,6 +43,7 @@ public class SettingsFragment extends Fragment {
     private Context mContext;
     public ArrayList<Friend> friendsArray;
     Friend me = null;
+//    ParseObject meParse;
     TextView name;
     ImageView propic;
 
@@ -100,6 +101,11 @@ public class SettingsFragment extends Fragment {
                                         .execute(imgUrl.toString());
 
                                 name.setText("Logged in as: " +object.getString("name"));
+//                                meParse = new ParseObject("Friend");
+//                                meParse.put("name",object.getString("name"));
+//                                meParse.put("id",object.getString("id"));
+//                                meParse.put("photo",imgUrl.toString());
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (MalformedURLException e) {
@@ -140,7 +146,11 @@ public class SettingsFragment extends Fragment {
                                         friendsArray.add(new Friend(friend.getString("name"),friend.getString("id"),imgUrl));
 
                                     }
+                                    me.add_friends(friendsArray);
+                                    //meParse.put("friends",friendsArray);
+
                                 }
+                               // meParse.saveInBackground();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
