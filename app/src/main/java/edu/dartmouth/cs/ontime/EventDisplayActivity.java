@@ -1,10 +1,13 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.Parse;
@@ -22,12 +25,20 @@ public class EventDisplayActivity extends Activity {
     public String eventId;
     private Event displayedEvent;
     private ParseObject result;
+    private TextView eventDisplayTextView;
+    private String eventTitle, eventLocationName;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_display);
+
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
 
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
@@ -43,6 +54,15 @@ public class EventDisplayActivity extends Activity {
                 }
             }
         }
+
+        //get all text fields from query
+
+        eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
+        eventDisplayTextView.setTextColor(Color.WHITE);
+        //to be used once actually getting event
+        //eventDisplayTextView.setText(eventTitle + "at" + eventLocationName);
+        eventDisplayTextView.setText("DINNER at Pine");
+
 
 
     }

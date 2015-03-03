@@ -7,11 +7,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -155,6 +157,23 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListToday);
         ListUtils.setDynamicHeight(mListTomorrow);
         ListUtils.setDynamicHeight(mListThisweek);
+
+
+
+        //when user selects event, fire EventDisplayActivity
+        mListThisweek.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> listView, View view,
+                                    int position, long id) {
+                // Get the cursor, positioned to the corresponding row in the result set
+//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
+//                historyCode = cursor.getColumnIndex("_id");
+
+                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
+                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                startActivity(intent);
+            }
+        });
     }
 
     public void query() {
