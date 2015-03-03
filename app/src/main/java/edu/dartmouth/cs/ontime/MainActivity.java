@@ -115,27 +115,27 @@ public class MainActivity extends Activity {
         tomorrowArray.clear();
         thisWeekArray.clear();
         for (int i = 0; i < upcomingEvents.size(); i++) {
-//            ParseObject event = upcomingEvents.get(i);
-//            Calendar date = new GregorianCalendar();
-//            date.setTime(event.getDate("date"));
-//            long currentTime = System.currentTimeMillis();
-//            Calendar today = Calendar.getInstance();
-//            today.setTimeInMillis(currentTime);
-//            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
-//                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
-//                todayArray.add(event.getString("title"));
-//            }
-//            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
-//                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
-//                tomorrowArray.add(event.getString("title"));
-//            }
-//            //this line will return -1 if today.getTime is before the last day of the week
-//            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
-//                thisWeekArray.add(event.getString("title"));
-//            }
-//            else {
-//                //else, add to "upcoming events" field at bottom
-//            }
+/*            ParseObject event = upcomingEvents.get(i);
+            Calendar date = new GregorianCalendar();
+            date.setTime(event.getDate("date"));
+            long currentTime = System.currentTimeMillis();
+            Calendar today = Calendar.getInstance();
+            today.setTimeInMillis(currentTime);
+            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
+                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
+                todayArray.add(event.getString("title"));
+            }
+            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
+                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
+                tomorrowArray.add(event.getString("title"));
+            }
+            //this line will return -1 if today.getTime is before the last day of the week
+            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+                thisWeekArray.add(event.getString("title"));
+            }
+            else {
+                //else, add to "upcoming events" field at bottom
+            }*/
 
         }
 
