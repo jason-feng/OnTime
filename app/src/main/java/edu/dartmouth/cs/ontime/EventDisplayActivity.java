@@ -40,6 +40,8 @@ public class EventDisplayActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.hide();
 
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
             eventId = getIntent().getStringExtra(EVENT_ID);
@@ -61,7 +63,7 @@ public class EventDisplayActivity extends Activity {
         eventDisplayTextView.setTextColor(Color.WHITE);
         //to be used once actually getting event
         //eventDisplayTextView.setText(eventTitle + "at" + eventLocationName);
-        eventDisplayTextView.setText("DINNER at Pine");
+        eventDisplayTextView.setText("    DINNER at Pine");
 
 
 
