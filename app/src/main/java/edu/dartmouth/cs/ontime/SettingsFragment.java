@@ -22,6 +22,7 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.widget.LoginButton;
+import com.parse.ParseObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +44,10 @@ public class SettingsFragment extends Fragment {
     private Context mContext;
     public ArrayList<Friend> friendsArray;
     Friend me = null;
+    ParseObject meParse;
     TextView name;
     ImageView propic;
+    String myfriends = "";
 
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -100,6 +103,12 @@ public class SettingsFragment extends Fragment {
                                         .execute(imgUrl.toString());
 
                                 name.setText("Logged in as: " +object.getString("name"));
+                                meParse = new ParseObject("Friend");
+                                meParse.put("name",object.getString("name"));
+                                meParse.put("idNum",object.getString("id"));
+
+//                                meParse.put("photo",imgUrl.toString());
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (MalformedURLException e) {
@@ -138,9 +147,19 @@ public class SettingsFragment extends Fragment {
                                         URL imgUrl = new URL("http://graph.facebook.com/"
                                                 + friend.getString("id") + "/picture?type=large");
                                         friendsArray.add(new Friend(friend.getString("name"),friend.getString("id"),imgUrl));
-
+                                        myfriends += friend.getString("name") + ", ";
+                                        ParseObject parseFriend = new ParseObject("Friend");
+                                        parseFriend.put("name",friend.getString("name"));
+                                        parseFriend.put("idNum",friend.getString("id"));
+                                        parseFriend.put("friends",me.getName());
+                                        parseFriend.saveInBackground();
                                     }
+                                    me.add_friends(friendsArray);
+                                    meParse.put("friends",myfriends);
+//                                    meParse.put("friends",friendsArray);
+
                                 }
+                               meParse.saveInBackground();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

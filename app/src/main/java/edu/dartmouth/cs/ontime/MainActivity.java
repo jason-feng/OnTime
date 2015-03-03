@@ -115,7 +115,9 @@ public class MainActivity extends Activity {
         tomorrowArray.clear();
         thisWeekArray.clear();
         for (int i = 0; i < upcomingEvents.size(); i++) {
+
             ParseObject event = upcomingEvents.get(i);
+
             Calendar date = new GregorianCalendar();
             date.setTime(event.getDate("date"));
             long currentTime = System.currentTimeMillis();
