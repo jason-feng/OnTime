@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -114,7 +115,7 @@ public class MainActivity extends Activity {
         tomorrowArray.clear();
         thisWeekArray.clear();
         for (int i = 0; i < upcomingEvents.size(); i++) {
-/*            ParseObject event = upcomingEvents.get(i);
+            ParseObject event = upcomingEvents.get(i);
             Calendar date = new GregorianCalendar();
             date.setTime(event.getDate("date"));
             long currentTime = System.currentTimeMillis();
@@ -134,7 +135,7 @@ public class MainActivity extends Activity {
             }
             else {
                 //else, add to "upcoming events" field at bottom
-            }*/
+            }
 
         }
 
