@@ -21,4 +21,8 @@ public class Friend {
     public void add_friends(ArrayList<Friend> friends) {
         this.friend = friends;
     }
+
+    public String getName() {
+        return this.name;
+    }
 }

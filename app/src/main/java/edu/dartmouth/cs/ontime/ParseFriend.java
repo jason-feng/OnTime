@@ -24,7 +24,9 @@ public class ParseFriend extends ParseObject {
             public void done(List<ParseObject> objects, com.parse.ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "ParseQuery");
-                    friends = objects;
+                    for (ParseObject object : objects) {
+                        friends.add(object);
+                    }
                 } else {
                     e.printStackTrace();
                 }
