@@ -119,7 +119,7 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-<!--                   IMPORTANT: Change "com.parse.starter" to match your app's package name. -->
+                <!-- IMPORTANT: Change "com.parse.starter" to match your app's package name. -->
                 <category android:name="edu.dartmouth.cs.ontime" />
             </intent-filter>
         </receiver>
@@ -137,6 +137,10 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".EventDisplayActivity"
+            android:label="@string/title_activity_event_display" >
         </activity>
     </application>
 
