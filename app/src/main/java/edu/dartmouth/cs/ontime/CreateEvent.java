@@ -78,7 +78,7 @@ public class CreateEvent extends ListActivity {
 
     public void onSaveClicked(View v) {
         event.put("accepted", new ArrayList<Integer>());
-        ParseInstallation.getCurrentInstallation().getInstallationId();
+        event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
         event.saveInBackground();
         finish();
     }
