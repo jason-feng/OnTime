@@ -75,6 +75,10 @@ public class EventDisplayActivity extends Activity  {
 //        mapFragment.getMapAsync(this);
 
 
+        //for each invitee in event invitees list
+
+        //add a progressbar for them into the scrollview
+
 
     }
 
