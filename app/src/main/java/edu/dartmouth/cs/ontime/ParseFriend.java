@@ -3,6 +3,7 @@ package edu.dartmouth.cs.ontime;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 

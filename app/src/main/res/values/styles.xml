@@ -5,4 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style
+        name="MyPreferenceTheme">
+
+        <item name="android:background">@color/white</item> <!-- delete this line if you want transparent background -->
+    </style>
+
+
 </resources>

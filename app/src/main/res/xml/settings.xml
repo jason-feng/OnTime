@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:key="example_key"
+        android:textColor="@android:color/white"
+        android:title="    SETTINGS     "
+         />
     <PreferenceCategory
-        android:title="@string/social_pref">
+        android:title="@string/social_pref"
+        android:background="@color/white">
+
         <PreferenceScreen
             android:title="@string/login"
+            android:background="@color/white"
             android:summary="@string/login_fb">
 
             <intent android:action="edu.dartmouth.cs.ontime.SettingsActivity.action.ACTION_MAIN_ACTIVITY"/>
@@ -25,10 +36,12 @@
         android:title="@string/push_pref">
         <CheckBoxPreference
             android:key="notify_me"
-            android:title="@string/notify_me" />
+            android:title="@string/notify_me"
+            android:background="@color/white"/>
         <CheckBoxPreference
             android:key="notify_others"
-            android:title="@string/notify_others" />
+            android:title="@string/notify_others"
+            android:background="@color/white"/>
     </PreferenceCategory>
 
 

@@ -13,7 +13,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.parse.Parse;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -75,6 +77,8 @@ public class CreateEvent extends ListActivity {
     }
 
     public void onSaveClicked(View v) {
+        event.put("accepted", new ArrayList<Integer>());
+        event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
         event.saveInBackground();
         finish();
     }

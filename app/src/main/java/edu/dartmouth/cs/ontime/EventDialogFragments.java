@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -37,6 +38,7 @@ public class EventDialogFragments extends DialogFragment {
         final EditText et = new EditText(parent);
         final Calendar c = Calendar.getInstance();
         final Calendar cal = new GregorianCalendar();
+        final ArrayList<Integer> mInvitees = new ArrayList<Integer>();
 
         switch(currentPosition) {
             case DIALOG_ID_LOCATION:
@@ -103,7 +105,7 @@ public class EventDialogFragments extends DialogFragment {
                                                         boolean isChecked) {
                                         if (isChecked) {
                                             // If the user checked the item, add it to the selected items
-                                            //mSelectedItems.add(which);
+                                            mInvitees.add(which);
                                         } //else if (mSelectedItems.contains(which)) {
                                         // Else, if the item is already in the array, remove it
                                         // mSelectedItems.remove(Integer.valueOf(which));

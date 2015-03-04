@@ -22,6 +22,7 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.widget.LoginButton;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 import org.json.JSONArray;
@@ -152,6 +153,7 @@ public class SettingsFragment extends Fragment {
                                         parseFriend.put("name",friend.getString("name"));
                                         parseFriend.put("idNum",friend.getString("id"));
                                         parseFriend.put("friends",me.getName());
+                                        parseFriend.put("installationID", ParseInstallation.getCurrentInstallation().getInstallationId());
                                         parseFriend.saveInBackground();
                                     }
                                     me.add_friends(friendsArray);
