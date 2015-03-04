@@ -103,6 +103,7 @@ public class SettingsFragment extends Fragment {
                                         .execute(imgUrl.toString());
 
                                 name.setText("Logged in as: " +object.getString("name"));
+
                                 meParse = new ParseObject("Friend");
                                 meParse.put("name",object.getString("name"));
                                 meParse.put("idNum",object.getString("id"));
