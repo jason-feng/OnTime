@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -27,6 +29,7 @@ public class EventDisplayActivity extends Activity  {
     private Event displayedEvent;
     private ParseObject result;
     private TextView eventDisplayTextView, eventDisplayDate;
+    private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
 
 
@@ -75,6 +78,10 @@ public class EventDisplayActivity extends Activity  {
 //        mapFragment.getMapAsync(this);
 
 
+        progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
+
+        ProgressBar newBar = new ProgressBar(this, null, R.style.CustomProgressBarHorizontal);
+        progressBarLinearLayout.addView(newBar);
         //for each invitee in event invitees list
 
         //add a progressbar for them into the scrollview
