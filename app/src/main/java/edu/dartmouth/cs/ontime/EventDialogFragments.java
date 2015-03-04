@@ -1,6 +1,5 @@
 package edu.dartmouth.cs.ontime;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -49,7 +48,7 @@ public class EventDialogFragments extends DialogFragment {
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         Log.d(TAG, "onDateSet()");
                         cal.set(year, month, day);
-                        ((CreateEvent)getActivity()).getEvent().put("date", cal.getTime());
+                        ((CreateEvent)getActivity()).getEvent().setDate(cal.getTime());
                     }
                 };
 
@@ -65,7 +64,7 @@ public class EventDialogFragments extends DialogFragment {
                     public void onTimeSet(TimePicker view, int hour, int minute) {
                         Log.d(TAG, "onTimeSet()");
                         cal.set(hour, minute);
-                        ((CreateEvent)getActivity()).getEvent().put("time", cal.getTime());
+                        ((CreateEvent)getActivity()).getEvent().setTime(cal.getTime());
                     }
                 };
                 // Use the current date as the default date in the picker
@@ -83,7 +82,7 @@ public class EventDialogFragments extends DialogFragment {
                 builder.setPositiveButton(R.string.dialog_fragment_positive_button,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((CreateEvent)getActivity()).getEvent().put("title", et.getText().toString());
+                                ((CreateEvent)getActivity()).getEvent().setTitle(et.getText().toString());
                                 dialog.cancel();
                             }
                         });

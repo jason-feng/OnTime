@@ -3,7 +3,7 @@ package edu.dartmouth.cs.ontime;
 import android.util.Log;
 
 import com.parse.FindCallback;
-import com.parse.ParseInstallation;
+import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * Created by garygreene on 3/2/15.
  */
+@ParseClassName("ParseFriend")
 public class ParseFriend extends ParseObject {
 
     public static final String TAG = "Friend";

@@ -2,12 +2,8 @@ package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -123,20 +119,25 @@ public class MainActivity extends Activity {
             long currentTime = System.currentTimeMillis();
             Calendar today = Calendar.getInstance();
             today.setTimeInMillis(currentTime);
-            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
-                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
-                todayArray.add(event.getString("title"));
-            }
-            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
-                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
-                tomorrowArray.add(event.getString("title"));
-            }
-            //this line will return -1 if today.getTime is before the last day of the week
-            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
-                thisWeekArray.add(event.getString("title"));
+            if (date == null) {
+                return;
             }
             else {
-                //else, add to "upcoming events" field at bottom
+                if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
+                    Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
+                    todayArray.add(event.getString("title"));
+                }
+                else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
+                    Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
+                    tomorrowArray.add(event.getString("title"));
+                }
+                //this line will return -1 if today.getTime is before the last day of the week
+                else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+                    thisWeekArray.add(event.getString("title"));
+                }
+                else {
+                    //else, add to "upcoming events" field at bottom
+                }
             }
 
         }
