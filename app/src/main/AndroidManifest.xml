@@ -139,6 +139,7 @@
             android:name=".EventDisplayActivity"
             android:label="@string/title_activity_event_display" >
         </activity>
+        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/notify"/>
     </application>
 
 </manifest>
