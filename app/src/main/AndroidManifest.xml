@@ -17,12 +17,11 @@
         android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE" />
-
     <permission
         android:name="edu.dartmouth.cs.ontime.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
+    <uses-permission android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE" />
     <uses-permission android:name="edu.dartmouth.cs.ontime.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
