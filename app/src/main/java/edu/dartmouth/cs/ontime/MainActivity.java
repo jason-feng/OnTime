@@ -38,7 +38,6 @@ public class MainActivity extends Activity {
     private ListView mListToday,mListTomorrow,mListThisweek;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
-    private NotificationManager mNotificationManager;
     private ArrayList<String> todayArray = new ArrayList<>();
     private ArrayList<String> tomorrowArray = new ArrayList<>();
     private ArrayList<String> thisWeekArray = new ArrayList<>();
