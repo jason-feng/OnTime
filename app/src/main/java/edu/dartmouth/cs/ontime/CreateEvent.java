@@ -14,7 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
+import com.parse.ParseInstallation;
 
 import java.util.ArrayList;
 
@@ -29,11 +29,11 @@ public class CreateEvent extends ListActivity {
     public ListView list;
     public static int[] intCal;
     public String actType;
-    private ParseObject event;
+    private Event event;
     private Context context;
     private Location mLocation;
 
-    public ParseObject getEvent() { return event; }
+    public Event getEvent() { return event; }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -47,7 +47,7 @@ public class CreateEvent extends ListActivity {
                         data.getDoubleExtra("LAT", 0),
                         data.getDoubleExtra("LONG", 0)
                 );
-                event.put("location", point);
+                event.setLocation(point);
             }
         }
     }
@@ -68,13 +68,15 @@ public class CreateEvent extends ListActivity {
         context = this;
         intCal = new int[6];
         list = (ListView)this.findViewById(android.R.id.list);
-        event = new ParseObject("event");
+        event = new Event();
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, FACULTY);
         setListAdapter(mAdapter);
     }
 
     public void onSaveClicked(View v) {
+        event.put("accepted", new ArrayList<Integer>());
+        event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
         event.saveInBackground();
         finish();
     }

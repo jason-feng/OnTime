@@ -2,9 +2,6 @@ package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -36,7 +34,6 @@ public class MainActivity extends Activity {
     private ListView mListToday,mListTomorrow,mListThisweek;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
-    private NotificationManager mNotificationManager;
     private ArrayList<String> todayArray = new ArrayList<>();
     private ArrayList<String> tomorrowArray = new ArrayList<>();
     private ArrayList<String> thisWeekArray = new ArrayList<>();
@@ -45,7 +42,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "oncreate");
 
-        showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -123,20 +119,25 @@ public class MainActivity extends Activity {
             long currentTime = System.currentTimeMillis();
             Calendar today = Calendar.getInstance();
             today.setTimeInMillis(currentTime);
-            if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
-                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
-                todayArray.add(event.getString("title"));
-            }
-            else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
-                Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
-                tomorrowArray.add(event.getString("title"));
-            }
-            //this line will return -1 if today.getTime is before the last day of the week
-            else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
-                thisWeekArray.add(event.getString("title"));
+            if (date == null) {
+                return;
             }
             else {
-                //else, add to "upcoming events" field at bottom
+                if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
+                    Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
+                    todayArray.add(event.getString("title"));
+                }
+                else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
+                    Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
+                    tomorrowArray.add(event.getString("title"));
+                }
+                //this line will return -1 if today.getTime is before the last day of the week
+                else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+                    thisWeekArray.add(event.getString("title"));
+                }
+                else {
+                    //else, add to "upcoming events" field at bottom
+                }
             }
 
         }
@@ -155,6 +156,23 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListToday);
         ListUtils.setDynamicHeight(mListTomorrow);
         ListUtils.setDynamicHeight(mListThisweek);
+
+
+
+        //when user selects event, fire EventDisplayActivity
+        mListThisweek.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> listView, View view,
+                                    int position, long id) {
+                // Get the cursor, positioned to the corresponding row in the result set
+//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
+//                historyCode = cursor.getColumnIndex("_id");
+
+                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
+                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                startActivity(intent);
+            }
+        });
     }
 
     public void query() {
@@ -199,9 +217,10 @@ public class MainActivity extends Activity {
         return enddate;
 
     }
-    /**
+
+/*    *//**
      * Display a notification in the notification bar.
-     */
+     *//*
     private void showNotification(String inviter) {
 
         // If notification pressed but not a button
@@ -229,7 +248,7 @@ public class MainActivity extends Activity {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(0, notification);
-    }
+    }*/
 
     public static class ListUtils {
         public static void setDynamicHeight(ListView mListView) {

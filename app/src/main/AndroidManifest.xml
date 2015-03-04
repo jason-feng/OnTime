@@ -17,12 +17,11 @@
         android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE" />
-
     <permission
         android:name="edu.dartmouth.cs.ontime.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
+    <uses-permission android:name="edu.dartmouth.cs.ontime.permission.C2D_MESSAGE" />
     <uses-permission android:name="edu.dartmouth.cs.ontime.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -118,8 +117,6 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
-                <!-- IMPORTANT: Change "com.parse.starter" to match your app's package name. -->
                 <category android:name="edu.dartmouth.cs.ontime" />
             </intent-filter>
         </receiver>
@@ -142,6 +139,7 @@
             android:name=".EventDisplayActivity"
             android:label="@string/title_activity_event_display" >
         </activity>
+        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/notify"/>
     </application>
 
 </manifest>

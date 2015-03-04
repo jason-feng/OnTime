@@ -3,28 +3,70 @@ package edu.dartmouth.cs.ontime;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.ParseClassName;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by jasonfeng on 3/1/15.
  */
+@ParseClassName("event")
 public class Event extends ParseObject {
 
-    public static final String TAG = "event";
+    public static final String TAG = "Event";
     private static List<ParseObject> events;
+
+    public Event() {
+
+    }
+
+    public Date getTime() {
+        return getDate("time");
+    }
+
+    public void setTime(Date time) {
+        put("time", time);
+    }
+
+    public Date getDate() {
+        return getDate("date");
+    }
+
+    public void setDate(Date date) {
+        put("date", date);
+    }
+
+    public String getTitle() {
+        return getString("title");
+    }
+
+    public void setTitle(String title) {
+        put("title", title);
+    }
+
+    public ParseGeoPoint getLocation() {
+        return getParseGeoPoint("location");
+    }
+
+    public void setLocation(ParseGeoPoint location) {
+        put("location", location);
+    }
 
     public static List<ParseObject> query() {
         Log.d(TAG, "query()");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Friend");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, com.parse.ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "ParseQuery");
-                    events = objects;
+                    for (ParseObject object : objects) {
+                        events.add(object);
+                    }
                 } else {
                     e.printStackTrace();
                 }
