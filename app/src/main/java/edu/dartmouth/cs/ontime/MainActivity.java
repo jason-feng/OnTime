@@ -47,7 +47,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "oncreate");
 
-        showNotification("Nick");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -218,9 +217,10 @@ public class MainActivity extends Activity {
         return enddate;
 
     }
-    /**
+
+/*    *//**
      * Display a notification in the notification bar.
-     */
+     *//*
     private void showNotification(String inviter) {
 
         // If notification pressed but not a button
@@ -248,7 +248,7 @@ public class MainActivity extends Activity {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(0, notification);
-    }
+    }*/
 
     public static class ListUtils {
         public static void setDynamicHeight(ListView mListView) {
