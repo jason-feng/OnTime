@@ -13,18 +13,20 @@ import java.util.List;
  */
 public class Event extends ParseObject {
 
-    public static final String TAG = "event";
+    public static final String TAG = "Event";
     private static List<ParseObject> events;
 
     public static List<ParseObject> query() {
         Log.d(TAG, "query()");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Friend");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, com.parse.ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "ParseQuery");
-                    events = objects;
+                    for (ParseObject object : objects) {
+                        events.add(object);
+                    }
                 } else {
                     e.printStackTrace();
                 }
