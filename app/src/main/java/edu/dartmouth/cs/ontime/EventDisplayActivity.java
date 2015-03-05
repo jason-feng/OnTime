@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -128,10 +129,16 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
             //ProgressBar newBar = new ProgressBar(this, null, R.style.CustomProgressBarHorizontal);
             //ProgressBar newBar = new ProgressBar(this, null, );
+            //ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+            //TODO: set to android.widget.ProgressBar.Horizontal somehow!!
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+
             newBar.setProgress(Integer.parseInt(invitees.get(i).getId()));
-            newBar.setMinimumWidth(20);
-            newBar.setMinimumHeight(30);
+            newBar.setMinimumWidth(40);
+            //newBar.setBackgroundColor(Color.WHITE);
+            newBar.setMinimumHeight(50);
+
+            newBar.setScrollBarSize(200);
             progressBarLinearLayout.addView(newBar);
         }
 
