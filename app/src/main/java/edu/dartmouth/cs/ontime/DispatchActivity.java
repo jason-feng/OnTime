@@ -18,21 +18,26 @@ public class DispatchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
-            public void done(ParseObject object, ParseException e) {
-                ParseUser currUser = (ParseUser) object;
-                // Check if there is current user info
-                if (currUser != null) {
-                    // Start an intent for the logged in activity
-                    Log.d("F8Debug", "onCreate, got user,  "
-                            + ParseUser.getCurrentUser().getUsername());
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                } else {
-                    // Start and intent for the logged out activity
-                    Log.d("F8Debug", "onCreate, no user");
-                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+        if (ParseUser.getCurrentUser() != null) {
+            ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
+                public void done(ParseObject object, ParseException e) {
+                    ParseUser currUser = (ParseUser) object;
+                    // Check if there is current user info
+                    if (currUser != null) {
+                        // Start an intent for the logged in activity
+                        Log.d("F8Debug", "onCreate, got user,  "
+                                + ParseUser.getCurrentUser().getUsername());
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    } else {
+                        // Start and intent for the logged out activity
+                        Log.d("F8Debug", "onCreate, no user");
+                        startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                    }
                 }
-            }
-        });
+            });
+        }
+        else{
+            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+        }
     }
 }
