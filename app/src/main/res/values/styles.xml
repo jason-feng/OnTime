@@ -11,5 +11,10 @@
         <item name="android:background">@color/white</item> <!-- delete this line if you want transparent background -->
     </style>
 
+    <style name="CustomProgressBarHorizontal" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:minHeight">20dip</item>
+        <item name="android:maxHeight">30dip</item>
+    </style>
+
 
 </resources>

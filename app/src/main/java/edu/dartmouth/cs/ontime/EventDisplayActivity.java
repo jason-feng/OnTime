@@ -4,9 +4,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -19,13 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EventDisplayActivity extends Activity {
+public class EventDisplayActivity extends Activity  {
 
     public static final String EVENT_ID = "edu.dartmouth.cs.myruns.entry_id";
     public String eventId;
     private Event displayedEvent;
     private ParseObject result;
-    private TextView eventDisplayTextView;
+    private TextView eventDisplayTextView, eventDisplayDate;
+    private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
 
 
@@ -61,10 +65,26 @@ public class EventDisplayActivity extends Activity {
 
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
-        //to be used once actually getting event
+        //TODO: to be used once actually getting event
         //eventDisplayTextView.setText(eventTitle + "at" + eventLocationName);
         eventDisplayTextView.setText("    DINNER at Pine");
+        eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
+        eventDisplayDate.setTextColor(Color.BLACK);
+        //TODO: when actually getting the event, set text to datetime
+        eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
+//        MapFragment mapFragment = (MapFragment) getFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+
+
+        progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
+
+        ProgressBar newBar = new ProgressBar(this, null, R.style.CustomProgressBarHorizontal);
+        progressBarLinearLayout.addView(newBar);
+        //for each invitee in event invitees list
+
+        //add a progressbar for them into the scrollview
 
 
     }
