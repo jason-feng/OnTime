@@ -73,8 +73,7 @@ public class SignInActivity extends Activity {
                         public void onCompleted(GraphUser user,
                                                 Response response) {
                             if (user != null) {
-                                ParseUser.getCurrentUser().put("name",
-                                        user.getName());
+                                ParseUser.getCurrentUser().put("name",user.getName());
                                 ParseUser.getCurrentUser().put("fbId",user.getId());
                                 ParseUser.getCurrentUser().saveInBackground();
                                 finishActivity();

@@ -26,6 +26,8 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONArray;
@@ -34,7 +36,9 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import com.parse.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FriendList extends Activity {
@@ -44,6 +48,7 @@ public class FriendList extends Activity {
     Button ok;
     private UiLifecycleHelper uiHelper;
     public ArrayList<Friend> friendList, selectedFriends;
+    public ArrayList<String> friendID;
     private Session.StatusCallback callback = new Session.StatusCallback() {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
@@ -58,6 +63,7 @@ public class FriendList extends Activity {
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         friendList = new ArrayList<Friend>();
+        friendID = new ArrayList<String>();
         selectedFriends = new ArrayList<Friend>();
         ok = (Button)findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
@@ -107,16 +113,23 @@ public class FriendList extends Activity {
                                     URL imgUrl = new URL("http://graph.facebook.com/"
                                             + friend.getString("id") + "/picture?type=large");
                                     newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
-                                    friendship += name + ", ";
+                                    //friendship += name + ", ";
                                     friendList.add(newfriend);
+                                    friendID.add(friend.getString("id"));
                                 }
-                                ParseUser.getCurrentUser().put("friends",friendship);
-                                ParseUser.getCurrentUser().saveInBackground();
+                                //ParseUser.getCurrentUser().put("friends",friendship);
+
+                                ParseQuery friendQuery = ParseUser.getQuery();
+                                friendQuery.whereContainedIn("fbId", friendID);
+
+                                List<Friend> friendUsers = friendQuery.find();
                                 displayListView();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
@@ -133,6 +146,8 @@ public class FriendList extends Activity {
     }
 
     private void displayListView() {
+
+
         //create an ArrayAdaptar from the String Array
         dataAdapter = new MyCustomAdapter(this,
                 R.layout.friend_info, friendList);
