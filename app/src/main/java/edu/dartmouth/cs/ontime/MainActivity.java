@@ -210,6 +210,7 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "ParseQuery");
                     upcomingEvents = new ArrayList<ParseObject>();
                     for (ParseObject event : objects) {
+                        //event.get("invitees");
                         Log.d(TAG, "Title : " + event.get("title"));
                         Log.d(TAG, "Date : " + event.get("date"));
                         upcomingEvents.add(event);

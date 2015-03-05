@@ -13,8 +13,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -25,6 +29,7 @@ public class CreateEvent extends ListActivity {
     private static final String TAG = "CreateEvent";
     public static final String INDEX = "CreateEvent.java";
     public static final int MAP_REQUEST = 1;
+    public static final int INVITE_REQUEST = 2;
     public ArrayList mSelectedItems;
     public ListView list;
     public static int[] intCal;
@@ -37,18 +42,36 @@ public class CreateEvent extends ListActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MAP_REQUEST) {
-            if (resultCode != RESULT_OK) {
-                return;
-            }
-            else {
+
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == MAP_REQUEST) {
+
+
                 Log.d(TAG, "onActivityResult Success");
                 ParseGeoPoint point = new ParseGeoPoint(
                         data.getDoubleExtra("LAT", 0),
                         data.getDoubleExtra("LONG", 0)
                 );
                 event.setLocation(point);
+
             }
+
+            else if (requestCode == INVITE_REQUEST){
+                ArrayList<String> selectedIDs = data.getStringArrayListExtra("selected_friends");
+                for (String id : selectedIDs){
+                    ParseQuery query = ParseUser.getQuery();
+                    query.whereContains("fbId", id);
+                    try{
+                        query.getFirst();
+                    }
+                    catch (ParseException e){
+
+                    }
+
+                }
+            }
+
         }
     }
     @Override
@@ -76,7 +99,6 @@ public class CreateEvent extends ListActivity {
 
     public void onSaveClicked(View v) {
         event.put("accepted", new ArrayList<Integer>());
-        event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
         event.saveInBackground();
         finish();
     }
@@ -101,7 +123,7 @@ public class CreateEvent extends ListActivity {
         }
         else if (position == 4) {
             Intent intent = new Intent(this, FriendList.class);
-            startActivity(intent);
+            startActivityForResult(intent, INVITE_REQUEST);
         }
     }
 

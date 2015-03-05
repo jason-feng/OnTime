@@ -26,6 +26,8 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONArray;
@@ -34,7 +36,9 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import com.parse.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FriendList extends Activity {
@@ -43,7 +47,8 @@ public class FriendList extends Activity {
     Friend newfriend;
     Button ok;
     private UiLifecycleHelper uiHelper;
-    public ArrayList<Friend> friendList, selectedFriends;
+    public ArrayList<Friend> friendList;
+    public ArrayList<String> selectedFriends;
     private Session.StatusCallback callback = new Session.StatusCallback() {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
@@ -58,7 +63,7 @@ public class FriendList extends Activity {
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         friendList = new ArrayList<Friend>();
-        selectedFriends = new ArrayList<Friend>();
+        selectedFriends = new ArrayList<String>();
         ok = (Button)findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -66,14 +71,16 @@ public class FriendList extends Activity {
                int i;
                for (i=0;i<friendList.size();i++){
                    if (friendList.get(i).isSelected()) {
-                        selectedFriends.add(friendList.get(i));
-                       Log.d("friend",friendList.get(i).getName());
+                       // add fb IDs to selected list
+                       selectedFriends.add(friendList.get(i).getId());
+                       Log.d("friend added",friendList.get(i).getName());
                    }
                }
-               // TODO: DO SOMETHING WITH THE FRIENDS HERE!
-               Intent intent = new Intent(FriendList.this, CreateEvent.class);
-               // put friends in the intent bundle?
-               startActivity(intent);
+               Intent intent = new Intent();
+               Bundle bundle = intent.getExtras();
+               bundle.putStringArrayList("selected_friends", selectedFriends);
+               setResult(RESULT_OK, intent);
+               finish();
            }
         });
         getFBinfo();
@@ -107,11 +114,11 @@ public class FriendList extends Activity {
                                     URL imgUrl = new URL("http://graph.facebook.com/"
                                             + friend.getString("id") + "/picture?type=large");
                                     newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
-                                    friendship += name + ", ";
+                                    //friendship += name + ", ";
                                     friendList.add(newfriend);
                                 }
-                                ParseUser.getCurrentUser().put("friends",friendship);
-                                ParseUser.getCurrentUser().saveInBackground();
+                                //ParseUser.getCurrentUser().put("friends",friendship);
+
                                 displayListView();
                             }
                         } catch (JSONException e) {
@@ -133,6 +140,8 @@ public class FriendList extends Activity {
     }
 
     private void displayListView() {
+
+
         //create an ArrayAdaptar from the String Array
         dataAdapter = new MyCustomAdapter(this,
                 R.layout.friend_info, friendList);
