@@ -104,10 +104,10 @@ public class FriendList extends Activity {
         Log.d("got", "here");
         Session session = Session.getActiveSession();
 
-        if(session==null){
+/*        if(session==null){
             // try to restore from cache
             session = Session.openActiveSessionFromCache(getApplicationContext());
-        }
+        }*/
         new Request(session,
                 "/me/friends",
                 null,
@@ -135,8 +135,6 @@ public class FriendList extends Activity {
                                         newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
                                         friendList.add(newfriend);
                                     }
-
-
                                     displayListView();
                                 }
                             } catch (JSONException e) {
