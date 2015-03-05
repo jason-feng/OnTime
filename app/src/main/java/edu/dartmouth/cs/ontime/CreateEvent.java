@@ -59,11 +59,12 @@ public class CreateEvent extends ListActivity {
 
             else if (requestCode == INVITE_REQUEST){
                 ArrayList<String> selectedIDs = data.getStringArrayListExtra("selected_friends");
+                ArrayList<String> installationIDs = new ArrayList<String>();
                 for (String id : selectedIDs){
                     ParseQuery query = ParseUser.getQuery();
                     query.whereContains("fbId", id);
                     try{
-                        query.getFirst();
+                        installationIDs.add(query.getFirst().getString("installation_id"));
                     }
                     catch (ParseException e){
 
