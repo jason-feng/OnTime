@@ -27,9 +27,6 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,13 +34,9 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.parse.ParseException;
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class FriendList extends Activity {
-    String friendship = "";
     MyCustomAdapter dataAdapter = null;
     Friend newfriend;
     Button ok;
