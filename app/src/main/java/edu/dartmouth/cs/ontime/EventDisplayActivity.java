@@ -38,6 +38,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private TextView eventDisplayTextView, eventDisplayDate;
     private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
+    public ArrayList<Friend> invitees;
 
 
     @Override
@@ -80,6 +81,25 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         //TODO: when actually getting the event, set text to datetime
         eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
+        //TODO: when actually getting the event, set arraylist of friends from query
+        invitees = new ArrayList<Friend>();
+        Friend friend1 = new Friend("Emily", "12", null);
+        invitees.add(friend1);
+        Friend friend2 = new Friend("Jason", "28", null);
+        invitees.add(friend2);
+        Friend friend3 = new Friend("Dani", "35", null);
+        invitees.add(friend3);
+        Friend friend4 = new Friend("Nick", "54", null);
+        invitees.add(friend4);
+        Friend friend5 = new Friend("test", "100", null);
+        invitees.add(friend5);
+        Friend friend6 = new Friend("test", "34", null);
+        invitees.add(friend6);
+        Friend friend7 = new Friend("test", "12", null);
+        invitees.add(friend7);
+        Friend friend8 = new Friend("plswork", "1", null);
+        invitees.add(friend8);
+
 
         //Context myContext =
 //        this.getSupportFragmentManager();
@@ -94,11 +114,32 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 .position(new LatLng(0, 0))
                 .title("Marker"));
 
-
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
-        ProgressBar newBar = new ProgressBar(this, null, R.style.CustomProgressBarHorizontal);
-        progressBarLinearLayout.addView(newBar);
+
+        //dynamically add friends
+        for (int i = 0; i < invitees.size(); i++) {
+            TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
+            //TODO: set text here to name of person
+            newView.setText(invitees.get(i).getName());
+            newView.setTextSize(15);
+            newView.setTextAppearance(this, R.style.boldText);
+            progressBarLinearLayout.addView(newView);
+
+            //ProgressBar newBar = new ProgressBar(this, null, R.style.CustomProgressBarHorizontal);
+            //ProgressBar newBar = new ProgressBar(this, null, );
+            ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+            newBar.setProgress(Integer.parseInt(invitees.get(i).getId()));
+            newBar.setMinimumWidth(20);
+            newBar.setMinimumHeight(30);
+            progressBarLinearLayout.addView(newBar);
+        }
+
+
+
+
+
+
         //for each invitee in event invitees list
 
         //add a progressbar for them into the scrollview

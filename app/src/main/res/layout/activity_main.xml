@@ -27,6 +27,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
+
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -117,6 +118,13 @@
                 android:id= "@+id/listTw"
                 android:layout_marginTop="10dip"
                 android:drawSelectorOnTop="true"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EventDisplay Test"
+                android:id="@+id/testDisplayButton"
+                android:layout_gravity="bottom" />
 
         </LinearLayout>
     </ScrollView>

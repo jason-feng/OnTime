@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity {
     private ListView mListToday,mListTomorrow,mListThisweek;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
+    private Button testEventDisplayButton;
     private ArrayList<String> todayArray = new ArrayList<>();
     private ArrayList<String> tomorrowArray = new ArrayList<>();
     private ArrayList<String> thisWeekArray = new ArrayList<>();
@@ -86,6 +88,19 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        testEventDisplayButton = (Button) findViewById(R.id.testDisplayButton);
+
+        testEventDisplayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "CreateEvent");
+                Intent intent = new Intent(mContext, EventDisplayActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         Log.d(TAG, "createEvent init");
 
@@ -198,7 +213,13 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+
+
+
     }
+
+
 
     public void query() {
         Log.d(TAG, "query()");

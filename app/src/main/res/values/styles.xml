@@ -16,5 +16,19 @@
         <item name="android:maxHeight">30dip</item>
     </style>
 
+    <style name="CustomTextViewDani" parent="android:Widget.TextView">
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="boldText">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
 
 </resources>
