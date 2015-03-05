@@ -13,8 +13,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -56,6 +60,14 @@ public class CreateEvent extends ListActivity {
             else if (requestCode == INVITE_REQUEST){
                 ArrayList<String> selectedIDs = data.getStringArrayListExtra("selected_friends");
                 for (String id : selectedIDs){
+                    ParseQuery query = ParseUser.getQuery();
+                    query.whereContains("fbId", id);
+                    try{
+                        query.getFirst();
+                    }
+                    catch (ParseException e){
+
+                    }
 
                 }
             }
