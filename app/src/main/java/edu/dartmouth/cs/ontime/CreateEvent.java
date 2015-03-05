@@ -98,7 +98,10 @@ public class CreateEvent extends ListActivity {
     }
 
     public void onSaveClicked(View v) {
-        event.put("accepted", new ArrayList<Integer>());
+        ArrayList<String> accepted =  new ArrayList<String>();
+        accepted.add(ParseUser.getCurrentUser().getString("fbId"));
+        event.put("accepted", accepted);
+        event.put("host", ParseUser.getCurrentUser().getString("fbId"));
         event.saveInBackground();
         finish();
     }

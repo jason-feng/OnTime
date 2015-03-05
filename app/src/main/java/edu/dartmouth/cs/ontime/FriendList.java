@@ -82,14 +82,23 @@ public class FriendList extends Activity {
                finish();
            }
         });
+        Session session = Session.getActiveSession();
+        if (session != null &&
+                (session.isOpened() || session.isClosed())) {
+            onSessionStateChange(session, session.getState(), null);
+        }
         getFBinfo();
-
     }
 
     private void getFBinfo() {
         Log.d("got", "here");
-        new Request(
-                Session.getActiveSession(),
+        Session session = Session.getActiveSession();
+
+        if(session==null){
+            // try to restore from cache
+            session = Session.openActiveSessionFromCache(getApplicationContext());
+        }
+        new Request(session,
                 "/me/friends",
                 null,
                 HttpMethod.GET,
@@ -98,32 +107,38 @@ public class FriendList extends Activity {
                                 /* handle the result */
                         Log.d("here","got");
                         GraphObject graphObject = response.getGraphObject();
-                        JSONObject json = graphObject.getInnerJSONObject();
-                        JSONArray friends = null;
-                        try {
-                            friends = json.getJSONArray("data");
-                            Log.d("hello", friends.toString());
-                            if (friends.length() > 0) {
+                        if (graphObject != null) {
+                            JSONObject json = graphObject.getInnerJSONObject();
+                            JSONArray friends = null;
+                            try {
+                                friends = json.getJSONArray("data");
+                                Log.d("hello", friends.toString());
+                                if (friends.length() > 0) {
 
-                                // Ensure the user has at least one friend ...
-                                for (int i = 0; i < friends.length(); i++) {
-                                    JSONObject friend = friends.getJSONObject(i);
-                                    String name = friend.getString("name");
-                                    Log.d("name",name);
-                                    URL imgUrl = new URL("http://graph.facebook.com/"
-                                            + friend.getString("id") + "/picture?type=large");
-                                    newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
-                                    //friendship += name + ", ";
-                                    friendList.add(newfriend);
+                                    // Ensure the user has at least one friend ...
+                                    for (int i = 0; i < friends.length(); i++) {
+                                        JSONObject friend = friends.getJSONObject(i);
+                                        String name = friend.getString("name");
+                                        Log.d("name", name);
+                                        URL imgUrl = new URL("http://graph.facebook.com/"
+                                                + friend.getString("id") + "/picture?type=large");
+                                        newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
+                                        friendList.add(newfriend);
+                                    }
+
+
+                                    displayListView();
                                 }
-                                //ParseUser.getCurrentUser().put("friends",friendship);
-
-                                displayListView();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),
+                                    "Could not get friends!",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).executeAsync();
@@ -139,7 +154,6 @@ public class FriendList extends Activity {
     }
 
     private void displayListView() {
-
 
         //create an ArrayAdaptar from the String Array
         dataAdapter = new MyCustomAdapter(this,
@@ -158,7 +172,7 @@ public class FriendList extends Activity {
                 friend.setSelected(true);
                 Toast.makeText(getApplicationContext(),
                         friend.getName() + " selected!",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -238,12 +252,6 @@ public class FriendList extends Activity {
         }
 
     }
-
-
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
