@@ -77,8 +77,7 @@ public class FriendList extends Activity {
                    }
                }
                Intent intent = new Intent();
-               Bundle bundle = intent.getExtras();
-               bundle.putStringArrayList("selected_friends", selectedFriends);
+               intent.putStringArrayListExtra("selected_friends", selectedFriends);
                setResult(RESULT_OK, intent);
                finish();
            }
