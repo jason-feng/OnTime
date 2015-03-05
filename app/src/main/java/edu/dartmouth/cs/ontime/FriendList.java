@@ -47,8 +47,8 @@ public class FriendList extends Activity {
     Friend newfriend;
     Button ok;
     private UiLifecycleHelper uiHelper;
-    public ArrayList<Friend> friendList, selectedFriends;
-    public ArrayList<String> friendID;
+    public ArrayList<Friend> friendList;
+    public ArrayList<String> selectedFriends;
     private Session.StatusCallback callback = new Session.StatusCallback() {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
@@ -63,8 +63,7 @@ public class FriendList extends Activity {
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         friendList = new ArrayList<Friend>();
-        friendID = new ArrayList<String>();
-        selectedFriends = new ArrayList<Friend>();
+        selectedFriends = new ArrayList<String>();
         ok = (Button)findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -72,14 +71,16 @@ public class FriendList extends Activity {
                int i;
                for (i=0;i<friendList.size();i++){
                    if (friendList.get(i).isSelected()) {
-                        selectedFriends.add(friendList.get(i));
-                       Log.d("friend",friendList.get(i).getName());
+                       // add fb IDs to selected list
+                       selectedFriends.add(friendList.get(i).getId());
+                       Log.d("friend added",friendList.get(i).getName());
                    }
                }
-               // TODO: DO SOMETHING WITH THE FRIENDS HERE!
-               Intent intent = new Intent(FriendList.this, CreateEvent.class);
-               // put friends in the intent bundle?
-               startActivity(intent);
+               Intent intent = new Intent();
+               Bundle bundle = intent.getExtras();
+               bundle.putStringArrayList("selected_friends", selectedFriends);
+               setResult(RESULT_OK, intent);
+               finish();
            }
         });
         getFBinfo();
@@ -115,21 +116,14 @@ public class FriendList extends Activity {
                                     newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
                                     //friendship += name + ", ";
                                     friendList.add(newfriend);
-                                    friendID.add(friend.getString("id"));
                                 }
                                 //ParseUser.getCurrentUser().put("friends",friendship);
 
-                                ParseQuery friendQuery = ParseUser.getQuery();
-                                friendQuery.whereContainedIn("fbId", friendID);
-
-                                List<Friend> friendUsers = friendQuery.find();
                                 displayListView();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }

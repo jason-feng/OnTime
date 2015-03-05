@@ -15,6 +15,7 @@ import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
 import java.util.Arrays;
@@ -75,6 +76,7 @@ public class SignInActivity extends Activity {
                             if (user != null) {
                                 ParseUser.getCurrentUser().put("name",user.getName());
                                 ParseUser.getCurrentUser().put("fbId",user.getId());
+                                ParseUser.getCurrentUser().put("installation_id", ParseInstallation.getCurrentInstallation().getInstallationId());
                                 ParseUser.getCurrentUser().saveInBackground();
                                 finishActivity();
                             } else if (response.getError() != null) {
