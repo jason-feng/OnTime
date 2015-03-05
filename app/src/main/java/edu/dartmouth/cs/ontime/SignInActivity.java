@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,6 +32,14 @@ public class SignInActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.login_start);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
 
         Button loginButton = (Button) findViewById(R.id.logButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
