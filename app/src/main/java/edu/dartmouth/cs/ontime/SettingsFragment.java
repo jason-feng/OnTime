@@ -22,10 +22,8 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.widget.LoginButton;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
+import com.parse.ParseUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +43,8 @@ public class SettingsFragment extends Fragment {
     private Context mContext;
     public ArrayList<Friend> friendsArray;
     Friend me = null;
-    ParseObject meParse;
+    Friend newfriend = null;
+    ParseUser meParse;
     TextView name;
     ImageView propic;
     String myfriends = "";
@@ -98,18 +97,13 @@ public class SettingsFragment extends Fragment {
                             try {
                                 URL imgUrl = new URL("https://graph.facebook.com/"
                                         + object.getString("id") + "/picture?type=large");
-                                Log.d("url",imgUrl.toString());
-                                me = new Friend(object.getString("name"),object.getString("id"),imgUrl);
+                                Log.d("url", imgUrl.toString());
+                                me = new Friend(object.getString("name"), object.getString("id"), imgUrl);
                                 new DownloadImageTask(propic)
                                         .execute(imgUrl.toString());
 
-                                name.setText("Logged in as: " +object.getString("name"));
-
-                                meParse = new ParseObject("Friend");
-                                meParse.put("name",object.getString("name"));
-                                meParse.put("idNum",object.getString("id"));
-
-//                                meParse.put("photo",imgUrl.toString());
+                                name.setText("Logged in as: " + object.getString("name"));
+//                                TODO: Should we make it an option to sign in here too? With the parse current user stuff?
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -118,64 +112,14 @@ public class SettingsFragment extends Fragment {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            Log.d("me",me.name);
+                            Log.d("me", me.name);
 
                         }
                     }
             ).executeAsync();
+        }
 
-            new Request(
-                    session,
-                    "/me/friends",
-                    null,
-                    HttpMethod.GET,
-                    new Request.Callback() {
-                        public void onCompleted(Response response) {
-                                /* handle the result */
-                            GraphObject graphObject = response.getGraphObject();
-                            JSONObject json = graphObject.getInnerJSONObject();
-                            JSONArray friends = null;
-                            try {
-                                friends = json.getJSONArray("data");
-                                Log.d("hello",friends.toString());
-                                if (friends.length() > 0) {
-
-                                    // Ensure the user has at least one friend ...
-                                    for (int i = 0; i < friends.length(); i++) {
-                                        JSONObject friend = friends.getJSONObject(i);
-                                        String name = friend.getString("name");
-                                        String id = friend.getString("id");
-                                        Log.d("name",name);
-                                        URL imgUrl = new URL("http://graph.facebook.com/"
-                                                + friend.getString("id") + "/picture?type=large");
-                                        friendsArray.add(new Friend(friend.getString("name"),friend.getString("id"),imgUrl));
-                                        myfriends += friend.getString("name") + ", ";
-                                        ParseObject parseFriend = new ParseObject("Friend");
-                                        parseFriend.put("name",friend.getString("name"));
-                                        parseFriend.put("idNum",friend.getString("id"));
-                                        parseFriend.put("friends",me.getName());
-                                        parseFriend.put("installationID", ParseInstallation.getCurrentInstallation().getInstallationId());
-                                        parseFriend.saveInBackground();
-                                    }
-                                    me.add_friends(friendsArray);
-                                    meParse.put("friends",myfriends);
-//                                    meParse.put("friends",friendsArray);
-
-                                }
-                               meParse.saveInBackground();
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-                    }
-            ).executeAsync();
-
-        } else if (state.isClosed()) {
+       else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
         }
     }
@@ -223,6 +167,7 @@ public class SettingsFragment extends Fragment {
     }
 
 
+
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
@@ -246,6 +191,7 @@ public class SettingsFragment extends Fragment {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
+
     }
 }
 

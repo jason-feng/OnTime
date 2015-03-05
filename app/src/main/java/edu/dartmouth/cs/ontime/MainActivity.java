@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
                     tomorrowArray.add(event.getString("title"));
                 }
                 //this line will return -1 if today.getTime is before the last day of the week
-                else if (today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) {
+                else if ((today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) && (today.get(Calendar.DATE) < date.get(Calendar.DATE))) {
                     thisWeekArray.add(event.getString("title"));
                 }
                 else {

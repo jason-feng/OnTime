@@ -11,6 +11,7 @@ public class Friend {
     String id;
     URL url;
     ArrayList<Friend> friend = null;
+    boolean selected = false;
 
     public Friend(String name, String id,URL url) {
         this.name = name;
@@ -24,5 +25,16 @@ public class Friend {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

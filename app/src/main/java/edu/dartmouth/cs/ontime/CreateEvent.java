@@ -87,7 +87,7 @@ public class CreateEvent extends ListActivity {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (position != 3) {
+        if (position != 3 && position != 4) {
             Log.d(TAG, "onListItemClick()");
             Bundle bundle = new Bundle();
             bundle.putInt(INDEX, position);
@@ -95,9 +95,13 @@ public class CreateEvent extends ListActivity {
             fragment.setArguments(bundle);
             fragment.show(getFragmentManager(), "dialog");
         }
-        else {
+        else if (position == 3) {
             Intent intent = new Intent(this, MapFragment.class);
             startActivityForResult(intent, MAP_REQUEST);
+        }
+        else if (position == 4) {
+            Intent intent = new Intent(this, FriendList.class);
+            startActivity(intent);
         }
     }
 
