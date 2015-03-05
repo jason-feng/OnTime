@@ -2,6 +2,7 @@ package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -11,7 +12,13 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.support.v4.app.Fragment;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -22,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EventDisplayActivity extends Activity  {
+public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final String EVENT_ID = "edu.dartmouth.cs.myruns.entry_id";
     public String eventId;
@@ -73,9 +80,19 @@ public class EventDisplayActivity extends Activity  {
         //TODO: when actually getting the event, set text to datetime
         eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
-//        MapFragment mapFragment = (MapFragment) getFragmentManager()
-//                .findFragmentById(R.id.map);
+
+        //Context myContext =
+//        this.getSupportFragmentManager();
+//        MapFragment mapFragment = (MapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
+
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
+        GoogleMap mmap = supportMapFragment.getMap();
+
+        mmap.addMarker(new MarkerOptions()
+                .position(new LatLng(0, 0))
+                .title("Marker"));
 
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
@@ -115,4 +132,10 @@ public class EventDisplayActivity extends Activity  {
     }
 
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(0, 0))
+                .title("Marker"));
+    }
 }

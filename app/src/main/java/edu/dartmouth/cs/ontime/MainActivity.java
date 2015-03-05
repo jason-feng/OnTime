@@ -158,8 +158,33 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListThisweek);
 
 
-
         //when user selects event, fire EventDisplayActivity
+        mListToday.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> listView, View view,
+                                    int position, long id) {
+                // Get the cursor, positioned to the corresponding row in the result set
+//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
+//                historyCode = cursor.getColumnIndex("_id");
+
+                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
+                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                startActivity(intent);
+            }
+        });
+        mListTomorrow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> listView, View view,
+                                    int position, long id) {
+                // Get the cursor, positioned to the corresponding row in the result set
+//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
+//                historyCode = cursor.getColumnIndex("_id");
+
+                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
+                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                startActivity(intent);
+            }
+        });
         mListThisweek.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
