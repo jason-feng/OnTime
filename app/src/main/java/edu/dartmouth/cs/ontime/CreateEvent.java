@@ -22,7 +22,6 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
-
 public class CreateEvent extends ListActivity {
 
     public static final String[] FACULTY = new String[] { "Title","Date", "Time", "Location", "Invitees"};
@@ -72,9 +71,9 @@ public class CreateEvent extends ListActivity {
 
                 }
             }
-
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
