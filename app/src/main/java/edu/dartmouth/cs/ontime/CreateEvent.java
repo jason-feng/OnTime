@@ -68,7 +68,9 @@ public class CreateEvent extends ListActivity {
                     catch (ParseException e){
 
                     }
-
+                    event.setInviteList(installationIDs);
+                    ParseQuery installationQuery = ParseInstallation.getQuery();
+                    installationQuery.whereContainedIn("installationId", installationIDs);
                 }
             }
         }

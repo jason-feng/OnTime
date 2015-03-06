@@ -220,9 +220,7 @@ public class FriendList extends Activity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         int getPosition = (Integer) buttonView.getTag();
 
-
                         friendsList.get(getPosition).setSelected(buttonView.isChecked());
-
 
                     }
                 });
@@ -241,6 +239,7 @@ public class FriendList extends Activity {
 //                    }
 //                });
             }
+
             else {
                 holder = (ViewHolder) convertView.getTag();
             }
