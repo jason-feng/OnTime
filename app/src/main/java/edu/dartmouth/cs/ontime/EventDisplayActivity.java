@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.support.v4.app.Fragment;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -40,6 +41,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
     public ArrayList<Friend> invitees;
+    private LatLng location;
 
 
     @Override
@@ -82,6 +84,10 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         //TODO: when actually getting the event, set text to datetime
         eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
+        //TODO: when actually getting the event, create new LatLng with event location
+        //for now this is hard coded
+        location = new LatLng(43.704441, -72.288693);
+
         //TODO: when actually getting the event, set arraylist of friends from query
         invitees = new ArrayList<Friend>();
         Friend friend1 = new Friend("Emily", "12", null);
@@ -112,8 +118,11 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         GoogleMap mmap = supportMapFragment.getMap();
 
         mmap.addMarker(new MarkerOptions()
-                .position(new LatLng(0, 0))
+                .position(location)
                 .title("Marker"));
+
+        mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(location,
+                17));
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
@@ -178,7 +187,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
