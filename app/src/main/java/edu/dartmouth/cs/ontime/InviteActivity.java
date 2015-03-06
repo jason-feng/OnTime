@@ -8,6 +8,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import java.util.List;
 public class InviteActivity extends Activity {
 
     public ListView mList;
+    public InviteAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +44,33 @@ public class InviteActivity extends Activity {
         ParseUser me = ParseUser.getCurrentUser();
         ArrayList<Event> invitedList = (ArrayList<Event>) me.get("invited");
 
+        InviteAdapter mAdapter = new InviteAdapter(this, R.layout.pending_list_item, invitedList);
+
         mList = (ListView)findViewById(R.id.list);
-        mList.setAdapter(new InviteAdapter(this, R.layout.pending_list_item, invitedList));
+        mList.setAdapter(mAdapter);
+
+        InviteClickListener listener = new InviteClickListener();
+
+        mList.setOnItemClickListener(listener);
 
         MainActivity.ListUtils.setDynamicHeight(mList);
+    }
+
+    private class InviteClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Event event = (Event) parent.getAdapter().getItem(position);
+            ParseUser me = ParseUser.getCurrentUser();
+            ArrayList<Event> invited = (ArrayList<Event>) me.get("invited");
+            ArrayList<Event> accepted = (ArrayList<Event>) me.get("accepted");
+            invited.remove(event);
+            accepted.add(event);
+            me.put("invited", invited);
+            me.put("accepted", accepted);
+
+            mAdapter = new InviteAdapter(getParent(), R.layout.pending_list_item, invited);
+            mList.setAdapter(mAdapter);
+        }
     }
 
     private class InviteAdapter extends ArrayAdapter<Event>{
