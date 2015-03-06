@@ -12,11 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -38,6 +40,7 @@ public class CreateEvent extends ListActivity {
     private Context context;
     private Location mLocation;
     private ArrayList<ParseUser> userList;
+    private ArrayList<String> installationIDs;
 
     public Event getEvent() { return event; }
 
@@ -60,7 +63,7 @@ public class CreateEvent extends ListActivity {
 
             else if (requestCode == INVITE_REQUEST){
                 ArrayList<String> selectedIDs = data.getStringArrayListExtra("selected_friends");
-                ArrayList<String> installationIDs = new ArrayList<String>();
+                installationIDs = new ArrayList<String>();
                 for (String id : selectedIDs){
                     ParseQuery query = ParseUser.getQuery();
                     query.whereContains("fbId", id);
@@ -73,8 +76,6 @@ public class CreateEvent extends ListActivity {
 
                     }
                     event.setInviteList(installationIDs);
-                    ParseQuery installationQuery = ParseInstallation.getQuery();
-                    installationQuery.whereContainedIn("installationId", installationIDs);
                 }
             }
         }
@@ -107,23 +108,45 @@ public class CreateEvent extends ListActivity {
     }
 
     public void onSaveClicked(View v) {
-        ArrayList<String> accepted =  new ArrayList<String>();
-        accepted.add(ParseUser.getCurrentUser().getString("fbId"));
-        event.put("accepted", accepted);
-        event.put("host", ParseUser.getCurrentUser().getString("fbId"));
-        event.saveInBackground();
+        if (installationIDs.size() != 0 && event.getTitle() != null) {
+            ArrayList<String> accepted = new ArrayList<String>();
+            accepted.add(ParseUser.getCurrentUser().getString("fbId"));
+            event.put("accepted", accepted);
+            event.put("host", ParseUser.getCurrentUser().getString("fbId"));
+            event.saveInBackground();
 
-        for (ParseUser user : userList){
-            ArrayList<Event> updatedEvents = (ArrayList<Event>) user.get("eventList");
+            for (ParseUser user : userList) {
+                ArrayList<Event> inviteList = (ArrayList<Event>) user.get("invited");
+                inviteList.add(event);
+                user.put("invited", inviteList);
+            }
+            ParseUser me = ParseUser.getCurrentUser();
+            ArrayList<Event> updatedEvents = (ArrayList<Event>) me.get("accepted");
             updatedEvents.add(event);
-            user.put("eventList", updatedEvents);
-        }
-        ParseUser me = ParseUser.getCurrentUser();
-        ArrayList<Event> updatedEvents = (ArrayList<Event>) me.get("eventList");
-        updatedEvents.add(event);
-        me.put("eventList", updatedEvents);
+            me.put("accepted", updatedEvents);
 
-        finish();
+            // create installation query
+            ParseQuery installationQuery = ParseInstallation.getQuery();
+            installationQuery.whereContainedIn("installationId", installationIDs);
+
+            // Send push notification to query
+            ParsePush push = new ParsePush();
+            push.setQuery(installationQuery); // Set our Installation query
+            push.setMessage(ParseUser.getCurrentUser().get("name") + " invited you to " + event.getTitle());
+            push.sendInBackground();
+
+            finish();
+        }
+        else if (installationIDs.size() == 0 ){
+            Toast.makeText(getApplicationContext(),
+                    "Please select friends to invite",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else if (event.getTitle() == null){
+            Toast.makeText(getApplicationContext(),
+                    "Please set a title for your event",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onCancelClicked(View v) {
