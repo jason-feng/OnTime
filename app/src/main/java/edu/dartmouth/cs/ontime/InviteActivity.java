@@ -13,7 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.DecimalFormat;
@@ -67,6 +70,17 @@ public class InviteActivity extends Activity {
             accepted.add(event);
             me.put("invited", invited);
             me.put("accepted", accepted);
+            String hostId = event.getString("host");
+
+            // create installation query
+            ParseQuery installationQuery = ParseInstallation.getQuery();
+            installationQuery.whereContains("installationId", hostId);
+
+            // Send push notification to query
+            ParsePush push = new ParsePush();
+            push.setQuery(installationQuery); // Set our Installation query
+            push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
+            push.sendInBackground();
 
             mAdapter = new InviteAdapter(getParent(), R.layout.pending_list_item, invited);
             mList.setAdapter(mAdapter);

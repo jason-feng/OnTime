@@ -112,7 +112,7 @@ public class CreateEvent extends ListActivity {
             ArrayList<String> accepted = new ArrayList<String>();
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
             event.put("accepted", accepted);
-            event.put("host", ParseUser.getCurrentUser().getString("fbId"));
+            event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
             event.saveInBackground();
 
             for (ParseUser user : userList) {
