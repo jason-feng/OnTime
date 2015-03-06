@@ -86,8 +86,8 @@ public class SignInActivity extends Activity {
                             if (user != null) {
                                 ParseUser.getCurrentUser().put("name",user.getName());
                                 ParseUser.getCurrentUser().put("fbId",user.getId());
-                                ParseUser.getCurrentUser().put("invited", new ArrayList<Event>());
-                                ParseUser.getCurrentUser().put("accepted", new ArrayList<Event>());
+                                ParseUser.getCurrentUser().put("invited", new ArrayList<String>());
+                                ParseUser.getCurrentUser().put("accepted", new ArrayList<String>());
                                 ParseUser.getCurrentUser().put("installation_id", ParseInstallation.getCurrentInstallation().getInstallationId());
                                 ParseUser.getCurrentUser().saveInBackground();
                                 finishActivity();

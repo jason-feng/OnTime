@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
@@ -45,9 +46,20 @@ public class InviteActivity extends Activity {
         actionBar.hide();
 
         ParseUser me = ParseUser.getCurrentUser();
-        ArrayList<Event> invitedList = (ArrayList<Event>) me.get("invited");
+        ArrayList<String> invitedList = (ArrayList<String>) me.get("invited");
 
-        InviteAdapter mAdapter = new InviteAdapter(this, R.layout.pending_list_item, invitedList);
+        ParseQuery query = ParseQuery.getQuery("Event");
+        query.whereContainedIn("objectId", invitedList);
+        ArrayList<Event> invitedEvents = new ArrayList<Event>();
+        try{
+            invitedEvents = (ArrayList<Event>) query.find();
+        }
+        catch (ParseException e){
+
+        }
+
+
+        InviteAdapter mAdapter = new InviteAdapter(this, R.layout.pending_list_item, invitedEvents);
 
         mList = (ListView)findViewById(R.id.list);
         mList.setAdapter(mAdapter);
@@ -64,13 +76,23 @@ public class InviteActivity extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Event event = (Event) parent.getAdapter().getItem(position);
             ParseUser me = ParseUser.getCurrentUser();
-            ArrayList<Event> invited = (ArrayList<Event>) me.get("invited");
-            ArrayList<Event> accepted = (ArrayList<Event>) me.get("accepted");
-            invited.remove(event);
-            accepted.add(event);
+            ArrayList<String> invited = (ArrayList<String>) me.get("invited");
+            ArrayList<String> accepted = (ArrayList<String>) me.get("accepted");
+            invited.remove(event.getObjectId());
+            accepted.add(event.getObjectId());
             me.put("invited", invited);
             me.put("accepted", accepted);
+            me.saveInBackground();
             String hostId = event.getString("host");
+
+            ParseQuery query = ParseQuery.getQuery("Event");
+            query.whereContainedIn("objectId", invited);
+            ArrayList<Event> invitedEvents = new ArrayList<Event>();
+            try{
+                invitedEvents = (ArrayList<Event>) query.find();
+            }
+            catch (ParseException e){
+            }
 
             // create installation query
             ParseQuery installationQuery = ParseInstallation.getQuery();
@@ -82,7 +104,7 @@ public class InviteActivity extends Activity {
             push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
             push.sendInBackground();
 
-            mAdapter = new InviteAdapter(getParent(), R.layout.pending_list_item, invited);
+            mAdapter = new InviteAdapter(getParent(), R.layout.pending_list_item, invitedEvents);
             mList.setAdapter(mAdapter);
         }
     }
@@ -96,6 +118,7 @@ public class InviteActivity extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             Event event = getItem(position);
+
             TextView text = (TextView) convertView.findViewById(R.id.eventTitle);
             text.setText(event.getTitle());
 

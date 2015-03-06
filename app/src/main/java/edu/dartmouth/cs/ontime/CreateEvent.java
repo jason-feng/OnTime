@@ -21,6 +21,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -113,17 +114,31 @@ public class CreateEvent extends ListActivity {
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
             event.put("accepted", accepted);
             event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
-            event.saveInBackground();
+            String eId = "";
+            event.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        String eventId = event.getObjectId();
 
-            for (ParseUser user : userList) {
-                ArrayList<Event> inviteList = (ArrayList<Event>) user.get("invited");
-                inviteList.add(event);
-                user.put("invited", inviteList);
-            }
-            ParseUser me = ParseUser.getCurrentUser();
-            ArrayList<Event> updatedEvents = (ArrayList<Event>) me.get("accepted");
-            updatedEvents.add(event);
-            me.put("accepted", updatedEvents);
+                        for (ParseUser user : userList) {
+                            ArrayList<String> inviteList = (ArrayList<String>) user.get("invited");
+                            inviteList.add(eventId);
+                            user.put("invited", inviteList);
+                            user.saveInBackground();
+                        }
+                        ParseUser me = ParseUser.getCurrentUser();
+                        ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
+                        updatedEvents.add(eventId);
+                        me.put("accepted", updatedEvents);
+                        me.saveInBackground();
+                    }
+                    else{
+                        Log.d(TAG, "failed to save!");
+                    }
+
+                }
+            });
 
             // create installation query
             ParseQuery installationQuery = ParseInstallation.getQuery();

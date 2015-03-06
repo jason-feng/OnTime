@@ -18,6 +18,7 @@ import android.widget.ListView;
 
 import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -127,9 +128,7 @@ public class MainActivity extends Activity {
         todayArray.clear();
         tomorrowArray.clear();
         thisWeekArray.clear();
-        for (int i = 0; i < upcomingEvents.size(); i++) {
-
-            ParseObject event = upcomingEvents.get(i);
+        for (Event event : upcomingEvents) {
 
             Calendar date = new GregorianCalendar();
             date.setTime(event.getDate("date"));
@@ -216,17 +215,22 @@ public class MainActivity extends Activity {
             }
         });
 
-
-
-
     }
-
-
 
     public void query() {
         Log.d(TAG, "query()");
         ParseUser me = ParseUser.getCurrentUser();
-        upcomingEvents = (ArrayList<Event>) me.get("accepted");
+        ArrayList<String> upcomingString = (ArrayList<String>) me.get("accepted");
+
+        ParseQuery query = ParseQuery.getQuery("event");
+        query.whereContainedIn("objectId", upcomingString);
+        try{
+            upcomingEvents = (ArrayList<Event>) query.find();
+        }
+        catch (ParseException e){
+        }
+
+        loadEvents();
     }
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
