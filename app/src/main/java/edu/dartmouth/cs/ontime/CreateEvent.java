@@ -20,6 +20,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CreateEvent extends ListActivity {
@@ -36,6 +37,7 @@ public class CreateEvent extends ListActivity {
     private Event event;
     private Context context;
     private Location mLocation;
+    private ArrayList<ParseUser> userList;
 
     public Event getEvent() { return event; }
 
@@ -63,7 +65,9 @@ public class CreateEvent extends ListActivity {
                     ParseQuery query = ParseUser.getQuery();
                     query.whereContains("fbId", id);
                     try{
-                        installationIDs.add(query.getFirst().getString("installation_id"));
+                        ParseUser user = (ParseUser) query.getFirst();
+                        userList.add(user);
+                        installationIDs.add(user.getString("installation_id"));
                     }
                     catch (ParseException e){
 
@@ -93,6 +97,9 @@ public class CreateEvent extends ListActivity {
         context = this;
         intCal = new int[6];
         list = (ListView)this.findViewById(android.R.id.list);
+
+        userList = new ArrayList<ParseUser>();
+
         event = new Event();
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, FACULTY);
@@ -105,6 +112,17 @@ public class CreateEvent extends ListActivity {
         event.put("accepted", accepted);
         event.put("host", ParseUser.getCurrentUser().getString("fbId"));
         event.saveInBackground();
+
+        for (ParseUser user : userList){
+            ArrayList<Event> updatedEvents = (ArrayList<Event>) user.get("eventList");
+            updatedEvents.add(event);
+            user.put("eventList", updatedEvents);
+        }
+        ParseUser me = ParseUser.getCurrentUser();
+        ArrayList<Event> updatedEvents = (ArrayList<Event>) me.get("eventList");
+        updatedEvents.add(event);
+        me.put("eventList", updatedEvents);
+
         finish();
     }
 

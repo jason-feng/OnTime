@@ -17,8 +17,10 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class MainActivity extends Activity {
 
     public static final String TAG = "MainActivity";
 
-    private List<com.parse.ParseObject> upcomingEvents;
+    private ArrayList<Event> upcomingEvents;
     private ListView mListToday,mListTomorrow,mListThisweek;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
@@ -57,7 +59,7 @@ public class MainActivity extends Activity {
         //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
-        upcomingEvents = new ArrayList<ParseObject>();
+        upcomingEvents = new ArrayList<Event>();
         mContext = this;
 
         settingsButton = (ImageButton)findViewById(R.id.settingsButton);
@@ -223,25 +225,8 @@ public class MainActivity extends Activity {
 
     public void query() {
         Log.d(TAG, "query()");
-        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery("event");
-        query.findInBackground(new FindCallback<com.parse.ParseObject>() {
-            @Override
-            public void done(List<com.parse.ParseObject> objects, com.parse.ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "ParseQuery");
-                    upcomingEvents = new ArrayList<ParseObject>();
-                    for (ParseObject event : objects) {
-                        //event.get("invitees");
-                        Log.d(TAG, "Title : " + event.get("title"));
-                        Log.d(TAG, "Date : " + event.get("date"));
-                        upcomingEvents.add(event);
-                    }
-                    loadEvents();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+        ParseUser me = ParseUser.getCurrentUser();
+        upcomingEvents = (ArrayList<Event>) me.get("accepted");
     }
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
