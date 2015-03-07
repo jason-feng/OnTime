@@ -165,6 +165,8 @@ public class CreateEvent extends ListActivity {
             push.setMessage(ParseUser.getCurrentUser().get("name") + " invited you to " + event.getTitle());
             push.sendInBackground();
 
+            ((CreateFinished) getParent()).createEventDone();
+
             finish();
         }
 
@@ -243,6 +245,10 @@ public class CreateEvent extends ListActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public interface CreateFinished{
+        public void createEventDone();
     }
 }
 

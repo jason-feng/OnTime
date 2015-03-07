@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements CreateEvent.CreateFinished{
 
     public static final String TAG = "MainActivity";
 
@@ -57,7 +57,6 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.hide();
-        //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
         upcomingEvents = new ArrayList<Event>();
@@ -120,15 +119,7 @@ public class MainActivity extends Activity {
         query();
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        query();
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    public void createEventDone(){
         query();
     }
 
@@ -188,11 +179,10 @@ public class MainActivity extends Activity {
         //when user selects event, fire EventDisplayActivity
         mListToday.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
@@ -201,11 +191,10 @@ public class MainActivity extends Activity {
         });
         mListTomorrow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
@@ -214,11 +203,10 @@ public class MainActivity extends Activity {
         });
         mListThisweek.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
