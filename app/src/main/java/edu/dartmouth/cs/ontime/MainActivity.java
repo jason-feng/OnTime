@@ -185,7 +185,6 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListTomorrow);
         ListUtils.setDynamicHeight(mListThisweek);
 
-
         //when user selects event, fire EventDisplayActivity
         mListToday.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

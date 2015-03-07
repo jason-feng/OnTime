@@ -48,7 +48,7 @@ public class InviteActivity extends Activity {
         ParseUser me = ParseUser.getCurrentUser();
         ArrayList<String> invitedList = (ArrayList<String>) me.get("invited");
 
-        ParseQuery query = ParseQuery.getQuery("Event");
+        ParseQuery query = ParseQuery.getQuery("event");
         query.whereContainedIn("objectId", invitedList);
         ArrayList<Event> invitedEvents = new ArrayList<Event>();
         try{
@@ -59,7 +59,7 @@ public class InviteActivity extends Activity {
         }
 
 
-        InviteAdapter mAdapter = new InviteAdapter(this, R.layout.pending_list_item, invitedEvents);
+        InviteAdapter mAdapter = new InviteAdapter(this, android.R.layout.simple_list_item_1, invitedEvents);
 
         mList = (ListView)findViewById(R.id.list);
         mList.setAdapter(mAdapter);
@@ -104,7 +104,7 @@ public class InviteActivity extends Activity {
             push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
             push.sendInBackground();
 
-            mAdapter = new InviteAdapter(getParent(), R.layout.pending_list_item, invitedEvents);
+            mAdapter = new InviteAdapter(getParent(), android.R.layout.simple_list_item_1, invitedEvents);
             mList.setAdapter(mAdapter);
         }
     }
@@ -117,9 +117,13 @@ public class InviteActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
             Event event = getItem(position);
 
-            TextView text = (TextView) convertView.findViewById(R.id.eventTitle);
+            TextView text = (TextView) convertView.findViewById(android.R.id.text1);
             text.setText(event.getTitle());
 
             return convertView;
