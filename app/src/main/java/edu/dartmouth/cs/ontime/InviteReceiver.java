@@ -17,14 +17,9 @@ import org.json.JSONObject;
  * Created by Nick on 3/7/15.
  */
 public class InviteReceiver extends ParsePushBroadcastReceiver{
-    @Override
-    public void onPushOpen(Context context, Intent intent) {
-        Intent i = new Intent(context, InviteActivity.class);
-        context.startActivity(i);
-    }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onPushReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
         String message = extras != null ? extras.getString("com.parse.Data") : "";
         JSONObject jObject;
