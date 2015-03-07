@@ -25,6 +25,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +82,6 @@ public class CreateEvent extends ListActivity {
                     catch (ParseException e){
 
                     }
-                    event.setInviteList(installationIDs);
                 }
             }
         }
@@ -125,7 +127,7 @@ public class CreateEvent extends ListActivity {
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
             event.put("accepted", accepted);
             event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
-            String eId = "";
+
             event.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -139,24 +141,15 @@ public class CreateEvent extends ListActivity {
                         ParseCloud.callFunctionInBackground("InviteListSaver", params, new FunctionCallback<Object>() {
                             @Override
                             public void done(Object o, ParseException e) {
-                                // do something
                             }
                         });
 
-                        /*for (ParseUser user : userList) {
-                        ArrayList<String> inviteList = (ArrayList<String>) user.get("invited");
-                        inviteList.add(eventId);
-                        user.put("invited", inviteList);
-                        user.saveInBackground();
-
-                        }*/
                         ParseUser me = ParseUser.getCurrentUser();
                         ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
                         updatedEvents.add(eventId);
                         me.put("accepted", updatedEvents);
                         me.saveInBackground();
-                    }
-                    else{
+                    } else {
                         Log.d(TAG, "failed to save!");
                     }
 
@@ -170,7 +163,15 @@ public class CreateEvent extends ListActivity {
             // Send push notification to query
             ParsePush push = new ParsePush();
             push.setQuery(installationQuery); // Set our Installation query
-            push.setMessage(ParseUser.getCurrentUser().get("name") + " invited you to " + event.getTitle());
+            JSONObject jsonObj = new JSONObject();
+            try{
+                jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
+                jsonObj.put("title", event.getTitle());
+                jsonObj.put("objectId", event.getObjectId());
+            }
+            catch (JSONException j){
+            }
+            push.setData(jsonObj);
             push.sendInBackground();
 
             ((CreateFinished) App.getContext()).createEventDone();

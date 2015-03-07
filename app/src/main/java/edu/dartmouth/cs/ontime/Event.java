@@ -57,8 +57,12 @@ public class Event extends ParseObject {
         put("location", location);
     }
 
-    public void setInviteList(ArrayList<String> invitees){
-        put("invited", invitees);
+    public ArrayList<String> getAcceptedList(){
+        return (ArrayList<String>) get("accepted");
+    }
+
+    public void setAcceptedList(ArrayList<String> invitees){
+        put("accepted", invitees);
     }
 
     public static List<ParseObject> query() {
