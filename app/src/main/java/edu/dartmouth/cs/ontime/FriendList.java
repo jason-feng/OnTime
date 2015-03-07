@@ -138,9 +138,11 @@ public class FriendList extends Activity {
                             }
                         }
                         else{
-                            Toast.makeText(getApplicationContext(),
-                                    "Could not get friends!",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Trying to get friends!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.putExtra("retry", true);
+                            setResult(14, intent);
+                            finish();
                         }
                     }
                 }).executeAsync();

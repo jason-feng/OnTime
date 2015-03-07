@@ -83,6 +83,14 @@ public class CreateEvent extends ListActivity {
                 }
             }
         }
+        else if (resultCode == 14){
+            if (requestCode == INVITE_REQUEST) {
+                if (data.getBooleanExtra("retry", false)) {
+                    Intent intent = new Intent(this, FriendList.class);
+                    startActivityForResult(intent, INVITE_REQUEST);
+                }
+            }
+        }
     }
 
     @Override
