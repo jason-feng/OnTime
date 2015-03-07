@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -38,6 +39,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public static final String DATE = "date";
     public static final String TITLE = "title";
     public static final String LOCATION = "location";
+    public static final String ATTENDEES = "attendees";
     public String eventId;
     public Date date;
     public String title;
@@ -46,8 +48,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private TextView eventDisplayTextView, eventDisplayDate;
     private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
-    public ArrayList<Friend> invitees;
-    private LatLng location;
+    public ArrayList<String> attendees;
+    private Location finalLocation;
+    private LatLng latLngLocation;
 
 
     @Override
@@ -65,7 +68,11 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
-            //title = getIntent().getStringExtra(TITLE);
+            title = getIntent().getStringExtra(TITLE);
+            attendees = getIntent().getStringArrayListExtra(ATTENDEES);
+
+            finalLocation = getIntent().getParcelableExtra(LOCATION);
+            //geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
 //            if (eventId != "") {
 //
@@ -78,68 +85,42 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 //            }
         }
 
-        //get all text fields from query
-
+        //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
-        //TODO: to be used once actually getting event
-        //eventDisplayTextView.setText(title + "at");
-       // eventDisplayTextView.setText(title + "at" + eventLocationName);
+        eventDisplayTextView.setText("    " + title);
 
-        //eventDisplayTextView.setText("    DINNER at Pine");
+        //get event date and time
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
         eventDisplayDate.setTextColor(Color.BLACK);
         //TODO: when actually getting the event, set text to datetime
         eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
-        //TODO: when actually getting the event, create new LatLng with event location
-        //for now this is hard coded
-        location = new LatLng(43.704441, -72.288693);
+        //get event location
+        double latitude = finalLocation.getLatitude();
+        double longitude = finalLocation.getLongitude();
+        latLngLocation = new LatLng(latitude, longitude);
 
-        //TODO: when actually getting the event, set arraylist of friends from query
-        invitees = new ArrayList<Friend>();
-        Friend friend1 = new Friend("Emily", "12", null);
-        invitees.add(friend1);
-        Friend friend2 = new Friend("Jason", "28", null);
-        invitees.add(friend2);
-        Friend friend3 = new Friend("Dani", "35", null);
-        invitees.add(friend3);
-        Friend friend4 = new Friend("Nick", "54", null);
-        invitees.add(friend4);
-        Friend friend5 = new Friend("test", "100", null);
-        invitees.add(friend5);
-        Friend friend6 = new Friend("test", "34", null);
-        invitees.add(friend6);
-        Friend friend7 = new Friend("test", "12", null);
-        invitees.add(friend7);
-        Friend friend8 = new Friend("plswork", "1", null);
-        invitees.add(friend8);
-
-
-        //Context myContext =
-//        this.getSupportFragmentManager();
-//        MapFragment mapFragment = (MapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
         GoogleMap mmap = supportMapFragment.getMap();
 
         mmap.addMarker(new MarkerOptions()
-                .position(location)
+                .position(latLngLocation)
                 .title("Marker"));
 
-        mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(location,
+        mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngLocation,
                 17));
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
 
         //dynamically add friends
-        for (int i = 0; i < invitees.size(); i++) {
+        for (int i = 0; i < attendees.size(); i++) {
             TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
-            //TODO: set text here to name of person
-            newView.setText(invitees.get(i).getName());
+            //TODO: get actual person not whatever this rando string is
+            newView.setText(attendees.get(i));
             newView.setTextSize(15);
             newView.setTextAppearance(this, R.style.boldText);
             progressBarLinearLayout.addView(newView);
@@ -150,7 +131,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             //TODO: set to android.widget.ProgressBar.Horizontal somehow!!
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
-            newBar.setProgress(Integer.parseInt(invitees.get(i).getId()));
+            //newBar.setProgress(Integer.parseInt(attendees.get(i).getId()));
             newBar.setMinimumWidth(40);
             //newBar.setBackgroundColor(Color.WHITE);
             newBar.setMinimumHeight(50);
