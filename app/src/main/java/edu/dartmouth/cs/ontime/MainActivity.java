@@ -102,7 +102,7 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             }
         });
 
-
+        App.setContext(this);
 
         Log.d(TAG, "createEvent init");
 

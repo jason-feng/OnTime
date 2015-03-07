@@ -165,7 +165,7 @@ public class CreateEvent extends ListActivity {
             push.setMessage(ParseUser.getCurrentUser().get("name") + " invited you to " + event.getTitle());
             push.sendInBackground();
 
-            ((CreateFinished) getParent()).createEventDone();
+            ((CreateFinished) App.getContext()).createEventDone();
 
             finish();
         }
