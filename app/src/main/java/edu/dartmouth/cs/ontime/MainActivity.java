@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.Parse;
@@ -39,9 +41,9 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
     private Button testEventDisplayButton;
-    private ArrayList<String> todayArray = new ArrayList<>();
-    private ArrayList<String> tomorrowArray = new ArrayList<>();
-    private ArrayList<String> thisWeekArray = new ArrayList<>();
+    private ArrayList<Event> todayArray = new ArrayList<>();
+    private ArrayList<Event> tomorrowArray = new ArrayList<>();
+    private ArrayList<Event> thisWeekArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,15 +146,15 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             else {
                 if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
                     Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
-                    todayArray.add(event.getString("title"));
+                    todayArray.add(event);
                 }
                 else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
                     Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
-                    tomorrowArray.add(event.getString("title"));
+                    tomorrowArray.add(event);
                 }
                 //this line will return -1 if today.getTime is before the last day of the week
                 else if ((today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) && (today.get(Calendar.DATE) < date.get(Calendar.DATE))) {
-                    thisWeekArray.add(event.getString("title"));
+                    thisWeekArray.add(event);
                 }
                 else {
                     //else, add to "upcoming events" field at bottom
@@ -168,9 +170,9 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         mListThisweek = (ListView)findViewById(R.id.listTw);
         mListThisweek.setBackgroundColor(Color.WHITE);
 
-        mListToday.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todayArray));
-        mListTomorrow.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tomorrowArray));
-        mListThisweek.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, thisWeekArray));
+        mListToday.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, todayArray));
+        mListTomorrow.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, tomorrowArray));
+        mListThisweek.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, thisWeekArray));
 
         ListUtils.setDynamicHeight(mListToday);
         ListUtils.setDynamicHeight(mListTomorrow);
@@ -213,7 +215,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
                 startActivity(intent);
             }
         });
-
     }
 
     public void query() {
@@ -305,6 +306,27 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
                 mListView.setLayoutParams(params);
                 mListView.requestLayout();
             }
+        }
+    }
+
+    private class EventAdapter extends ArrayAdapter<Event>{
+        private EventAdapter(Context context, int resource, ArrayList<Event> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
+            Event event = getItem(position);
+
+            TextView text = (TextView) convertView.findViewById(android.R.id.text1);
+            text.setText(event.getTitle());
+
+            return convertView;
         }
     }
 }
