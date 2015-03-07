@@ -5,6 +5,7 @@ package edu.dartmouth.cs.ontime;
  */
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import com.parse.Parse;
@@ -17,6 +18,16 @@ import com.parse.SaveCallback;
 public class App extends Application {
 
     private String mSearchText;
+
+    private static Context mContext;
+
+    public static Context getContext() {
+        return mContext;
+    }
+
+    public static void setContext(Context context) {
+        mContext = context;
+    }
 
     public String getSearchText() {
         return mSearchText;

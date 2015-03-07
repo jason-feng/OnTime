@@ -17,8 +17,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,11 +30,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements CreateEvent.CreateFinished{
 
     public static final String TAG = "MainActivity";
 
-    private List<com.parse.ParseObject> upcomingEvents;
+    private ArrayList<Event> upcomingEvents;
     private ListView mListToday,mListTomorrow,mListThisweek;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
@@ -54,10 +57,9 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.hide();
-        //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
-        upcomingEvents = new ArrayList<ParseObject>();
+        upcomingEvents = new ArrayList<Event>();
         mContext = this;
 
         settingsButton = (ImageButton)findViewById(R.id.settingsButton);
@@ -100,7 +102,7 @@ public class MainActivity extends Activity {
             }
         });
 
-
+        App.setContext(this);
 
         Log.d(TAG, "createEvent init");
 
@@ -117,6 +119,10 @@ public class MainActivity extends Activity {
         query();
     }
 
+    public void createEventDone(){
+        query();
+    }
+
     public void loadEvents() {
         Log.d(TAG, "loadEvents");
         Log.d(TAG, "list size: " + upcomingEvents.size());
@@ -125,9 +131,7 @@ public class MainActivity extends Activity {
         todayArray.clear();
         tomorrowArray.clear();
         thisWeekArray.clear();
-        for (int i = 0; i < upcomingEvents.size(); i++) {
-
-            ParseObject event = upcomingEvents.get(i);
+        for (Event event : upcomingEvents) {
 
             Calendar date = new GregorianCalendar();
             date.setTime(event.getDate("date"));
@@ -172,15 +176,13 @@ public class MainActivity extends Activity {
         ListUtils.setDynamicHeight(mListTomorrow);
         ListUtils.setDynamicHeight(mListThisweek);
 
-
         //when user selects event, fire EventDisplayActivity
         mListToday.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
@@ -189,11 +191,10 @@ public class MainActivity extends Activity {
         });
         mListTomorrow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
@@ -202,11 +203,10 @@ public class MainActivity extends Activity {
         });
         mListThisweek.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
@@ -214,34 +214,22 @@ public class MainActivity extends Activity {
             }
         });
 
-
-
-
     }
-
-
 
     public void query() {
         Log.d(TAG, "query()");
-        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery("event");
-        query.findInBackground(new FindCallback<com.parse.ParseObject>() {
-            @Override
-            public void done(List<com.parse.ParseObject> objects, com.parse.ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "ParseQuery");
-                    upcomingEvents = new ArrayList<ParseObject>();
-                    for (ParseObject event : objects) {
-                        //event.get("invitees");
-                        Log.d(TAG, "Title : " + event.get("title"));
-                        Log.d(TAG, "Date : " + event.get("date"));
-                        upcomingEvents.add(event);
-                    }
-                    loadEvents();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+        ParseUser me = ParseUser.getCurrentUser();
+        ArrayList<String> upcomingString = (ArrayList<String>) me.get("accepted");
+
+        ParseQuery query = ParseQuery.getQuery("event");
+        query.whereContainedIn("objectId", upcomingString);
+        try{
+            upcomingEvents = (ArrayList<Event>) query.find();
+        }
+        catch (ParseException e){
+        }
+
+        loadEvents();
     }
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){

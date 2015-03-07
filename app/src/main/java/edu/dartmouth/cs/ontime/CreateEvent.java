@@ -12,15 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.parse.FunctionCallback;
 import com.parse.Parse;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CreateEvent extends ListActivity {
 
@@ -36,6 +43,8 @@ public class CreateEvent extends ListActivity {
     private Event event;
     private Context context;
     private Location mLocation;
+    private ArrayList<String> userList;
+    private ArrayList<String> installationIDs;
 
     public Event getEvent() { return event; }
 
@@ -58,17 +67,27 @@ public class CreateEvent extends ListActivity {
 
             else if (requestCode == INVITE_REQUEST){
                 ArrayList<String> selectedIDs = data.getStringArrayListExtra("selected_friends");
-                ArrayList<String> installationIDs = new ArrayList<String>();
+                installationIDs = new ArrayList<String>();
                 for (String id : selectedIDs){
                     ParseQuery query = ParseUser.getQuery();
                     query.whereContains("fbId", id);
                     try{
-                        installationIDs.add(query.getFirst().getString("installation_id"));
+                        ParseUser user = (ParseUser) query.getFirst();
+                        userList.add(user.getObjectId());
+                        installationIDs.add(user.getString("installation_id"));
                     }
                     catch (ParseException e){
 
                     }
-
+                    event.setInviteList(installationIDs);
+                }
+            }
+        }
+        else if (resultCode == 14){
+            if (requestCode == INVITE_REQUEST) {
+                if (data.getBooleanExtra("retry", false)) {
+                    Intent intent = new Intent(this, FriendList.class);
+                    startActivityForResult(intent, INVITE_REQUEST);
                 }
             }
         }
@@ -91,6 +110,9 @@ public class CreateEvent extends ListActivity {
         context = this;
         intCal = new int[6];
         list = (ListView)this.findViewById(android.R.id.list);
+
+        userList = new ArrayList<String>();
+
         event = new Event();
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, FACULTY);
@@ -98,12 +120,93 @@ public class CreateEvent extends ListActivity {
     }
 
     public void onSaveClicked(View v) {
-        ArrayList<String> accepted =  new ArrayList<String>();
-        accepted.add(ParseUser.getCurrentUser().getString("fbId"));
-        event.put("accepted", accepted);
-        event.put("host", ParseUser.getCurrentUser().getString("fbId"));
-        event.saveInBackground();
-        finish();
+        if (installationIDs.size() != 0 && event.getTitle() != null && event.getTime() != null && event.getDate() != null) {
+            ArrayList<String> accepted = new ArrayList<String>();
+            accepted.add(ParseUser.getCurrentUser().getString("fbId"));
+            event.put("accepted", accepted);
+            event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
+            String eId = "";
+            event.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        String eventId = event.getObjectId();
+
+                        HashMap<String, ArrayList<String>> params = new HashMap<>();
+                        userList.add(eventId);
+                        params.put("users", userList);
+
+                        ParseCloud.callFunctionInBackground("InviteListSaver", params, new FunctionCallback<Object>() {
+                            @Override
+                            public void done(Object o, ParseException e) {
+                                // do something
+                            }
+                        });
+
+                        /*for (ParseUser user : userList) {
+                        ArrayList<String> inviteList = (ArrayList<String>) user.get("invited");
+                        inviteList.add(eventId);
+                        user.put("invited", inviteList);
+                        user.saveInBackground();
+
+                        }*/
+                        ParseUser me = ParseUser.getCurrentUser();
+                        ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
+                        updatedEvents.add(eventId);
+                        me.put("accepted", updatedEvents);
+                        me.saveInBackground();
+                    }
+                    else{
+                        Log.d(TAG, "failed to save!");
+                    }
+
+                }
+            });
+
+            // create installation query
+            ParseQuery installationQuery = ParseInstallation.getQuery();
+            installationQuery.whereContainedIn("installationId", installationIDs);
+
+            // Send push notification to query
+            ParsePush push = new ParsePush();
+            push.setQuery(installationQuery); // Set our Installation query
+            push.setMessage(ParseUser.getCurrentUser().get("name") + " invited you to " + event.getTitle());
+            push.sendInBackground();
+
+            ((CreateFinished) App.getContext()).createEventDone();
+
+            finish();
+        }
+
+        else if (installationIDs.size() == 0 ){
+            Toast.makeText(getApplicationContext(),
+                    "Please select friends to invite",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        else if (event.getTitle() == null){
+            Toast.makeText(getApplicationContext(),
+                    "Please set a title for your event",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        else if (event.getDate() == null){
+            Toast.makeText(getApplicationContext(),
+                    "Please set a date for your event",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        else if (event.getTime() == null){
+            Toast.makeText(getApplicationContext(),
+                    "Please set a time for your event",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+/*        else if (event.getLocation() == null){
+            Toast.makeText(getApplicationContext(),
+                    "Please set a location for your event",
+                    Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     public void onCancelClicked(View v) {
@@ -150,6 +253,10 @@ public class CreateEvent extends ListActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public interface CreateFinished{
+        public void createEventDone();
     }
 }
 
