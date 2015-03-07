@@ -25,11 +25,13 @@ public class InviteActivity extends Activity {
 
     public ListView mList;
     public InviteAdapter mAdapter;
+    public Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);
+        mContext = this;
 
         getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
 
@@ -54,7 +56,7 @@ public class InviteActivity extends Activity {
 
         }
 
-        InviteAdapter mAdapter = new InviteAdapter(this, android.R.layout.simple_list_item_1, invitedEvents);
+        InviteAdapter mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, invitedEvents);
 
         mList = (ListView)findViewById(R.id.list);
         mList.setAdapter(mAdapter);
@@ -71,97 +73,93 @@ public class InviteActivity extends Activity {
             boolean accepted = received.getBooleanExtra("accept", false);
             boolean declined = received.getBooleanExtra("decline", false);
             String eventId = received.getStringExtra("eventId");
-            ParseQuery eventQuery = ParseQuery.getQuery("event");
-            eventQuery.whereContains("objectId", eventId);
-            Event event = null;
-            try {
-                event = (Event) eventQuery.getFirst();
-            }
-            catch (ParseException e){
+            if (eventId != null) {
+                ParseQuery eventQuery = ParseQuery.getQuery("event");
+                eventQuery.whereContains("objectId", eventId);
+                Event event = null;
+                try {
+                    event = (Event) eventQuery.getFirst();
+                } catch (ParseException e) {
 
-            }
-            if (event != null) {
-
-                if (declined) {
-
-                    ArrayList<String> invited = (ArrayList<String>) me.get("invited");
-                    invited.remove(event.getObjectId());
-                    me.put("invited", invited);
-                    me.saveInBackground();
-                    String hostId = event.getString("host");
-
-                    // get actual event objects from ids
-                    ParseQuery declineQuery = ParseQuery.getQuery("event");
-                    query.whereContainedIn("objectId", invited);
-                    ArrayList<Event> declineEvents = new ArrayList<Event>();
-                    try{
-                        declineEvents = (ArrayList<Event>) query.find();
-                    }
-                    catch (ParseException e){
-
-                    }
-
-                    // create installation query
-                    ParseQuery installationQuery = ParseInstallation.getQuery();
-                    installationQuery.whereContains("installationId", hostId);
-
-                    // Send push notification to query
-                    ParsePush push = new ParsePush();
-                    push.setQuery(installationQuery); // Set our Installation query
-                    push.setMessage(ParseUser.getCurrentUser().get("name") + " declined the event: " + event.getTitle());
-                    push.sendInBackground();
-
-                    mAdapter = new InviteAdapter(getParent(), android.R.layout.simple_list_item_1, declineEvents);
-                    mList.setAdapter(mAdapter);
                 }
+                if (event != null) {
 
-                else if (accepted) {
+                    if (declined) {
 
-                    ArrayList<String> i = (ArrayList<String>) me.get("invited");
-                    ArrayList<String> a = (ArrayList<String>) me.get("accepted");
-                    i.remove(event.getObjectId());
-                    a.add(event.getObjectId());
-                    me.put("invited", i);
-                    me.put("accepted", a);
-                    me.saveInBackground();
-                    String hostId = event.getString("host");
+                        ArrayList<String> invited = (ArrayList<String>) me.get("invited");
+                        invited.remove(event.getObjectId());
+                        me.put("invited", invited);
+                        me.saveInBackground();
+                        String hostId = event.getString("host");
 
-                    ParseQuery acceptQuery = ParseQuery.getQuery("event");
-                    acceptQuery.whereContains("objectId", eventId);
+                        // get actual event objects from ids
+                        ParseQuery declineQuery = ParseQuery.getQuery("event");
+                        query.whereContainedIn("objectId", invited);
+                        ArrayList<Event> declineEvents = new ArrayList<Event>();
+                        try {
+                            declineEvents = (ArrayList<Event>) query.find();
+                        } catch (ParseException e) {
 
-                    try {
-                        Event acceptEvent = (Event) query.getFirst();
-                        ArrayList<String> acceptInvitees = acceptEvent.getAcceptedList();
-                        acceptInvitees.add(ParseUser.getCurrentUser().getObjectId());
-                        acceptEvent.setAcceptedList(acceptInvitees);
-                        acceptEvent.saveInBackground();
+                        }
+
+                        // create installation query
+                        ParseQuery installationQuery = ParseInstallation.getQuery();
+                        installationQuery.whereContains("installationId", hostId);
+
+                        // Send push notification to query
+                        ParsePush push = new ParsePush();
+                        push.setQuery(installationQuery); // Set our Installation query
+                        push.setMessage(ParseUser.getCurrentUser().get("name") + " declined the event: " + event.getTitle());
+                        push.sendInBackground();
+
+                        mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, declineEvents);
+                        mList.setAdapter(mAdapter);
+                    } else if (accepted) {
+
+                        ArrayList<String> i = (ArrayList<String>) me.get("invited");
+                        ArrayList<String> a = (ArrayList<String>) me.get("accepted");
+                        i.remove(event.getObjectId());
+                        a.add(event.getObjectId());
+                        me.put("invited", i);
+                        me.put("accepted", a);
+                        me.saveInBackground();
+                        String hostId = event.getString("host");
+
+                        ParseQuery acceptQuery = ParseQuery.getQuery("event");
+                        acceptQuery.whereContains("objectId", eventId);
+
+                        try {
+                            Event acceptEvent = (Event) query.getFirst();
+                            ArrayList<String> acceptInvitees = acceptEvent.getAcceptedList();
+                            acceptInvitees.add(ParseUser.getCurrentUser().getObjectId());
+                            acceptEvent.setAcceptedList(acceptInvitees);
+                            acceptEvent.saveInBackground();
+                        } catch (ParseException e) {
+                        }
+
+                        // get actual event objects from ids
+                        ParseQuery acceptEventQuery = ParseQuery.getQuery("event");
+                        query.whereContainedIn("objectId", i);
+                        ArrayList<Event> acceptedEvents = new ArrayList<Event>();
+                        try {
+                            acceptedEvents = (ArrayList<Event>) query.find();
+                        } catch (ParseException e) {
+
+                        }
+
+                        // create installation query
+                        ParseQuery installationQuery = ParseInstallation.getQuery();
+                        installationQuery.whereContains("installationId", hostId);
+
+                        // Send push notification to query
+                        ParsePush push = new ParsePush();
+                        push.setQuery(installationQuery); // Set our Installation query
+                        push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
+                        push.sendInBackground();
+
+                        mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, acceptedEvents);
+                        mList.setAdapter(mAdapter);
                     }
-                    catch (ParseException e) {
-                    }
-
-                    // get actual event objects from ids
-                    ParseQuery acceptEventQuery = ParseQuery.getQuery("event");
-                    query.whereContainedIn("objectId", i);
-                    ArrayList<Event> acceptedEvents = new ArrayList<Event>();
-                    try{
-                        acceptedEvents = (ArrayList<Event>) query.find();
-                    }
-                    catch (ParseException e){
-
-                    }
-
-                    // create installation query
-                    ParseQuery installationQuery = ParseInstallation.getQuery();
-                    installationQuery.whereContains("installationId", hostId);
-
-                    // Send push notification to query
-                    ParsePush push = new ParsePush();
-                    push.setQuery(installationQuery); // Set our Installation query
-                    push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
-                    push.sendInBackground();
-
-                    mAdapter = new InviteAdapter(getParent(), android.R.layout.simple_list_item_1, acceptedEvents);
-                    mList.setAdapter(mAdapter);
                 }
             }
         }
@@ -206,7 +204,7 @@ public class InviteActivity extends Activity {
             push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
             push.sendInBackground();
 
-            mAdapter = new InviteAdapter(getParent(), android.R.layout.simple_list_item_1, invitedEvents);
+            mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, invitedEvents);
             mList.setAdapter(mAdapter);
         }
     }

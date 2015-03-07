@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.parse.ParsePushBroadcastReceiver;
 
@@ -39,6 +40,8 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
         catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Log.d("NOTIFICATION", name + title + eventId);
 
         Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
 
