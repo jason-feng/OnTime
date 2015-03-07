@@ -120,6 +120,18 @@ public class MainActivity extends Activity {
         query();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        query();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        query();
+    }
+
     public void loadEvents() {
         Log.d(TAG, "loadEvents");
         Log.d(TAG, "list size: " + upcomingEvents.size());
