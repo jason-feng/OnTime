@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +19,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -185,9 +188,23 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
                                     int position, long id) {
                 // Get the event, positioned to the corresponding row in the result set
                 Event event = (Event) parent.getAdapter().getItem(position);
+                String title = event.getTitle();
+                Log.d("title", title);
+                ArrayList<String> attendees = event.getAcceptedList();
+                for (int i = 0; i < attendees.size(); i ++) {
+                    Log.d("attendees", attendees.get(i).toString());
+                }
+                ParseGeoPoint location = event.getLocation();
+                Location sendLoc = new Location("any string");
+                sendLoc.setLatitude(location.getLatitude());
+                sendLoc.setLongitude(location.getLongitude());
 
+                //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                intent.putExtra(EventDisplayActivity.TITLE, title);
+                intent.putExtra(EventDisplayActivity.ATTENDEES, attendees);
+                intent.putExtra(EventDisplayActivity.LOCATION, sendLoc);
+
                 startActivity(intent);
             }
         });
@@ -197,9 +214,23 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
                                     int position, long id) {
                 // Get the event, positioned to the corresponding row in the result set
                 Event event = (Event) parent.getAdapter().getItem(position);
+                String title = event.getTitle();
+                Log.d("title", title);
+                ArrayList<String> attendees = event.getAcceptedList();
+                for (int i = 0; i < attendees.size(); i ++) {
+                    Log.d("attendees", attendees.get(i).toString());
+                }
+                ParseGeoPoint location = event.getLocation();
+                Location sendLoc = new Location("any string");
+                sendLoc.setLatitude(location.getLatitude());
+                sendLoc.setLongitude(location.getLongitude());
 
+                //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                intent.putExtra(EventDisplayActivity.TITLE, title);
+                intent.putExtra(EventDisplayActivity.ATTENDEES, attendees);
+                intent.putExtra(EventDisplayActivity.LOCATION, sendLoc);
+
                 startActivity(intent);
             }
         });
@@ -209,9 +240,23 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
                                     int position, long id) {
                 // Get the event, positioned to the corresponding row in the result set
                 Event event = (Event) parent.getAdapter().getItem(position);
+                String title = event.getTitle();
+                Log.d("title", title);
+                ArrayList<String> attendees = event.getAcceptedList();
+                for (int i = 0; i < attendees.size(); i ++) {
+                    Log.d("attendees", attendees.get(i).toString());
+                }
+                ParseGeoPoint location = event.getLocation();
+                Location sendLoc = new Location("any string");
+                sendLoc.setLatitude(location.getLatitude());
+                sendLoc.setLongitude(location.getLongitude());
 
+                //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                intent.putExtra(EventDisplayActivity.TITLE, title);
+                intent.putExtra(EventDisplayActivity.ATTENDEES, attendees);
+                intent.putExtra(EventDisplayActivity.LOCATION, sendLoc);
+
                 startActivity(intent);
             }
         });
