@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.parse.ParsePushBroadcastReceiver;
 
@@ -16,14 +17,9 @@ import org.json.JSONObject;
  * Created by Nick on 3/7/15.
  */
 public class InviteReceiver extends ParsePushBroadcastReceiver{
-    @Override
-    public void onPushOpen(Context context, Intent intent) {
-        Intent i = new Intent(context, InviteActivity.class);
-        context.startActivity(i);
-    }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onPushReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
         String message = extras != null ? extras.getString("com.parse.Data") : "";
         JSONObject jObject;
@@ -39,6 +35,8 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
         catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Log.d("NOTIFICATION", name + title + eventId);
 
         Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
 
