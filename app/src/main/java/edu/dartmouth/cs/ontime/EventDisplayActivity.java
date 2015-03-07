@@ -28,13 +28,19 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final String EVENT_ID = "edu.dartmouth.cs.myruns.entry_id";
+    public static final String DATE = "date";
+    public static final String TITLE = "title";
+    public static final String LOCATION = "location";
     public String eventId;
+    public Date date;
+    public String title;
     private Event displayedEvent;
     private ParseObject result;
     private TextView eventDisplayTextView, eventDisplayDate;
@@ -59,17 +65,17 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
-            eventId = getIntent().getStringExtra(EVENT_ID);
+            //title = getIntent().getStringExtra(TITLE);
 
-            if (eventId != "") {
-
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
-                try {
-                    result = query.get(eventId);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
+//            if (eventId != "") {
+//
+//                ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
+//                try {
+//                    result = query.get(eventId);
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
 
         //get all text fields from query
@@ -77,8 +83,10 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
         //TODO: to be used once actually getting event
-        //eventDisplayTextView.setText(eventTitle + "at" + eventLocationName);
-        eventDisplayTextView.setText("    DINNER at Pine");
+        //eventDisplayTextView.setText(title + "at");
+       // eventDisplayTextView.setText(title + "at" + eventLocationName);
+
+        //eventDisplayTextView.setText("    DINNER at Pine");
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
         eventDisplayDate.setTextColor(Color.BLACK);
         //TODO: when actually getting the event, set text to datetime

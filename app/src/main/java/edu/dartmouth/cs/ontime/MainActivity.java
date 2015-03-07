@@ -182,10 +182,11 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // Get the event, positioned to the corresponding row in the result set
-                Event event = (Event) parent.getAdapter().getItem(position);
-
+                //Event event = (Event) parent.getAdapter().getItem(position);
+                //String title = event.getTitle();
+                //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                //intent.putExtra(EventDisplayActivity.TITLE, title);
                 startActivity(intent);
             }
         });
@@ -194,7 +195,7 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // Get the event, positioned to the corresponding row in the result set
-                Event event = (Event) parent.getAdapter().getItem(position);
+                //Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
@@ -206,7 +207,7 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // Get the event, positioned to the corresponding row in the result set
-                Event event = (Event) parent.getAdapter().getItem(position);
+                //Event event = (Event) parent.getAdapter().getItem(position);
 
                 Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
                 //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
