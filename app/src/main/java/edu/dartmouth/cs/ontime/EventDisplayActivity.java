@@ -3,7 +3,6 @@ package edu.dartmouth.cs.ontime;
 import android.app.ActionBar;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -23,7 +22,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +37,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     public static final String TAG = "EventDisplayActivity.java";
-    public static final String EVENT_ID = "edu.dartmouth.cs.myruns.entry_id";
+    public static final String OBJECT_ID = "event_id";
     public static final String DATE = "date";
     public static final String TITLE = "title";
     public static final String LOCATION = "location";
@@ -44,42 +47,42 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private static final String EVENT_TITLE_INSTANCE_STATE_KEY = "saved_event_title";
     private static final String DATE_INSTANCE_STATE_KEY = "saved_date";
     private static final String LATLNG_INSTANCE_STATE_KEY = "saved_latlng";
-    public String date, time, title;
+    private double distance;
+    public String object_id, date, time, title;
     private Event displayedEvent;
     private ParseObject result;
     private TextView eventDisplayTextView, eventDisplayDate;
     private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
     public ArrayList<String> attendees;
+    public ArrayList<ParseGeoPoint> userLocations;
     private Location finalLocation;
+    private ParseGeoPoint finalGeoPoint;
+    private ParseGeoPoint current_location;
     private LatLng latLngLocation;
     private double latitude, longitude;
-    protected LocationManager mLocationManager;
     private int LOCATION_REFRESH_TIME = 1000;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
+    private ParseUser currentUser;
+    private String currentFbId;
+    private int position;
     private boolean mRequestingLocationUpdates;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!mRequestingLocationUpdates) {
-            Log.d(TAG, "requestingLocationUpdates");
-            mRequestingLocationUpdates = true;
-            mGoogleApiClient.connect();
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged");
+        current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+        distance = current_location.distanceInMilesTo(finalGeoPoint);
+        userLocations.set(position, current_location);
+        displayedEvent.setUserLocations(userLocations);
+        try {
+            displayedEvent.save();
+        }
+        catch (ParseException e) {
+
         }
     }
-
-    private void initLocationTracking() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
-        mRequestingLocationUpdates = true;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,16 +100,35 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
+            object_id = getIntent().getStringExtra(OBJECT_ID);
             title = getIntent().getStringExtra(TITLE);
             attendees = getIntent().getStringArrayListExtra(ATTENDEES);
 
             finalLocation = getIntent().getParcelableExtra(LOCATION);
+            finalGeoPoint = new ParseGeoPoint(finalLocation.getLatitude(),finalLocation.getLongitude());
             date = getIntent().getStringExtra(DATE);
             time = getIntent().getStringExtra(TIME);
 
             latitude = finalLocation.getLatitude();
             longitude = finalLocation.getLongitude();
             latLngLocation = new LatLng(latitude, longitude);
+
+            Log.d(TAG, "ObjectID: " + object_id);
+
+            ParseQuery<Event> currentEventQuery = ParseQuery.getQuery("event");
+            currentEventQuery.whereEqualTo("objectId", object_id);
+            try{
+                displayedEvent = currentEventQuery.getFirst();
+            }
+            catch (ParseException e){
+            }
+        }
+
+        currentUser = ParseUser.getCurrentUser();
+        currentFbId = currentUser.getString("fbId");
+        for (int i = 0; i < attendees.size(); i++) {
+            if (attendees.get(i) == currentFbId)
+                position = i;
         }
 
         if (savedInstanceState != null) {
@@ -116,6 +138,24 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             latLngLocation = savedInstanceState.getParcelable(LATLNG_INSTANCE_STATE_KEY);
 
         }
+
+        if (displayedEvent.getUserLocations() != null) {
+            userLocations = displayedEvent.getUserLocations();
+        }
+        else {
+            userLocations = new ArrayList<ParseGeoPoint>();
+            for (int i = 0; i < attendees.size(); i++) {
+                userLocations.add(i, null);
+            }
+            displayedEvent.setUserLocations(userLocations);
+            try {
+                displayedEvent.save();
+            }
+            catch (ParseException e) {
+
+            }
+        }
+
         //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
@@ -151,8 +191,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         eventDisplayDate.setText(date);
 
         //set event location
-
-
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
         GoogleMap mmap = supportMapFragment.getMap();
@@ -165,8 +203,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 17));
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
-
-
 
         //dynamically add friends
         for (int i = 0; i < attendees.size(); i++) {
@@ -197,24 +233,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         }
     }
 
-//    private void syncDistances() {
-//        Log.d(TAG, "syncDistances");
-//        new AsyncTask<Void, Void, String>() {
-//        @Override
-//        protected String doInBackground(Void... location) {
-//            Location current =
-//            return res;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String res) {
-//                Log.d(TAG, "EEAsyncTask onPostExecute()");
-//            }
-//
-//        }.execute();
-//    }
-
-    //from Android developers
     public static Calendar DateToCalendar(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -261,11 +279,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        Log.d(TAG, "onLocationChanged");
-    }
-
-    @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -282,5 +295,36 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mRequestingLocationUpdates) {
+            Log.d(TAG, "requestingLocationUpdates");
+            mRequestingLocationUpdates = true;
+            mGoogleApiClient.connect();
+        }
+    }
+
+    private void initLocationTracking() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        mGoogleApiClient.connect();
+        mRequestingLocationUpdates = true;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+        mGoogleApiClient.disconnect();
+        super.onDestroy();
     }
 }

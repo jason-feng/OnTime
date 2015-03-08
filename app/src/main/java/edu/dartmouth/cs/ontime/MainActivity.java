@@ -238,6 +238,7 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
     }
 
     private Intent createIntentFromEvent(Event event) {
+        String objectId = event.getObjectId();
         String title = event.getTitle();
         Log.d("title", title);
         ArrayList<String> attendees = event.getAcceptedList();
@@ -257,6 +258,7 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
 
         //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
         Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
+        intent.putExtra(EventDisplayActivity.OBJECT_ID, objectId);
         intent.putExtra(EventDisplayActivity.TITLE, title);
         intent.putExtra(EventDisplayActivity.ATTENDEES, attendees);
         intent.putExtra(EventDisplayActivity.LOCATION, sendLoc);

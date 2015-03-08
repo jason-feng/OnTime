@@ -65,6 +65,10 @@ public class Event extends ParseObject {
         put("accepted", invitees);
     }
 
+    public ArrayList<ParseGeoPoint> getUserLocations() { return (ArrayList<ParseGeoPoint>) get("distances"); }
+
+    public void setUserLocations(ArrayList<ParseGeoPoint> user_locations) { put("user_locations", user_locations);}
+
     public static List<ParseObject> query() {
         Log.d(TAG, "query()");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Friend");
