@@ -1,6 +1,7 @@
 package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -37,8 +38,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private static final String ATTENDEES_INSTANCE_STATE_KEY = "saved_attendees";
     private static final String EVENT_TITLE_INSTANCE_STATE_KEY = "saved_event_title";
     private static final String DATE_INSTANCE_STATE_KEY = "saved_date";
-    private static final String LATITUDE_INSTANCE_STATE_KEY = "saved_latitude";
-    private static final String LONGITUDE_INSTANCE_STATE_KEY = "saved_longitude";
+    private static final String LATLNG_INSTANCE_STATE_KEY = "saved_latlng";
     public String date, time, title;
     private Event displayedEvent;
     private ParseObject result;
@@ -75,25 +75,14 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
             latitude = finalLocation.getLatitude();
             longitude = finalLocation.getLongitude();
-            //geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-
-//            if (eventId != "") {
-//
-//                ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
-//                try {
-//                    result = query.get(eventId);
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            latLngLocation = new LatLng(latitude, longitude);
         }
 
         if (savedInstanceState != null) {
             attendees = savedInstanceState.getStringArrayList(ATTENDEES_INSTANCE_STATE_KEY);
             title = savedInstanceState.getString(EVENT_TITLE_INSTANCE_STATE_KEY);
             date = savedInstanceState.getString(DATE_INSTANCE_STATE_KEY);
-            latitude = savedInstanceState.getDouble(LATITUDE_INSTANCE_STATE_KEY);
-            longitude = savedInstanceState.getDouble(LATITUDE_INSTANCE_STATE_KEY);
+            latLngLocation = savedInstanceState.getParcelable(LATLNG_INSTANCE_STATE_KEY);
 
         }
         //get event title
@@ -132,7 +121,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //set event location
 
-        latLngLocation = new LatLng(latitude, longitude);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
@@ -146,6 +134,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 17));
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
+
 
 
         //dynamically add friends
@@ -162,11 +151,12 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             //ProgressBar newBar = new ProgressBar(this, null, );
             //ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
             //TODO: set to android.widget.ProgressBar.Horizontal somehow!!
+
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
-            //newBar.setProgress(Integer.parseInt(attendees.get(i).getId()));
+            //TODO: set progress based on how far away
+            newBar.setProgress(45);
             newBar.setMinimumWidth(40);
-            //newBar.setBackgroundColor(Color.WHITE);
             newBar.setMinimumHeight(50);
            // newBar.setProgressTintList();
 
@@ -199,9 +189,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         outState.putStringArrayList(ATTENDEES_INSTANCE_STATE_KEY, attendees);
         outState.putString(EVENT_TITLE_INSTANCE_STATE_KEY, title);
         outState.putString(DATE_INSTANCE_STATE_KEY, date);
-        outState.putDouble(LATITUDE_INSTANCE_STATE_KEY, latitude);
-        outState.putDouble(LONGITUDE_INSTANCE_STATE_KEY, longitude);
-        //outState.putString()
+        outState.putParcelable(LATLNG_INSTANCE_STATE_KEY, latLngLocation);
     }
 
     @Override
