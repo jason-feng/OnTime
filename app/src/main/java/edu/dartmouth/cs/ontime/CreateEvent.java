@@ -14,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -41,6 +43,7 @@ public class CreateEvent extends ListActivity {
     public ListView list;
     public static int[] intCal;
     public String actType;
+    private static boolean[] dialogFields = new boolean[5];
     private Event event;
     private Context context;
     private Location mLocation;
@@ -48,6 +51,25 @@ public class CreateEvent extends ListActivity {
     private ArrayList<String> installationIDs;
 
     public Event getEvent() { return event; }
+    public boolean[] getDialogFields() { return dialogFields; }
+
+    public boolean allEventFields() {
+        for (int i = 0; i < dialogFields.length; i++) {
+            if (dialogFields[i] != true) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void setDialogField(int index, boolean value) {
+        if (index > dialogFields.length || index < 0) {
+            return;
+        }
+        else {
+            dialogFields[index] = value;
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -56,14 +78,13 @@ public class CreateEvent extends ListActivity {
 
             if (requestCode == MAP_REQUEST) {
 
-
                 Log.d(TAG, "onActivityResult Success");
                 ParseGeoPoint point = new ParseGeoPoint(
                         data.getDoubleExtra("LAT", 0),
                         data.getDoubleExtra("LONG", 0)
                 );
                 event.setLocation(point);
-
+                CreateEvent.setDialogField(4,true);
             }
 
             else if (requestCode == INVITE_REQUEST){
@@ -120,6 +141,7 @@ public class CreateEvent extends ListActivity {
     }
 
     public void onSaveClicked(View v) {
+        event.put("accepted", new ArrayList<Integer>());;
         if (installationIDs.size() != 0 && event.getTitle() != null && event.getTime() != null && event.getDate() != null) {
             ArrayList<String> accepted = new ArrayList<String>();
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
