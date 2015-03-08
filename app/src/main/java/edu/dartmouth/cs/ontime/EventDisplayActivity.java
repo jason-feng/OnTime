@@ -1,20 +1,15 @@
 package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,19 +17,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FindCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 
 public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -147,7 +134,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         //dynamically add friends
         for (int i = 0; i < attendees.size(); i++) {
             TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
-            //TODO: get actual person not whatever this rando string is
+            //TODO: get actual person not the person's fb id number
+            //query parse and iterate through the users and see which one has a matching fb id
             newView.setText(attendees.get(i));
             newView.setTextSize(15);
             newView.setTextAppearance(this, R.style.boldText);

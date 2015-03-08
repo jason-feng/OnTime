@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FunctionCallback;
-import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -28,7 +27,6 @@ import com.parse.SaveCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -203,11 +201,11 @@ public class CreateEvent extends ListActivity {
                     Toast.LENGTH_SHORT).show();
         }
 
-/*        else if (event.getLocation() == null){
+        else if (event.getLocation() == null){
             Toast.makeText(getApplicationContext(),
                     "Please set a location for your event",
                     Toast.LENGTH_SHORT).show();
-        }*/
+        }
     }
 
     public void onCancelClicked(View v) {
