@@ -17,12 +17,70 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <ListView
-        android:id="@+id/list_settings"
+    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:background="@color/white"/>
+        android:layout_marginTop="50dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="4dip"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:paddingLeft="5dp"
+                android:text="@string/social_pref"
+                android:textStyle="bold"/>
+
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id= "@+id/listFb"
+                android:layout_marginTop="10dip"
+                android:drawSelectorOnTop="true"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:paddingLeft="5dp"
+                android:text="@string/locations_pref"
+                android:textStyle="bold"/>
+
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id= "@+id/listLoc"
+                android:layout_marginTop="10dip"
+                android:drawSelectorOnTop="true"
+                />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:paddingLeft="5dp"
+                android:text="@string/push_pref"
+                android:textStyle="bold"/>
+
+            <CheckBox
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notify_me"
+                android:id="@+id/checkMe" />
+
+            <CheckBox
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notify_others"
+                android:id="@+id/checkOthers" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -35,17 +93,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Save"
-            android:onClick="onSaveClicked"
             android:layout_weight="1"
-            android:id="@+id/save_button2" />
+            android:id="@+id/save_button_settings" />
 
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:onClick="onCancelClicked"
             android:layout_weight="1"
-            android:id="@+id/cancel_button2" />
+            android:id="@+id/cancel_button_settings" />
 
     </LinearLayout>
 
