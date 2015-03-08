@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by garygreene on 2/17/15.
+ * Fragment that communicates with facebook for login/off
  */
 public class SettingsFragment extends Fragment {
     private static final String TAG = "SettingsFragment";
@@ -167,6 +167,9 @@ public class SettingsFragment extends Fragment {
     }
 
 
+    /**
+     * Class to download the profile pic from facebook
+     */
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;

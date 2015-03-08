@@ -1,15 +1,12 @@
 package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
-import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -142,6 +139,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
             //TODO: get actual person not the person's fb id number
             //query parse and iterate through the users and see which one has a matching fb id
+
             newView.setText(attendees.get(i));
             newView.setTextSize(15);
             newView.setTextAppearance(this, R.style.boldText);

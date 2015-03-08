@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//TODO: Needs UI updates
-//Make it match theme
-//Make button look like the regular FB button
+/**
+ * If the current user isn't signed into facebook, launch this activity upon starting the app to allow
+ * the user to login to facebook
+ */
 public class SignInActivity extends Activity {
 
     @Override
@@ -57,6 +58,7 @@ public class SignInActivity extends Activity {
         ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
     }
 
+    // login with facebook, requesting the person's public profile and their friends
     private void onLoginButtonClicked() {
         List<String> permissions = Arrays.asList("public_profile, user_friends");
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
@@ -74,6 +76,7 @@ public class SignInActivity extends Activity {
         });
     }
 
+    // create a parse user that is compatible with facebook
     private void makeMeRequest() {
         Session session = ParseFacebookUtils.getSession();
         if (session != null && session.isOpened()) {

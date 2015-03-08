@@ -36,6 +36,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * This is a class to query the current user's friends from facebook and display them in a listview where
+ * you can check next to or click on the friends that you want to invite to the event
+ */
+
 public class FriendList extends Activity {
     MyCustomAdapter dataAdapter = null;
     Friend newfriend;
@@ -67,6 +72,8 @@ public class FriendList extends Activity {
         uiHelper.onCreate(savedInstanceState);
         friendList = new ArrayList<Friend>();
         selectedFriends = new ArrayList<String>();
+
+        // add selected friends to the event by sending an intent back
         ok = (Button)findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -101,7 +108,7 @@ public class FriendList extends Activity {
             // try to restore from cache
             session = Session.openActiveSessionFromCache(getApplicationContext());
         }
-
+        // query the user's friends from facebook using their interface
         new Request(session,
                 "/me/friends",
                 null,
@@ -182,6 +189,10 @@ public class FriendList extends Activity {
 
     }
 
+    /**
+     * Custom lisview adapter that contains checkboxes and friends' names
+     */
+
     private class MyCustomAdapter extends ArrayAdapter<Friend> {
 
         private ArrayList<Friend> friendsList;
@@ -200,6 +211,7 @@ public class FriendList extends Activity {
             CheckBox name;
         }
 
+        // custom view for the checkbox and name combination
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -229,17 +241,6 @@ public class FriendList extends Activity {
 
                 holder.name.setTag(position);
 
-//                holder.name.setOnClickListener( new View.OnClickListener() {
-//                    public void onClick(View v) {
-//                        CheckBox cb = (CheckBox) v;
-//                        Friend friend = (Friend) cb.getTag();
-//                        Toast.makeText(getApplicationContext(),
-//                                "Clicked on Checkbox: " + cb.getText() +
-//                                        " is " + cb.isChecked(),
-//                                Toast.LENGTH_LONG).show();
-//                        friend.setSelected(cb.isChecked());
-//                    }
-//                });
             }
 
             else {

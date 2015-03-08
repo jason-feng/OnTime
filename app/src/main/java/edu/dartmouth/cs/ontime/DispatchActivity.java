@@ -10,8 +10,11 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
-
+/**
+ * Activity that starts upon all launches of the app and determines whether the current user
+ * is signed into facebook. If the user is, redirect to the main activity, if not redirect
+ * to the sign in activity
+ */
 public class DispatchActivity extends Activity {
 
     @Override
