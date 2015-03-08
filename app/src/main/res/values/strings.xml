@@ -57,5 +57,7 @@
     <string name="title_activity_friend_list">FriendList</string>
     <string name="choose">Choose Friends to Invite</string>
     <string name="ok">Ok</string>
+    <string name="pref_saved">\"Preferences saved\"</string>
+    <string name="pref_cancel">Preferences cancelled</string>
 
 </resources>
