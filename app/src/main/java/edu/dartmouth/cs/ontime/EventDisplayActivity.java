@@ -28,9 +28,13 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -40,9 +44,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public static final String TITLE = "title";
     public static final String LOCATION = "location";
     public static final String ATTENDEES = "attendees";
+    public static final String TIME = "time";
     public String eventId;
-    public Date date;
-    public String title;
+    public String date, time, title;
     private Event displayedEvent;
     private ParseObject result;
     private TextView eventDisplayTextView, eventDisplayDate;
@@ -72,6 +76,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             attendees = getIntent().getStringArrayListExtra(ATTENDEES);
 
             finalLocation = getIntent().getParcelableExtra(LOCATION);
+            date = getIntent().getStringExtra(DATE);
+            time = getIntent().getStringExtra(TIME);
             //geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
 //            if (eventId != "") {
@@ -93,14 +99,36 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         //get event date and time
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
         eventDisplayDate.setTextColor(Color.BLACK);
-        //TODO: when actually getting the event, set text to datetime
-        eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
-        //get event location
+        //TODO: get this working to make date prettier if possible
+//        Calendar cal = Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+//        try {
+//            cal.setTime(sdf.parse(date));
+//        } catch (java.text.ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//        String displayTime = "";
+//        displayTime += cal.get(Calendar.DAY_OF_WEEK);
+//        displayTime += ", ";
+//        displayTime += cal.get(Calendar.MONTH);
+//        displayTime += " ";
+//        displayTime += cal.get(Calendar.DATE);
+//        displayTime += ", at ";
+//        displayTime += cal.get(Calendar.HOUR);
+//        displayTime += ":";
+//        displayTime += cal.get(Calendar.MINUTE);
+//        displayTime += cal.get(Calendar.AM_PM);
+
+       // String displayTime = cal.get(Calendar.DATE) + " " + cal.get(Calendar.HOUR) + cal.get(Calendar.MINUTE);
+
+        eventDisplayDate.setText(date);
+
+        //set event location
         double latitude = finalLocation.getLatitude();
         double longitude = finalLocation.getLongitude();
         latLngLocation = new LatLng(latitude, longitude);
-
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
@@ -142,18 +170,14 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
 
 
-
-
-
-        //for each invitee in event invitees list
-
-        //add a progressbar for them into the scrollview
-
-
     }
 
-
-
+    //from Android developers
+    public static Calendar DateToCalendar(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
