@@ -91,16 +91,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             }
         });
 
-        testEventDisplayButton = (Button) findViewById(R.id.testDisplayButton);
-
-        testEventDisplayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "CreateEvent");
-                Intent intent = new Intent(mContext, EventDisplayActivity.class);
-                startActivity(intent);
-            }
-        });
 
         App.setContext(this);
 

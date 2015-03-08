@@ -21,6 +21,9 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class InviteActivity extends Activity {
@@ -111,8 +114,17 @@ public class InviteActivity extends Activity {
                         // Send push notification to query
                         ParsePush push = new ParsePush();
                         push.setQuery(installationQuery); // Set our Installation query
-                        push.setMessage(ParseUser.getCurrentUser().get("name") + " declined the event: " + event.getTitle());
+                        JSONObject jsonObj = new JSONObject();
+                        try{
+                            jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
+                            jsonObj.put("title", event.getTitle());
+                            jsonObj.put("objectId", null);
+                        }
+                        catch (JSONException j){
+                        }
+                        push.setData(jsonObj);
                         push.sendInBackground();
+
 
                         mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, declineEvents);
                         mList.setAdapter(mAdapter);
@@ -133,7 +145,7 @@ public class InviteActivity extends Activity {
                         try {
                             Event acceptEvent = (Event) query.getFirst();
                             ArrayList<String> acceptInvitees = acceptEvent.getAcceptedList();
-                            acceptInvitees.add(ParseUser.getCurrentUser().getObjectId());
+                            acceptInvitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             acceptEvent.setAcceptedList(acceptInvitees);
                             acceptEvent.saveInBackground();
                         } catch (ParseException e) {
@@ -156,7 +168,15 @@ public class InviteActivity extends Activity {
                         // Send push notification to query
                         ParsePush push = new ParsePush();
                         push.setQuery(installationQuery); // Set our Installation query
-                        push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
+                        JSONObject jsonObj = new JSONObject();
+                        try{
+                            jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
+                            jsonObj.put("title", event.getTitle());
+                            jsonObj.put("objectId", null);
+                        }
+                        catch (JSONException j){
+                        }
+                        push.setData(jsonObj);
                         push.sendInBackground();
 
                         mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, acceptedEvents);
@@ -201,7 +221,7 @@ public class InviteActivity extends Activity {
 
                             // update event accepted list
                             ArrayList<String> invitees = event.getAcceptedList();
-                            invitees.add(ParseUser.getCurrentUser().getObjectId());
+                            invitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             event.setAcceptedList(invitees);
                             event.saveInBackground();
 
@@ -212,7 +232,15 @@ public class InviteActivity extends Activity {
                             // Send push notification to query
                             ParsePush push = new ParsePush();
                             push.setQuery(installationQuery); // Set our Installation query
-                            push.setMessage(ParseUser.getCurrentUser().get("name") + " accepted the event: " + event.getTitle());
+                            JSONObject jsonObj = new JSONObject();
+                            try{
+                                jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
+                                jsonObj.put("title", event.getTitle());
+                                jsonObj.put("objectId", null);
+                            }
+                            catch (JSONException j){
+                            }
+                            push.setData(jsonObj);
                             push.sendInBackground();
 
                             mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, invitedEvents);
@@ -245,7 +273,15 @@ public class InviteActivity extends Activity {
                             // Send push notification to query
                             ParsePush declinePush = new ParsePush();
                             declinePush.setQuery(declineInstallQ); // Set our Installation query
-                            declinePush.setMessage(ParseUser.getCurrentUser().get("name") + " declined the event: " + declineEvent.getTitle());
+                            JSONObject jsonObj2 = new JSONObject();
+                            try{
+                                jsonObj2.put("name", ParseUser.getCurrentUser().get("name"));
+                                jsonObj2.put("title", declineEvent.getTitle());
+                                jsonObj2.put("objectId", null);
+                            }
+                            catch (JSONException j){
+                            }
+                            declinePush.setData(jsonObj2);
                             declinePush.sendInBackground();
 
                             mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, declineEvents);
@@ -258,7 +294,6 @@ public class InviteActivity extends Activity {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setMessage(titleEvent.getTitle()).setPositiveButton("Accept", dialogClickListener)
                     .setNegativeButton("Decline", dialogClickListener).show();
-
 
         }
     }

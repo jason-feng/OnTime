@@ -19,7 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 /**
- * Created by garygreene on 2/17/15.
+ * Main settings fragment
  */
 public class Settings extends Fragment {
 
@@ -44,27 +44,6 @@ public class Settings extends Fragment {
         actionBar.hide();
 
 
-
-
-//        ListPreference listPreference = (ListPreference) findPreference("list_preference");
-//        if (listPreference.getValue() == null) {
-//            listPreference.setValueIndex(1);
-//        }
-//
-//        String currValue = listPreference.getValue();
-//
-//
-//        String mKey = getString(R.string.conversion);
-//        SharedPreferences mPreference = getActivity().getApplicationContext().getSharedPreferences(mKey, Context.MODE_PRIVATE);
-//
-//        SharedPreferences.Editor mEditor = mPreference.edit();
-//        mEditor.putString(mKey,currValue);
-//        mEditor.commit();
-
-//        addPreferencesFromResource(R.xml.settings);
-//        myContext = this.getActivity();
-//        myContext.setTheme(R.style.MyPreferenceTheme);
-
     }
 
     @Override
@@ -72,21 +51,8 @@ public class Settings extends Fragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.settings_listview_layout, container, false);
         view.setBackgroundResource(R.drawable.bokehcheat);
-        //view.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
 
-//        TextView tv = new TextView (this.getActivity());
-//        tv.setTextColor (Color.BLACK);
-//        tv.setText("Hi There", TextView.BufferType.NORMAL);
-//        LayoutParams layoutParams  = new LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-////        tv.setBackgroundColor(Color.WHITE);
-//        pms.setMargins(100, 900, 0, 500);
-//        tv.setLayoutParams(pms);
-
-        //view.setTop(50);
-//        view.setX(500);
-//        view.setY(500);
+        // when you click the save button, store the checkmarks in shared preferences
         mSave = (Button) view.findViewById(R.id.save_button_settings);
         mSave.setOnClickListener(new View.OnClickListener() {
                                      @Override
@@ -141,6 +107,8 @@ public class Settings extends Fragment {
             }
         });
 
+
+        // check shared preferences
         String mKey = getString(R.string.preference);
         SharedPreferences mPreference = getActivity().getSharedPreferences(mKey,getActivity().MODE_PRIVATE);
 
@@ -156,6 +124,8 @@ public class Settings extends Fragment {
             mOthers.setSelected(mValue);
         }
 
+
+         // Listviews for all the settings options
 
         String[] fbArray = {"Login with Facebook"};
 

@@ -14,6 +14,9 @@ import android.view.MenuItem;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Activity that houses the fragment that communicates with facebook for login/off from settings
+ */
 
 public class SettingsActivity extends FragmentActivity {
     private SettingsFragment settingsFragment;

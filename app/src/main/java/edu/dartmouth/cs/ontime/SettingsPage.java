@@ -6,6 +6,9 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * Activity to hold the main settings fragment page
+ */
 
 public class SettingsPage extends FragmentActivity {
     Settings settings;

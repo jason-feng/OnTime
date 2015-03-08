@@ -40,7 +40,10 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public static final String LOCATION = "location";
     public static final String ATTENDEES = "attendees";
     public static final String TIME = "time";
-    public String eventId;
+    private static final String ATTENDEES_INSTANCE_STATE_KEY = "saved_attendees";
+    private static final String EVENT_TITLE_INSTANCE_STATE_KEY = "saved_event_title";
+    private static final String DATE_INSTANCE_STATE_KEY = "saved_date";
+    private static final String LATLNG_INSTANCE_STATE_KEY = "saved_latlng";
     public String date, time, title;
     private Event displayedEvent;
     private ParseObject result;
@@ -103,23 +106,20 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
             latitude = finalLocation.getLatitude();
             longitude = finalLocation.getLongitude();
-            //geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-
-//            if (eventId != "") {
-//
-//                ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
-//                try {
-//                    result = query.get(eventId);
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            latLngLocation = new LatLng(latitude, longitude);
         }
 
+        if (savedInstanceState != null) {
+            attendees = savedInstanceState.getStringArrayList(ATTENDEES_INSTANCE_STATE_KEY);
+            title = savedInstanceState.getString(EVENT_TITLE_INSTANCE_STATE_KEY);
+            date = savedInstanceState.getString(DATE_INSTANCE_STATE_KEY);
+            latLngLocation = savedInstanceState.getParcelable(LATLNG_INSTANCE_STATE_KEY);
+
+        }
         //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
-        eventDisplayTextView.setText("    " + title);
+        eventDisplayTextView.setText("    " + title.toUpperCase());
 
         //get event date and time
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
@@ -152,7 +152,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //set event location
 
-        latLngLocation = new LatLng(latitude, longitude);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
@@ -168,11 +167,13 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
 
+
         //dynamically add friends
         for (int i = 0; i < attendees.size(); i++) {
             TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
             //TODO: get actual person not the person's fb id number
             //query parse and iterate through the users and see which one has a matching fb id
+
             newView.setText(attendees.get(i));
             newView.setTextSize(15);
             newView.setTextAppearance(this, R.style.boldText);
@@ -182,11 +183,12 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             //ProgressBar newBar = new ProgressBar(this, null, );
             //ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
             //TODO: set to android.widget.ProgressBar.Horizontal somehow!!
+
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
-            //newBar.setProgress(Integer.parseInt(attendees.get(i).getId()));
+            //TODO: set progress based on how far away
+            newBar.setProgress(45);
             newBar.setMinimumWidth(40);
-            //newBar.setBackgroundColor(Color.WHITE);
             newBar.setMinimumHeight(50);
            // newBar.setProgressTintList();
 
@@ -224,6 +226,16 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_event_display, menu);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save the image capture uri before the activity goes into background
+        outState.putStringArrayList(ATTENDEES_INSTANCE_STATE_KEY, attendees);
+        outState.putString(EVENT_TITLE_INSTANCE_STATE_KEY, title);
+        outState.putString(DATE_INSTANCE_STATE_KEY, date);
+        outState.putParcelable(LATLNG_INSTANCE_STATE_KEY, latLngLocation);
     }
 
     @Override

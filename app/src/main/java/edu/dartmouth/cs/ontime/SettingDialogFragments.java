@@ -11,6 +11,9 @@ import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
 
+/**
+ * Activity to create dialog fragments for the listview in settings
+ */
 public class SettingDialogFragments extends DialogFragment {
 
     public static final String TAG = "MyRunsFragment.java";

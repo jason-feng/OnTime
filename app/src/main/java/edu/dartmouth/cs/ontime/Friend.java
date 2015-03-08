@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by garygreene on 3/2/15.
+ * This is a class to hold the name, facebook id, and url locally (not in the cloud) to facilitate accessing user info
  */
 public class Friend {
     String name;
