@@ -163,6 +163,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             newBar.setMinimumWidth(40);
             //newBar.setBackgroundColor(Color.WHITE);
             newBar.setMinimumHeight(50);
+           // newBar.setProgressTintList();
 
             newBar.setScrollBarSize(200);
             progressBarLinearLayout.addView(newBar);
