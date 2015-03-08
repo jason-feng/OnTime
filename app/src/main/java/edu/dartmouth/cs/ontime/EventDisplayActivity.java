@@ -42,6 +42,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public ArrayList<String> attendees;
     private Location finalLocation;
     private LatLng latLngLocation;
+    private double latitude, longitude;
 
 
     @Override
@@ -65,6 +66,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             finalLocation = getIntent().getParcelableExtra(LOCATION);
             date = getIntent().getStringExtra(DATE);
             time = getIntent().getStringExtra(TIME);
+
+            latitude = finalLocation.getLatitude();
+            longitude = finalLocation.getLongitude();
             //geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
 //            if (eventId != "") {
@@ -113,8 +117,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         eventDisplayDate.setText(date);
 
         //set event location
-        double latitude = finalLocation.getLatitude();
-        double longitude = finalLocation.getLongitude();
+
         latLngLocation = new LatLng(latitude, longitude);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();

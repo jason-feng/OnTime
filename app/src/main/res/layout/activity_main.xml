@@ -80,6 +80,7 @@
                 android:layout_marginTop="10dip"
                 android:paddingLeft="5dp"
                 android:text="@string/today"
+                android:textColor="@color/violet"
                 android:textStyle="bold"/>
 
             <ListView
@@ -95,6 +96,7 @@
                 android:layout_marginTop="10dip"
                 android:paddingLeft="5dp"
                 android:text="@string/tomorrow"
+                android:textColor="@color/violet"
                 android:textStyle="bold"/>
 
             <ListView
@@ -110,6 +112,7 @@
                 android:layout_marginTop="10dip"
                 android:paddingLeft="5dp"
                 android:text="@string/thisweek"
+                android:textColor="@color/violet"
                 android:textStyle="bold"/>
 
             <ListView
