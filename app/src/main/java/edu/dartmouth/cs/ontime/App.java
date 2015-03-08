@@ -40,7 +40,6 @@ public class App extends Application {
     @Override public void onCreate() {
         Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Event.class);
-        ParseObject.registerSubclass(ParseFriend.class);
         Parse.initialize(this, "mpKUYS0VHcJR1KQiVDQ8EUC0RDb5WRqB1gwUOuT4", "lP5IoGEkvcqBG9I3IxtXU5EtnEJiE2yHzX1bbZuq");
 
         ParsePush.subscribeInBackground("", new SaveCallback() {

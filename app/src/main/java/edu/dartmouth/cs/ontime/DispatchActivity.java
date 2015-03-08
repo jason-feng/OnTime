@@ -28,7 +28,8 @@ public class DispatchActivity extends Activity {
                         Log.d("F8Debug", "onCreate, got user,  "
                                 + ParseUser.getCurrentUser().getUsername());
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    } else {
+                    }
+                    else {
                         // Start and intent for the logged out activity
                         Log.d("F8Debug", "onCreate, no user");
                         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
@@ -39,5 +40,6 @@ public class DispatchActivity extends Activity {
         else{
             startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         }
+        finish();
     }
 }

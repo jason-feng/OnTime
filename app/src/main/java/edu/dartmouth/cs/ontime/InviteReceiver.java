@@ -36,38 +36,54 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
             e.printStackTrace();
         }
 
-        Log.d("NOTIFICATION", name + title + eventId);
+        if (eventId == null){
+            PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, new Intent(App.getContext(), MainActivity.class), 0);
 
-        Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
+            Notification notification = new Notification.Builder(App.getContext())
+                    .setContentTitle("OnTime")
+                    .setContentText(name + " accepted the event " + title + "!")
+                    .setSmallIcon(R.drawable.notify)
+                    .setOngoing(true)
+                    .setAutoCancel(true)
+                    .setContentIntent(contentIntent).build();
 
-        // If notification pressed but not a button
-        PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(0, notification);
+        }
 
-        mIntent.putExtra("accept", true);
-        mIntent.putExtra("eventId", eventId);
+        else{
+            Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
 
-        // If accept is pressed
-        PendingIntent acceptIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
+            // If notification pressed but not a button
+            PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
 
-        mIntent.putExtra("decline", true);
+            mIntent.putExtra("accept", true);
+            mIntent.putExtra("eventId", eventId);
 
-        // If decline is pressed
-        PendingIntent declineIntent = PendingIntent.getActivity(App.getContext(), 0,
-                new Intent(App.getContext(), InviteActivity.class), 0);
+            // If accept is pressed
+            PendingIntent acceptIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
 
-        Notification notification = new Notification.Builder(App.getContext())
-                .setContentTitle("OnTime")
-                .setContentText(name + " invited you to " + title + "!")
-                .setSmallIcon(R.drawable.notify)
-                .setOngoing(true)
-                .setAutoCancel(true)
-                .addAction(R.drawable.ic_accept, "Accept", acceptIntent)
-                .addAction(R.drawable.ic_cancel, "Decline", declineIntent)
-                .setContentIntent(contentIntent).build();
+            mIntent.putExtra("decline", true);
+
+            // If decline is pressed
+            PendingIntent declineIntent = PendingIntent.getActivity(App.getContext(), 0,
+                    new Intent(App.getContext(), InviteActivity.class), 0);
+
+            Notification notification = new Notification.Builder(App.getContext())
+                    .setContentTitle("OnTime")
+                    .setContentText(name + " invited you to " + title + "!")
+                    .setSmallIcon(R.drawable.notify)
+                    .setOngoing(true)
+                    .setAutoCancel(true)
+                    .addAction(R.drawable.ic_accept, "Accept", acceptIntent)
+                    .addAction(R.drawable.ic_cancel, "Decline", declineIntent)
+                    .setContentIntent(contentIntent).build();
 
 
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0, notification);
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(0, notification);
+
+        }
 
     }
 
