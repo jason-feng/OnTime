@@ -19,12 +19,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -33,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 public class MainActivity extends Activity implements CreateEvent.CreateFinished{
 
@@ -111,15 +106,16 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
 
         Log.d(TAG, "createEvent init");
 
-        query();
-
         todayArray = new ArrayList<>();
         tomorrowArray = new ArrayList<>();
         thisWeekArray = new ArrayList<>();
+
+        query();
     }
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume()");
         super.onResume();
         query();
     }

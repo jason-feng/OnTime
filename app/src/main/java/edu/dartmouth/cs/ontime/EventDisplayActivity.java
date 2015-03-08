@@ -3,14 +3,20 @@ package edu.dartmouth.cs.ontime;
 import android.app.ActionBar;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,8 +30,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback {
+public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
+    public static final String TAG = "EventDisplayActivity.java";
     public static final String EVENT_ID = "edu.dartmouth.cs.myruns.entry_id";
     public static final String DATE = "date";
     public static final String TITLE = "title";
@@ -43,7 +51,31 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private Location finalLocation;
     private LatLng latLngLocation;
     private double latitude, longitude;
+    protected LocationManager mLocationManager;
+    private int LOCATION_REFRESH_TIME = 1000;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
+    private boolean mRequestingLocationUpdates;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mRequestingLocationUpdates) {
+            Log.d(TAG, "requestingLocationUpdates");
+            mRequestingLocationUpdates = true;
+            mGoogleApiClient.connect();
+        }
+    }
+
+    private void initLocationTracking() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        mGoogleApiClient.connect();
+        mRequestingLocationUpdates = true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +89,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         actionBar.hide();
 
         getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
+        initLocationTracking();
 
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
@@ -159,10 +193,24 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             newBar.setScrollBarSize(200);
             progressBarLinearLayout.addView(newBar);
         }
-
-
-
     }
+
+//    private void syncDistances() {
+//        Log.d(TAG, "syncDistances");
+//        new AsyncTask<Void, Void, String>() {
+//        @Override
+//        protected String doInBackground(Void... location) {
+//            Location current =
+//            return res;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String res) {
+//                Log.d(TAG, "EEAsyncTask onPostExecute()");
+//            }
+//
+//        }.execute();
+//    }
 
     //from Android developers
     public static Calendar DateToCalendar(Date date){
@@ -198,5 +246,29 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
                 .title("Marker"));
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000); // Update location every second
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }
