@@ -145,7 +145,7 @@ public class InviteActivity extends Activity {
                         try {
                             Event acceptEvent = (Event) query.getFirst();
                             ArrayList<String> acceptInvitees = acceptEvent.getAcceptedList();
-                            acceptInvitees.add(ParseUser.getCurrentUser().getObjectId());
+                            acceptInvitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             acceptEvent.setAcceptedList(acceptInvitees);
                             acceptEvent.saveInBackground();
                         } catch (ParseException e) {
@@ -221,7 +221,7 @@ public class InviteActivity extends Activity {
 
                             // update event accepted list
                             ArrayList<String> invitees = event.getAcceptedList();
-                            invitees.add(ParseUser.getCurrentUser().getObjectId());
+                            invitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             event.setAcceptedList(invitees);
                             event.saveInBackground();
 
@@ -294,7 +294,6 @@ public class InviteActivity extends Activity {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setMessage(titleEvent.getTitle()).setPositiveButton("Accept", dialogClickListener)
                     .setNegativeButton("Decline", dialogClickListener).show();
-
 
         }
     }
