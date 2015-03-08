@@ -5,8 +5,10 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,7 +34,11 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public static final String LOCATION = "location";
     public static final String ATTENDEES = "attendees";
     public static final String TIME = "time";
-    public String eventId;
+    private static final String ATTENDEES_INSTANCE_STATE_KEY = "saved_attendees";
+    private static final String EVENT_TITLE_INSTANCE_STATE_KEY = "saved_event_title";
+    private static final String DATE_INSTANCE_STATE_KEY = "saved_date";
+    private static final String LATITUDE_INSTANCE_STATE_KEY = "saved_latitude";
+    private static final String LONGITUDE_INSTANCE_STATE_KEY = "saved_longitude";
     public String date, time, title;
     private Event displayedEvent;
     private ParseObject result;
@@ -82,6 +88,14 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 //            }
         }
 
+        if (savedInstanceState != null) {
+            attendees = savedInstanceState.getStringArrayList(ATTENDEES_INSTANCE_STATE_KEY);
+            title = savedInstanceState.getString(EVENT_TITLE_INSTANCE_STATE_KEY);
+            date = savedInstanceState.getString(DATE_INSTANCE_STATE_KEY);
+            latitude = savedInstanceState.getDouble(LATITUDE_INSTANCE_STATE_KEY);
+            longitude = savedInstanceState.getDouble(LATITUDE_INSTANCE_STATE_KEY);
+
+        }
         //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
@@ -176,6 +190,18 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_event_display, menu);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save the image capture uri before the activity goes into background
+        outState.putStringArrayList(ATTENDEES_INSTANCE_STATE_KEY, attendees);
+        outState.putString(EVENT_TITLE_INSTANCE_STATE_KEY, title);
+        outState.putString(DATE_INSTANCE_STATE_KEY, date);
+        outState.putDouble(LATITUDE_INSTANCE_STATE_KEY, latitude);
+        outState.putDouble(LONGITUDE_INSTANCE_STATE_KEY, longitude);
+        //outState.putString()
     }
 
     @Override
