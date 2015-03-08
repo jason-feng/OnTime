@@ -99,7 +99,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
-        eventDisplayTextView.setText("    " + title);
+        eventDisplayTextView.setText("    " + title.toUpperCase());
 
         //get event date and time
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
