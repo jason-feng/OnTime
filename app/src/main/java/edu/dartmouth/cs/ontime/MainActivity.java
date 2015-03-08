@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,10 +17,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,18 +35,18 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements CreateEvent.CreateFinished{
 
     public static final String TAG = "MainActivity";
 
-    private List<com.parse.ParseObject> upcomingEvents;
+    private ArrayList<Event> upcomingEvents;
     private ListView mListToday,mListTomorrow,mListThisweek;
     private Context mContext;
     private ImageButton createEventButton, invitesButton, settingsButton;
     private Button testEventDisplayButton;
-    private ArrayList<String> todayArray = new ArrayList<>();
-    private ArrayList<String> tomorrowArray = new ArrayList<>();
-    private ArrayList<String> thisWeekArray = new ArrayList<>();
+    private ArrayList<Event> todayArray = new ArrayList<>();
+    private ArrayList<Event> tomorrowArray = new ArrayList<>();
+    private ArrayList<Event> thisWeekArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +62,9 @@ public class MainActivity extends Activity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.hide();
-        //TODO: get person based on regId of phone (from server); for now this and events are hard-coded
 
         //upcomingEvents = person.getEvents()
-        upcomingEvents = new ArrayList<ParseObject>();
+        upcomingEvents = new ArrayList<Event>();
         mContext = this;
 
         settingsButton = (ImageButton)findViewById(R.id.settingsButton);
@@ -100,7 +107,7 @@ public class MainActivity extends Activity {
             }
         });
 
-
+        App.setContext(this);
 
         Log.d(TAG, "createEvent init");
 
@@ -117,6 +124,10 @@ public class MainActivity extends Activity {
         query();
     }
 
+    public void createEventDone(){
+        query();
+    }
+
     public void loadEvents() {
         Log.d(TAG, "loadEvents");
         Log.d(TAG, "list size: " + upcomingEvents.size());
@@ -125,9 +136,7 @@ public class MainActivity extends Activity {
         todayArray.clear();
         tomorrowArray.clear();
         thisWeekArray.clear();
-        for (int i = 0; i < upcomingEvents.size(); i++) {
-
-            ParseObject event = upcomingEvents.get(i);
+        for (Event event : upcomingEvents) {
 
             Calendar date = new GregorianCalendar();
             date.setTime(event.getDate("date"));
@@ -140,15 +149,15 @@ public class MainActivity extends Activity {
             else {
                 if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
                     Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
-                    todayArray.add(event.getString("title"));
+                    todayArray.add(event);
                 }
                 else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
                     Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
-                    tomorrowArray.add(event.getString("title"));
+                    tomorrowArray.add(event);
                 }
                 //this line will return -1 if today.getTime is before the last day of the week
                 else if ((today.getTime().compareTo(getStartEndOFWeek(date.get(Calendar.WEEK_OF_YEAR), date.get(Calendar.YEAR))) == -1) && (today.get(Calendar.DATE) < date.get(Calendar.DATE))) {
-                    thisWeekArray.add(event.getString("title"));
+                    thisWeekArray.add(event);
                 }
                 else {
                     //else, add to "upcoming events" field at bottom
@@ -164,84 +173,61 @@ public class MainActivity extends Activity {
         mListThisweek = (ListView)findViewById(R.id.listTw);
         mListThisweek.setBackgroundColor(Color.WHITE);
 
-        mListToday.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todayArray));
-        mListTomorrow.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tomorrowArray));
-        mListThisweek.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, thisWeekArray));
+        mListToday.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, todayArray));
+        mListTomorrow.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, tomorrowArray));
+        mListThisweek.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, thisWeekArray));
 
         ListUtils.setDynamicHeight(mListToday);
         ListUtils.setDynamicHeight(mListTomorrow);
         ListUtils.setDynamicHeight(mListThisweek);
 
-
         //when user selects event, fire EventDisplayActivity
         mListToday.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
-
-                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
+                Intent intent = createIntentFromEvent(event);
                 startActivity(intent);
             }
         });
         mListTomorrow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
-
-                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
+                Intent intent = createIntentFromEvent(event);
                 startActivity(intent);
             }
         });
         mListThisweek.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> listView, View view,
+            public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Get the cursor, positioned to the corresponding row in the result set
-//                Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-//                historyCode = cursor.getColumnIndex("_id");
-
-                Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
-                //intent.putExtra(EntryActivity.EXTRA_ENTRY_ID, historyCode);
+                // Get the event, positioned to the corresponding row in the result set
+                Event event = (Event) parent.getAdapter().getItem(position);
+                Intent intent = createIntentFromEvent(event);
                 startActivity(intent);
             }
         });
-
-
-
-
     }
-
-
 
     public void query() {
         Log.d(TAG, "query()");
-        ParseQuery<com.parse.ParseObject> query = ParseQuery.getQuery("event");
-        query.findInBackground(new FindCallback<com.parse.ParseObject>() {
-            @Override
-            public void done(List<com.parse.ParseObject> objects, com.parse.ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "ParseQuery");
-                    upcomingEvents = new ArrayList<ParseObject>();
-                    for (ParseObject event : objects) {
-                        //event.get("invitees");
-                        Log.d(TAG, "Title : " + event.get("title"));
-                        Log.d(TAG, "Date : " + event.get("date"));
-                        upcomingEvents.add(event);
-                    }
-                    loadEvents();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+        ParseUser me = ParseUser.getCurrentUser();
+        ArrayList<String> upcomingString = (ArrayList<String>) me.get("accepted");
+
+        ParseQuery query = ParseQuery.getQuery("event");
+        query.whereContainedIn("objectId", upcomingString);
+        try{
+            upcomingEvents = (ArrayList<Event>) query.find();
+        }
+        catch (ParseException e){
+        }
+
+        loadEvents();
     }
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
@@ -263,6 +249,35 @@ public class MainActivity extends Activity {
 
         return enddate;
 
+    }
+
+    private Intent createIntentFromEvent(Event event) {
+        String title = event.getTitle();
+        Log.d("title", title);
+        ArrayList<String> attendees = event.getAcceptedList();
+        for (int i = 0; i < attendees.size(); i ++) {
+            Log.d("attendees", attendees.get(i).toString());
+        }
+        ParseGeoPoint location = event.getLocation();
+        Location sendLoc = new Location("any string");
+        sendLoc.setLatitude(location.getLatitude());
+        sendLoc.setLongitude(location.getLongitude());
+
+        Date eventDate = event.getDate();
+        String stringEventDate = eventDate.toString();
+
+        Date eventTime = event.getTime();
+        String stringEventTime = eventTime.toString();
+
+        //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
+        Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
+        intent.putExtra(EventDisplayActivity.TITLE, title);
+        intent.putExtra(EventDisplayActivity.ATTENDEES, attendees);
+        intent.putExtra(EventDisplayActivity.LOCATION, sendLoc);
+        intent.putExtra(EventDisplayActivity.DATE, stringEventDate);
+        intent.putExtra(EventDisplayActivity.TIME, stringEventTime);
+
+        return intent;
     }
 
 /*    *//**
@@ -319,4 +334,26 @@ public class MainActivity extends Activity {
             }
         }
     }
+
+    private class EventAdapter extends ArrayAdapter<Event>{
+        private EventAdapter(Context context, int resource, ArrayList<Event> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
+            Event event = getItem(position);
+
+            TextView text = (TextView) convertView.findViewById(android.R.id.text1);
+            text.setText(event.getTitle());
+
+            return convertView;
+        }
+    }
+
 }

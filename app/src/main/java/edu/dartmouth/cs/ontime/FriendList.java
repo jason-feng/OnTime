@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,9 +27,6 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,13 +34,9 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.parse.ParseException;
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class FriendList extends Activity {
-    String friendship = "";
     MyCustomAdapter dataAdapter = null;
     Friend newfriend;
     Button ok;
@@ -60,6 +54,15 @@ public class FriendList extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
+
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         friendList = new ArrayList<Friend>();
@@ -82,14 +85,24 @@ public class FriendList extends Activity {
                finish();
            }
         });
+        Session session = Session.getActiveSession();
+        if (session != null &&
+                (session.isOpened() || session.isClosed())) {
+            onSessionStateChange(session, session.getState(), null);
+        }
         getFBinfo();
-
     }
 
     private void getFBinfo() {
         Log.d("got", "here");
-        new Request(
-                Session.getActiveSession(),
+        Session session = Session.getActiveSession();
+
+        if(session==null) {
+            // try to restore from cache
+            session = Session.openActiveSessionFromCache(getApplicationContext());
+        }
+
+        new Request(session,
                 "/me/friends",
                 null,
                 HttpMethod.GET,
@@ -98,32 +111,38 @@ public class FriendList extends Activity {
                                 /* handle the result */
                         Log.d("here","got");
                         GraphObject graphObject = response.getGraphObject();
-                        JSONObject json = graphObject.getInnerJSONObject();
-                        JSONArray friends = null;
-                        try {
-                            friends = json.getJSONArray("data");
-                            Log.d("hello", friends.toString());
-                            if (friends.length() > 0) {
+                        if (graphObject != null) {
+                            JSONObject json = graphObject.getInnerJSONObject();
+                            JSONArray friends = null;
+                            try {
+                                friends = json.getJSONArray("data");
+                                Log.d("hello", friends.toString());
+                                if (friends.length() > 0) {
 
-                                // Ensure the user has at least one friend ...
-                                for (int i = 0; i < friends.length(); i++) {
-                                    JSONObject friend = friends.getJSONObject(i);
-                                    String name = friend.getString("name");
-                                    Log.d("name",name);
-                                    URL imgUrl = new URL("http://graph.facebook.com/"
-                                            + friend.getString("id") + "/picture?type=large");
-                                    newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
-                                    //friendship += name + ", ";
-                                    friendList.add(newfriend);
+                                    // Ensure the user has at least one friend ...
+                                    for (int i = 0; i < friends.length(); i++) {
+                                        JSONObject friend = friends.getJSONObject(i);
+                                        String name = friend.getString("name");
+                                        Log.d("name", name);
+                                        URL imgUrl = new URL("http://graph.facebook.com/"
+                                                + friend.getString("id") + "/picture?type=large");
+                                        newfriend = new Friend(friend.getString("name"), friend.getString("id"), imgUrl);
+                                        friendList.add(newfriend);
+                                    }
+                                    displayListView();
                                 }
-                                //ParseUser.getCurrentUser().put("friends",friendship);
-
-                                displayListView();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Trying to get friends!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.putExtra("retry", true);
+                            setResult(14, intent);
+                            finish();
                         }
                     }
                 }).executeAsync();
@@ -139,7 +158,6 @@ public class FriendList extends Activity {
     }
 
     private void displayListView() {
-
 
         //create an ArrayAdaptar from the String Array
         dataAdapter = new MyCustomAdapter(this,
@@ -158,7 +176,7 @@ public class FriendList extends Activity {
                 friend.setSelected(true);
                 Toast.makeText(getApplicationContext(),
                         friend.getName() + " selected!",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -204,9 +222,7 @@ public class FriendList extends Activity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         int getPosition = (Integer) buttonView.getTag();
 
-
                         friendsList.get(getPosition).setSelected(buttonView.isChecked());
-
 
                     }
                 });
@@ -225,6 +241,7 @@ public class FriendList extends Activity {
 //                    }
 //                });
             }
+
             else {
                 holder = (ViewHolder) convertView.getTag();
             }
@@ -238,12 +255,6 @@ public class FriendList extends Activity {
         }
 
     }
-
-
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

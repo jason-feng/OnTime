@@ -1,45 +1,48 @@
 package edu.dartmouth.cs.ontime;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
-import android.widget.ProgressBar;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FindCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final String EVENT_ID = "edu.dartmouth.cs.myruns.entry_id";
+    public static final String DATE = "date";
+    public static final String TITLE = "title";
+    public static final String LOCATION = "location";
+    public static final String ATTENDEES = "attendees";
+    public static final String TIME = "time";
     public String eventId;
+    public String date, time, title;
     private Event displayedEvent;
     private ParseObject result;
     private TextView eventDisplayTextView, eventDisplayDate;
     private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
-    public ArrayList<Friend> invitees;
+    public ArrayList<String> attendees;
+    private Location finalLocation;
+    private LatLng latLngLocation;
+    private double latitude, longitude;
 
 
     @Override
@@ -57,72 +60,86 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //query the database for specific event. not sure if this works yet...
         if (savedInstanceState == null) {
-            eventId = getIntent().getStringExtra(EVENT_ID);
+            title = getIntent().getStringExtra(TITLE);
+            attendees = getIntent().getStringArrayListExtra(ATTENDEES);
 
-            if (eventId != "") {
+            finalLocation = getIntent().getParcelableExtra(LOCATION);
+            date = getIntent().getStringExtra(DATE);
+            time = getIntent().getStringExtra(TIME);
 
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
-                try {
-                    result = query.get(eventId);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
+            latitude = finalLocation.getLatitude();
+            longitude = finalLocation.getLongitude();
+            //geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+
+//            if (eventId != "") {
+//
+//                ParseQuery<ParseObject> query = ParseQuery.getQuery("event");
+//                try {
+//                    result = query.get(eventId);
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
 
-        //get all text fields from query
-
+        //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
         eventDisplayTextView.setTextColor(Color.WHITE);
-        //TODO: to be used once actually getting event
-        //eventDisplayTextView.setText(eventTitle + "at" + eventLocationName);
-        eventDisplayTextView.setText("    DINNER at Pine");
+        eventDisplayTextView.setText("    " + title);
+
+        //get event date and time
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
         eventDisplayDate.setTextColor(Color.BLACK);
-        //TODO: when actually getting the event, set text to datetime
-        eventDisplayDate.setText("Monday, February 2 @ 5:00pm-6:30pm");
 
-        //TODO: when actually getting the event, set arraylist of friends from query
-        invitees = new ArrayList<Friend>();
-        Friend friend1 = new Friend("Emily", "12", null);
-        invitees.add(friend1);
-        Friend friend2 = new Friend("Jason", "28", null);
-        invitees.add(friend2);
-        Friend friend3 = new Friend("Dani", "35", null);
-        invitees.add(friend3);
-        Friend friend4 = new Friend("Nick", "54", null);
-        invitees.add(friend4);
-        Friend friend5 = new Friend("test", "100", null);
-        invitees.add(friend5);
-        Friend friend6 = new Friend("test", "34", null);
-        invitees.add(friend6);
-        Friend friend7 = new Friend("test", "12", null);
-        invitees.add(friend7);
-        Friend friend8 = new Friend("plswork", "1", null);
-        invitees.add(friend8);
+        //TODO: get this working to make date prettier if possible
+//        Calendar cal = Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+//        try {
+//            cal.setTime(sdf.parse(date));
+//        } catch (java.text.ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//        String displayTime = "";
+//        displayTime += cal.get(Calendar.DAY_OF_WEEK);
+//        displayTime += ", ";
+//        displayTime += cal.get(Calendar.MONTH);
+//        displayTime += " ";
+//        displayTime += cal.get(Calendar.DATE);
+//        displayTime += ", at ";
+//        displayTime += cal.get(Calendar.HOUR);
+//        displayTime += ":";
+//        displayTime += cal.get(Calendar.MINUTE);
+//        displayTime += cal.get(Calendar.AM_PM);
 
+       // String displayTime = cal.get(Calendar.DATE) + " " + cal.get(Calendar.HOUR) + cal.get(Calendar.MINUTE);
 
-        //Context myContext =
-//        this.getSupportFragmentManager();
-//        MapFragment mapFragment = (MapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
+        eventDisplayDate.setText(date);
+
+        //set event location
+
+        latLngLocation = new LatLng(latitude, longitude);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
         GoogleMap mmap = supportMapFragment.getMap();
 
         mmap.addMarker(new MarkerOptions()
-                .position(new LatLng(0, 0))
+                .position(latLngLocation)
                 .title("Marker"));
+
+        mmap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngLocation,
+                17));
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
 
         //dynamically add friends
-        for (int i = 0; i < invitees.size(); i++) {
+        for (int i = 0; i < attendees.size(); i++) {
             TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
-            //TODO: set text here to name of person
-            newView.setText(invitees.get(i).getName());
+            //TODO: get actual person not the person's fb id number
+            //query parse and iterate through the users and see which one has a matching fb id
+            newView.setText(attendees.get(i));
             newView.setTextSize(15);
             newView.setTextAppearance(this, R.style.boldText);
             progressBarLinearLayout.addView(newView);
@@ -133,10 +150,11 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             //TODO: set to android.widget.ProgressBar.Horizontal somehow!!
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
-            newBar.setProgress(Integer.parseInt(invitees.get(i).getId()));
+            //newBar.setProgress(Integer.parseInt(attendees.get(i).getId()));
             newBar.setMinimumWidth(40);
             //newBar.setBackgroundColor(Color.WHITE);
             newBar.setMinimumHeight(50);
+           // newBar.setProgressTintList();
 
             newBar.setScrollBarSize(200);
             progressBarLinearLayout.addView(newBar);
@@ -144,18 +162,14 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
 
 
-
-
-
-        //for each invitee in event invitees list
-
-        //add a progressbar for them into the scrollview
-
-
     }
 
-
-
+    //from Android developers
+    public static Calendar DateToCalendar(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -178,7 +192,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

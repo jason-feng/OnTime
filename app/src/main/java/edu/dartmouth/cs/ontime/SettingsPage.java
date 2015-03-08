@@ -1,13 +1,14 @@
 package edu.dartmouth.cs.ontime;
 
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class SettingsPage extends Activity {
+public class SettingsPage extends FragmentActivity {
+    Settings settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,9 +17,16 @@ public class SettingsPage extends Activity {
         getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new Settings())
+            // Add the fragment on initial activity setup
+            settings = new Settings();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(android.R.id.content, settings)
                     .commit();
+        } else {
+            // Or set the fragment from restored state info
+            settings = (Settings) getSupportFragmentManager()
+                    .findFragmentById(android.R.id.content);
         }
     }
 

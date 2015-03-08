@@ -8,6 +8,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,14 @@ public class Event extends ParseObject {
 
     public void setLocation(ParseGeoPoint location) {
         put("location", location);
+    }
+
+    public ArrayList<String> getAcceptedList(){
+        return (ArrayList<String>) get("accepted");
+    }
+
+    public void setAcceptedList(ArrayList<String> invitees){
+        put("accepted", invitees);
     }
 
     public static List<ParseObject> query() {

@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.ontime;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +33,14 @@ public class SignInActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.login_start);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.bokeh1copy3);
+
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.hide();
 
         Button loginButton = (Button) findViewById(R.id.logButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +86,8 @@ public class SignInActivity extends Activity {
                             if (user != null) {
                                 ParseUser.getCurrentUser().put("name",user.getName());
                                 ParseUser.getCurrentUser().put("fbId",user.getId());
+                                ParseUser.getCurrentUser().put("invited", new ArrayList<String>());
+                                ParseUser.getCurrentUser().put("accepted", new ArrayList<String>());
                                 ParseUser.getCurrentUser().put("installation_id", ParseInstallation.getCurrentInstallation().getInstallationId());
                                 ParseUser.getCurrentUser().saveInBackground();
                                 finishActivity();
