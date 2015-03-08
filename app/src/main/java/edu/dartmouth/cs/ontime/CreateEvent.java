@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.FunctionCallback;
@@ -21,6 +22,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -152,7 +154,7 @@ public class CreateEvent extends ListActivity {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
-                        String eventId = event.getObjectId();
+                        final String eventId = event.getObjectId();
 
                         HashMap<String, ArrayList<String>> params = new HashMap<>();
                         userList.add(eventId);
@@ -164,35 +166,44 @@ public class CreateEvent extends ListActivity {
                             }
                         });
 
-                        ParseUser me = ParseUser.getCurrentUser();
-                        ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
-                        updatedEvents.add(eventId);
-                        me.put("accepted", updatedEvents);
-                        me.saveInBackground();
+                        ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
+                            public void done(ParseObject object, ParseException e) {
+                                ParseUser me = (ParseUser) object;
+                                // Check if there is current user info
+                                if (me != null) {
+                                    ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
+                                    updatedEvents.add(eventId);
+                                    me.put("accepted", updatedEvents);
+                                    me.saveInBackground();
+                                }
+                                else {
+                                }
+                            }
+                        });;
+
+                        // create installation query
+                        ParseQuery installationQuery = ParseInstallation.getQuery();
+                        installationQuery.whereContainedIn("installationId", installationIDs);
+
+                        // Send push notification to query
+                        ParsePush push = new ParsePush();
+                        push.setQuery(installationQuery); // Set our Installation query
+                        JSONObject jsonObj = new JSONObject();
+                        try{
+                            jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
+                            jsonObj.put("title", event.getTitle());
+                            jsonObj.put("objectId", event.getObjectId());
+                        }
+                        catch (JSONException j){
+                        }
+                        push.setData(jsonObj);
+                        push.sendInBackground();
                     } else {
                         Log.d(TAG, "failed to save!");
                     }
 
                 }
             });
-
-            // create installation query
-            ParseQuery installationQuery = ParseInstallation.getQuery();
-            installationQuery.whereContainedIn("installationId", installationIDs);
-
-            // Send push notification to query
-            ParsePush push = new ParsePush();
-            push.setQuery(installationQuery); // Set our Installation query
-            JSONObject jsonObj = new JSONObject();
-            try{
-                jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
-                jsonObj.put("title", event.getTitle());
-                jsonObj.put("objectId", event.getObjectId());
-            }
-            catch (JSONException j){
-            }
-            push.setData(jsonObj);
-            push.sendInBackground();
 
             ((CreateFinished) App.getContext()).createEventDone();
 
