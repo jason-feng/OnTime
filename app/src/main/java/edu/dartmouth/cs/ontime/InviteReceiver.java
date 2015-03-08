@@ -52,21 +52,23 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
 
         else{
             Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
+            Intent mIntent2 = new Intent(App.getContext(), InviteActivity.class);
+            Intent mIntent3 = new Intent(App.getContext(), InviteActivity.class);
 
             // If notification pressed but not a button
             PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
 
-            mIntent.putExtra("accept", true);
-            mIntent.putExtra("eventId", eventId);
+            mIntent2.putExtra("accept", true);
+            mIntent2.putExtra("eventId", eventId);
 
             // If accept is pressed
-            PendingIntent acceptIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
+            PendingIntent acceptIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent2, 0);
 
-            mIntent.putExtra("decline", true);
+            mIntent3.putExtra("decline", true);
+            mIntent3.putExtra("eventId", eventId);
 
             // If decline is pressed
-            PendingIntent declineIntent = PendingIntent.getActivity(App.getContext(), 0,
-                    new Intent(App.getContext(), InviteActivity.class), 0);
+            PendingIntent declineIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent3, 0);
 
             Notification notification = new Notification.Builder(App.getContext())
                     .setContentTitle("OnTime")

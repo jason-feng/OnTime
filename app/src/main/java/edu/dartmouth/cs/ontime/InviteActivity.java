@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,6 +148,7 @@ public class InviteActivity extends Activity {
                             ArrayList<String> acceptInvitees = acceptEvent.getAcceptedList();
                             acceptInvitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             acceptEvent.setAcceptedList(acceptInvitees);
+                            Log.d("InviteActivity", "Event saved with new accepted list");
                             acceptEvent.saveInBackground();
                         } catch (ParseException e) {
                         }
@@ -265,6 +267,7 @@ public class InviteActivity extends Activity {
                             } catch (ParseException e) {
 
                             }
+
 
                             // create installation query
                             ParseQuery declineInstallQ = ParseInstallation.getQuery();
