@@ -59,5 +59,8 @@
     <string name="ok">Ok</string>
     <string name="pref_saved">\"Preferences saved\"</string>
     <string name="pref_cancel">Preferences cancelled</string>
+    <string name="preference">Preference</string>
+    <string name="me">me</string>
+    <string name="others">others</string>
 
 </resources>

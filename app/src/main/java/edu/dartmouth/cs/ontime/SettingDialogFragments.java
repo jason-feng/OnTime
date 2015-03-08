@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -26,19 +27,33 @@ public class SettingDialogFragments extends DialogFragment {
         final Activity parent = getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(parent);
         final EditText et = new EditText(parent);
+        String mKey = getString(R.string.preference);
+        final SharedPreferences mPreference = getActivity().getSharedPreferences(mKey,getActivity().MODE_PRIVATE);
 
 
         switch(currentPosition) {
             case DIALOG_ID_HOME:
                 Log.d(TAG, "TITLE fragment");
                 et.setInputType(InputType.TYPE_CLASS_TEXT);
-                et.setHint(R.string.home_address_prompt);
+                mKey = getString(R.string.home_address);
+                if (mPreference.contains(mKey)) {
+                    et.setText(mPreference.getString(mKey," "));
+                }
+                else {
+                    et.setHint(R.string.home_address_prompt);
+                }
                 builder.setTitle(R.string.home_address);
                 builder.setView(et);
                 builder.setPositiveButton(R.string.dialog_fragment_positive_button,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                // save?? shared prefs?
+                                SharedPreferences.Editor mEditor = mPreference.edit();
+                                mEditor.clear();
+                                String mKey = getString(R.string.home_address);
+                                String mValue = (String)et.getText().toString();
+                                mEditor.putString(mKey,mValue);
+                                mEditor.commit();
+
                                 dialog.cancel();
                             }
                         });
@@ -53,13 +68,24 @@ public class SettingDialogFragments extends DialogFragment {
             case DIALOG_ID_WORK:
                 Log.d(TAG, "TITLE fragment");
                 et.setInputType(InputType.TYPE_CLASS_TEXT);
-                et.setHint(R.string.work_address_prompt);
+                mKey = getString(R.string.work_address);
+                if (mPreference.contains(mKey)) {
+                    et.setText(mPreference.getString(mKey," "));
+                }
+                else {
+                    et.setHint(R.string.work_address_prompt);
+                }
                 builder.setTitle(R.string.work_address);
                 builder.setView(et);
                 builder.setPositiveButton(R.string.dialog_fragment_positive_button,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((CreateEvent)getActivity()).getEvent().setTitle(et.getText().toString());
+                                SharedPreferences.Editor mEditor = mPreference.edit();
+                                mEditor.clear();
+                                String mKey = getString(R.string.work_address);
+                                String mValue = (String)et.getText().toString();
+                                mEditor.putString(mKey,mValue);
+                                mEditor.commit();
                                 dialog.cancel();
                             }
                         });

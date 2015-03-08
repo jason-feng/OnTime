@@ -3,6 +3,7 @@ package edu.dartmouth.cs.ontime;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -41,6 +42,8 @@ public class Settings extends Fragment {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.hide();
+
+
 
 
 //        ListPreference listPreference = (ListPreference) findPreference("list_preference");
@@ -88,6 +91,20 @@ public class Settings extends Fragment {
         mSave.setOnClickListener(new View.OnClickListener() {
                                      @Override
                                      public void onClick(View v) {
+                                         String mKey = getString(R.string.preference);
+                                         SharedPreferences mPreference = getActivity().getSharedPreferences(mKey,getActivity().MODE_PRIVATE);
+
+                                         SharedPreferences.Editor mEditor = mPreference.edit();
+                                         mEditor.clear();
+                                         mKey = getString(R.string.me);
+                                         boolean me = mMe.isSelected();
+
+                                         mEditor.putBoolean(mKey,me);
+                                         mKey = getString(R.string.others);
+                                         boolean others = mOthers.isSelected();
+                                         Log.d("put",Boolean.toString(others));
+                                         mEditor.putBoolean(mKey,others);
+                                         mEditor.commit();
                                          Toast.makeText(myContext,
                                                  getString(R.string.pref_saved), Toast.LENGTH_SHORT).show();
                                          getActivity().finish();
@@ -109,8 +126,35 @@ public class Settings extends Fragment {
         mListLocations.setBackgroundColor(Color.WHITE);
         mMe = (CheckBox) view.findViewById(R.id.checkMe);
         mMe.setBackgroundColor(Color.WHITE);
+        mMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                  mMe.setSelected(true);
+            }
+        });
         mOthers = (CheckBox) view.findViewById(R.id.checkOthers);
         mOthers.setBackgroundColor(Color.WHITE);
+        mOthers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOthers.setSelected(true);
+            }
+        });
+
+        String mKey = getString(R.string.preference);
+        SharedPreferences mPreference = getActivity().getSharedPreferences(mKey,getActivity().MODE_PRIVATE);
+
+        mKey = getString(R.string.me);
+        if (mPreference.contains(mKey)) {
+            boolean mValue = mPreference.getBoolean(mKey,false);
+            mMe.setSelected(mValue);
+        }
+        mKey = getString(R.string.others);
+        if (mPreference.contains(mKey)) {
+            Log.d("does","contain");
+            boolean mValue = mPreference.getBoolean(mKey,false);
+            mOthers.setSelected(mValue);
+        }
 
 
         String[] fbArray = {"Login with Facebook"};
