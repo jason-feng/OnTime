@@ -32,7 +32,7 @@ public class DispatchActivity extends Activity {
                     if (currUser != null) {
                         try{
                             installation = ParseInstallation.getCurrentInstallation().fetch();
-                            currUser.put("installationId", installation);
+                            currUser.put("installation_Id", installation);
                             currUser.save();
                         }
                         catch (ParseException k){
