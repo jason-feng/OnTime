@@ -166,6 +166,15 @@ public class CreateEvent extends ListActivity {
             // create an accepted list and add the host (current user)
             ArrayList<String> accepted = new ArrayList<String>();
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
+            ArrayList<ParseGeoPoint> user_locations = new ArrayList<ParseGeoPoint>();
+            user_locations.add(new ParseGeoPoint(0.0,0.0));
+            ArrayList<Double> init_distances = new ArrayList<Double>();
+            init_distances.add(-1.0);
+            ArrayList<Double> user_distances = new ArrayList<Double>();
+            init_distances.add(-1.0);
+            event.put("user_locations", user_locations);
+            event.put("user_distances", user_distances);
+            event.put("init_distances", init_distances);
             event.put("accepted", accepted);
             event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
 
