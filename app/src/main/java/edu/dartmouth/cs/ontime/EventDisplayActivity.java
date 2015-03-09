@@ -105,6 +105,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             double status = userDistances.get(i) / init_distances.get(i);
             int intStatus = (int) status * 100;
             currentUserBar.setProgress(intStatus);
+            Log.d("TEST", Integer.toString(intStatus));
         }
 
         displayedEvent.setUserLocations(userLocations);
@@ -180,9 +181,10 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         currentUser = ParseUser.getCurrentUser();
         currentFbId = currentUser.getString("fbId");
         for (int i = 0; i < attendees.size(); i++) {
-            if (attendees.get(i) == currentFbId)
+            if (attendees.get(i).equals(currentFbId)) {
                 position = i;
                 Log.d(TAG, "POSITION: " + Integer.toString(position));
+            }
         }
 
         userLocations = displayedEvent.getUserLocations();
