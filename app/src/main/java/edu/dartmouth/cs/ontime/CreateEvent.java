@@ -88,6 +88,7 @@ public class CreateEvent extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
 
+            // get the map data and put it into the event
             if (requestCode == MAP_REQUEST) {
 
                 Log.d(TAG, "onActivityResult Success");
@@ -99,6 +100,7 @@ public class CreateEvent extends ListActivity {
                 CreateEvent.setDialogField(4,true);
             }
 
+            // get the list of invitee installation ids from the fb ids
             else if (requestCode == INVITE_REQUEST){
                 ArrayList<String> selectedIDs = data.getStringArrayListExtra("selected_friends");
                 installationIDs = new ArrayList<String>();
@@ -159,18 +161,23 @@ public class CreateEvent extends ListActivity {
      */
     public void onSaveClicked(View v) {
         event.put("accepted", new ArrayList<Integer>());;
+        // if every field is filled out save the event
         if (allEventFields()) {
+            // create an accepted list and add the host (current user)
             ArrayList<String> accepted = new ArrayList<String>();
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
             event.put("accepted", accepted);
             event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
 
+            // save the event
             event.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
+                        // get the generated event id
                         final String eventId = event.getObjectId();
 
+                        // request the server to add the event to the invite list of invitees
                         HashMap<String, ArrayList<String>> params = new HashMap<>();
                         userList.add(eventId);
                         params.put("users", userList);
@@ -181,6 +188,7 @@ public class CreateEvent extends ListActivity {
                             }
                         });
 
+                        // save the event in accepted for the current user
                         ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
                             public void done(ParseObject object, ParseException e) {
                                 ParseUser me = (ParseUser) object;
@@ -195,13 +203,13 @@ public class CreateEvent extends ListActivity {
                                     catch (ParseException k){
 
                                     }
+                                    // when everything is done, prompt main activity to update
                                     ((CreateFinished) App.getContext()).createEventDone();
                                 }
                                 else {
                                 }
                             }
                         });;
-
 
                         // create installation query
                         ParseQuery installationQuery = ParseInstallation.getQuery();

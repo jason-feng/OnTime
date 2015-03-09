@@ -201,7 +201,10 @@ public class InviteActivity extends Activity {
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which){
                         case DialogInterface.BUTTON_POSITIVE:
+
                             Event event = (Event) parent.getAdapter().getItem(pos);
+
+                            // remove event from invited list and add it to the accepted list
                             ParseUser me = ParseUser.getCurrentUser();
                             ArrayList<String> invited = (ArrayList<String>) me.get("invited");
                             ArrayList<String> accepted = (ArrayList<String>) me.get("accepted");
@@ -210,7 +213,7 @@ public class InviteActivity extends Activity {
                             me.put("invited", invited);
                             me.put("accepted", accepted);
                             me.saveInBackground();
-                            String hostId = event.getString("host");
+
 
                             ParseQuery query = ParseQuery.getQuery("event");
                             query.whereContainedIn("objectId", invited);
@@ -227,11 +230,12 @@ public class InviteActivity extends Activity {
                             event.setAcceptedList(invitees);
                             event.saveInBackground();
 
-                            // create installation query
+                            // create installation query for the host
+                            String hostId = event.getString("host");
                             ParseQuery installationQuery = ParseInstallation.getQuery();
                             installationQuery.whereContains("installationId", hostId);
 
-                            // Send push notification to query
+                            // Send push notification to host that user accepted
                             ParsePush push = new ParsePush();
                             push.setQuery(installationQuery); // Set our Installation query
                             JSONObject jsonObj = new JSONObject();
@@ -239,6 +243,7 @@ public class InviteActivity extends Activity {
                                 jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
                                 jsonObj.put("title", event.getTitle());
                                 jsonObj.put("objectId", null);
+                                jsonObj.put("accepted", true);
                             }
                             catch (JSONException j){
                             }
@@ -251,6 +256,8 @@ public class InviteActivity extends Activity {
 
                         case DialogInterface.BUTTON_NEGATIVE:
                             Event declineEvent = (Event) parent.getAdapter().getItem(pos);
+
+                            // remove event from invite list
                             ParseUser me2 = ParseUser.getCurrentUser();
                             ArrayList<String> declineInvited = (ArrayList<String>) me2.get("invited");
                             declineInvited.remove(declineEvent.getObjectId());
@@ -268,12 +275,11 @@ public class InviteActivity extends Activity {
 
                             }
 
-
                             // create installation query
                             ParseQuery declineInstallQ = ParseInstallation.getQuery();
                             declineInstallQ.whereContains("installationId", declineHostId);
 
-                            // Send push notification to query
+                            // Send push notification to host that user declined invitation
                             ParsePush declinePush = new ParsePush();
                             declinePush.setQuery(declineInstallQ); // Set our Installation query
                             JSONObject jsonObj2 = new JSONObject();
@@ -281,6 +287,7 @@ public class InviteActivity extends Activity {
                                 jsonObj2.put("name", ParseUser.getCurrentUser().get("name"));
                                 jsonObj2.put("title", declineEvent.getTitle());
                                 jsonObj2.put("objectId", null);
+                                jsonObj2.put("accepted", false);
                             }
                             catch (JSONException j){
                             }
