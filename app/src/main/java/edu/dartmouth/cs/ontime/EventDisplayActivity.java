@@ -185,9 +185,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 Log.d(TAG, "POSITION: " + Integer.toString(position));
         }
 
-            userLocations = displayedEvent.getUserLocations();
-            userDistances = displayedEvent.getUserDistances();
-            init_distances = displayedEvent.getInitDistances();
+        userLocations = displayedEvent.getUserLocations();
+        userDistances = displayedEvent.getUserDistances();
+        init_distances = displayedEvent.getInitDistances();
 
     }
     @Override
@@ -209,7 +209,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         if (savedInstanceState == null) {
             object_id = getIntent().getStringExtra(OBJECT_ID);
             title = getIntent().getStringExtra(TITLE);
-            attendees = getIntent().getStringArrayListExtra(ATTENDEES);
 
             finalLocation = getIntent().getParcelableExtra(LOCATION);
             finalGeoPoint = new ParseGeoPoint(finalLocation.getLatitude(),finalLocation.getLongitude());
@@ -229,6 +228,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             }
             catch (ParseException e){
             }
+            attendees = displayedEvent.getAcceptedList();
         }
 
         if (savedInstanceState != null) {
