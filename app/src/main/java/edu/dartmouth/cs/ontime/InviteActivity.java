@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -228,6 +229,15 @@ public class InviteActivity extends Activity {
 
                             // update event accepted list
                             ArrayList<String> invitees = event.getAcceptedList();
+                            ArrayList<ParseGeoPoint> user_locations = event.getUserLocations();
+                            user_locations.add(new ParseGeoPoint(0.0,0.0));
+                            ArrayList<Double> init_distances = event.getInitDistances();
+                            init_distances.add(-1.0);
+                            ArrayList<Double> user_distances = event.getUserDistances();
+                            init_distances.add(-1.0);
+                            event.put("user_locations", user_locations);
+                            event.put("user_distances", user_distances);
+                            event.put("init_distances", init_distances);
                             invitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             event.setAcceptedList(invitees);
                             event.saveInBackground();
