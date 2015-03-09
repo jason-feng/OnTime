@@ -19,6 +19,8 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
 
     @Override
     public void onPushReceive(Context context, Intent intent) {
+
+        // get information from the JSONObject sent with the parse push
         Bundle extras = intent.getExtras();
         String message = extras != null ? extras.getString("com.parse.Data") : "";
         JSONObject jObject;
@@ -35,12 +37,30 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
             e.printStackTrace();
         }
 
+        // the notification is an accept notification if there is no eventId
         if (eventId == null){
+
+            // handle accept/decline notification message
+            String nMessage = "";
+            try {
+                jObject = new JSONObject(message);
+                if (jObject.getBoolean("accepted")){
+                    nMessage = " accepted the event ";
+                }
+                else{
+                    nMessage = " declined the event ";
+                }
+            }
+            catch (JSONException k){
+
+            }
+
+
             PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, new Intent(App.getContext(), MainActivity.class), 0);
 
             Notification notification = new Notification.Builder(App.getContext())
                     .setContentTitle("OnTime")
-                    .setContentText(name + " accepted the event " + title + "!")
+                    .setContentText(name + nMessage + title + "!")
                     .setSmallIcon(R.drawable.notify)
                     .setOngoing(true)
                     .setAutoCancel(true)
@@ -50,10 +70,11 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
             mNotificationManager.notify(0, notification);
         }
 
+        // Include option to accept/decline if it is an invite notification
         else{
             Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
-            Intent mIntent2 = new Intent(App.getContext(), InviteActivity.class);
-            Intent mIntent3 = new Intent(App.getContext(), InviteActivity.class);
+            Intent mIntent2 = new Intent(App.getContext(), MainActivity.class);
+            Intent mIntent3 = new Intent(App.getContext(), MainActivity.class);
 
             // If notification pressed but not a button
             PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);

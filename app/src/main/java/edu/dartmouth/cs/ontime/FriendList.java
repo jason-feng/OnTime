@@ -92,6 +92,8 @@ public class FriendList extends Activity {
                finish();
            }
         });
+
+        // make sure session is opened
         Session session = Session.getActiveSession();
         if (session != null &&
                 (session.isOpened() || session.isClosed())) {
@@ -100,6 +102,9 @@ public class FriendList extends Activity {
         getFBinfo();
     }
 
+    /*
+    Get a list of the user's friends who have registered with OnTime using a session request
+     */
     private void getFBinfo() {
         Log.d("got", "here");
         Session session = Session.getActiveSession();
@@ -124,9 +129,10 @@ public class FriendList extends Activity {
                             try {
                                 friends = json.getJSONArray("data");
                                 Log.d("hello", friends.toString());
-                                if (friends.length() > 0) {
 
-                                    // Ensure the user has at least one friend ...
+                                // Ensure the user has at least one friend ...
+                                if (friends.length() > 0) {
+                                    // create a friend object for each friend and add each to the list of friends
                                     for (int i = 0; i < friends.length(); i++) {
                                         JSONObject friend = friends.getJSONObject(i);
                                         String name = friend.getString("name");
@@ -145,6 +151,7 @@ public class FriendList extends Activity {
                             }
                         }
                         else{
+                            // session was not opened correctly, request a retry
                             Toast.makeText(getApplicationContext(), "Trying to get friends!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
                             intent.putExtra("retry", true);
