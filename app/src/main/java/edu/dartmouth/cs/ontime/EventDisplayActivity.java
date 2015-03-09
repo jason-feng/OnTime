@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -83,41 +84,42 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
      */
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
+        current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
         ParseQuery<Event> currentEventQuery = ParseQuery.getQuery("event");
         currentEventQuery.whereEqualTo("objectId", object_id);
-        try{
-            displayedEvent = currentEventQuery.getFirst();
-        }
-        catch (ParseException e){
-        }
-        init_distances = displayedEvent.getInitDistances();
-        userLocations = displayedEvent.getUserLocations();
-        userDistances = displayedEvent.getUserDistances();
-        current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-        Log.d(TAG, userDistances.toString());
-        if (userDistances.get(position) == -1.1) {
-            Log.d(TAG, "INIT LOCATIONS");
-            distance = current_location.distanceInMilesTo(finalGeoPoint);
-            init_distances.set(position, distance);
-            userLocations.set(position, current_location);
-            userDistances.set(position, distance);
-        }
-        else {
-            Log.d(TAG, "UPDATE LOCATIONS and POSITION: " + position);
-            distance = current_location.distanceInMilesTo(finalGeoPoint);
-            userLocations.set(position, current_location);
-            userDistances.set(position, distance);
-        }
+        currentEventQuery.getFirstInBackground(new GetCallback<Event>() {
+            @Override
+            public void done(Event event, ParseException e) {
+                if (event == null) {
+                    Log.d("score", "The getFirst request failed.");
+                } else {
+                    displayedEvent = event;
+                    init_distances = displayedEvent.getInitDistances();
+                    userLocations = displayedEvent.getUserLocations();
+                    userDistances = displayedEvent.getUserDistances();
+                    Log.d(TAG, userDistances.toString());
+                    if (userDistances.get(position) == -1.1) {
+                        Log.d(TAG, "INIT LOCATIONS");
+                        distance = current_location.distanceInMilesTo(finalGeoPoint);
+                        init_distances.set(position, distance);
+                        userLocations.set(position, current_location);
+                        userDistances.set(position, distance);
+                    }
+                    else {
+                        Log.d(TAG, "UPDATE LOCATIONS and POSITION: " + position);
+                        distance = current_location.distanceInMilesTo(finalGeoPoint);
+                        userLocations.set(position, current_location);
+                        userDistances.set(position, distance);
+                    }
+                }
+            }
+        });
 
         // Save distances to cloud
         displayedEvent.setUserLocations(userLocations);
         displayedEvent.setUserDistances(userDistances);
-        try {
-            displayedEvent.save();
-        }
-        catch (ParseException e) {
+        displayedEvent.saveInBackground();
 
-        }
 
         //
         for (int i = 0; i < userDistances.size(); i++) {
