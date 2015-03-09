@@ -82,6 +82,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         userDistances.set(position, distance);
 
         displayedEvent.setUserLocations(userLocations);
+        displayedEvent.setUserDistances(userDistances);
         try {
             displayedEvent.save();
         }
@@ -102,7 +103,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 position = i;
         }
 
-        if (displayedEvent.getUserLocations() != null) {
+        if (displayedEvent.getUserLocations() != null && displayedEvent.getUserDistances() != null) {
             userLocations = displayedEvent.getUserLocations();
             userDistances = displayedEvent.getUserDistances();
         }
