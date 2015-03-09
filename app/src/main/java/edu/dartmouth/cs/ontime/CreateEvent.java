@@ -169,10 +169,10 @@ public class CreateEvent extends ListActivity {
             ArrayList<ParseGeoPoint> user_locations = new ArrayList<ParseGeoPoint>();
             user_locations.add(new ParseGeoPoint(0.0,0.0));
             ArrayList<Double> init_distances = new ArrayList<Double>();
-            init_distances.add(-1.10);
+            init_distances.add(-1.1);
             Log.d(TAG, "initDIST: " + init_distances.toString());
             ArrayList<Double> user_distances = new ArrayList<Double>();
-            user_distances.add(-1.10);
+            user_distances.add(-1.1);
             event.setInitDistances(init_distances);
             event.setUserDistances(user_distances);
             event.setUserLocations(user_locations);
