@@ -172,32 +172,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 position = i;
         }
 
-        if (displayedEvent.getUserLocations() != null && displayedEvent.getUserDistances() != null && displayedEvent.getInitDistances() != null) {
-            userLocations = displayedEvent.getUserLocations();
-            userDistances = displayedEvent.getUserDistances();
-            init_distances = displayedEvent.getInitDistances();
-        }
-        else {
-            Log.d(TAG, "new Parse Stuff");
-            userLocations = new ArrayList<ParseGeoPoint>();
-            userDistances = new ArrayList<Double>();
-            init_distances = new ArrayList<Double>();
-            for (int i = 0; i < attendees.size(); i++) {
-                userLocations.add(i, null);
-                userDistances.add(i,-1.0);
-                init_distances.add(i,-1.0);
-                distance = -1.0;
-            }
-            displayedEvent.setUserLocations(userLocations);
-            displayedEvent.setUserDistances(userDistances);
-            displayedEvent.setInitDistances(init_distances);
-            try {
-                displayedEvent.save();
-            }
-            catch (ParseException e) {
-
-            }
-        }
+        userLocations = displayedEvent.getUserLocations();
+        userDistances = displayedEvent.getUserDistances();
+        init_distances = displayedEvent.getInitDistances();
 
     }
     @Override
