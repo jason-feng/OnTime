@@ -142,7 +142,7 @@ public class CreateEvent extends ListActivity {
 
     public void onSaveClicked(View v) {
         event.put("accepted", new ArrayList<Integer>());;
-        if (installationIDs.size() != 0 && event.getTitle() != null && event.getTime() != null && event.getDate() != null) {
+        if (allEventFields()) {
             ArrayList<String> accepted = new ArrayList<String>();
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
             event.put("accepted", accepted);
@@ -213,34 +213,39 @@ public class CreateEvent extends ListActivity {
             finish();
         }
 
-        else if (installationIDs.size() == 0 ){
-            Toast.makeText(getApplicationContext(),
-                    "Please select friends to invite",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getTitle() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a title for your event",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getDate() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a date for your event",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getTime() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a time for your event",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getLocation() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a location for your event",
-                    Toast.LENGTH_SHORT).show();
+        else {
+            for (int i = 0; i < dialogFields.length; i++) {
+                if (dialogFields[i] == false) {
+                    switch (i) {
+                        case 0:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a title for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a date for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a time for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 3:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a location for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 4:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please select friends to invite",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    break;
+                }
+            }
         }
     }
 

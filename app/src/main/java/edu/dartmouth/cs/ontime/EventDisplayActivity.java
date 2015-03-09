@@ -108,6 +108,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             userDistances = displayedEvent.getUserDistances();
         }
         else {
+            Log.d(TAG, "new Parse Stuff");
             userLocations = new ArrayList<ParseGeoPoint>();
             userDistances = new ArrayList<Double>();
             for (int i = 0; i < attendees.size(); i++) {

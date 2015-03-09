@@ -49,7 +49,7 @@ public class EventDialogFragments extends DialogFragment {
                         Log.d(TAG, "onDateSet()");
                         cal.set(year, month, day);
                         ((CreateEvent)getActivity()).getEvent().setDate(cal.getTime());
-                        CreateEvent.setDialogField(0,true);
+                        CreateEvent.setDialogField(1,true);
                     }
                 };
 
@@ -66,7 +66,7 @@ public class EventDialogFragments extends DialogFragment {
                         Log.d(TAG, "onTimeSet()");
                         cal.set(hour, minute);
                         ((CreateEvent)getActivity()).getEvent().setTime(cal.getTime());
-                        CreateEvent.setDialogField(1,true);
+                        CreateEvent.setDialogField(2,true);
                     }
                 };
                 // Use the current date as the default date in the picker
@@ -85,7 +85,7 @@ public class EventDialogFragments extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 ((CreateEvent)getActivity()).getEvent().setTitle(et.getText().toString());
-                                CreateEvent.setDialogField(2,true);
+                                CreateEvent.setDialogField(0,true);
                                 dialog.cancel();
                             }
                         });
@@ -120,7 +120,7 @@ public class EventDialogFragments extends DialogFragment {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK, so save the mSelectedItems results somewhere
                                 // or return them to the component that opened the dialog
-                                CreateEvent.setDialogField(3,true);
+                                CreateEvent.setDialogField(4,true);
                             }
                         })
                         .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {

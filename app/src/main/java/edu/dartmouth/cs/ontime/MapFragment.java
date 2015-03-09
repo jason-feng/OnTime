@@ -81,6 +81,7 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
             intent.putExtra("LONG", mMarker.getPosition().longitude);
             setResult(RESULT_OK, intent);
         }
+        CreateEvent.setDialogField(3,true);
         finish();
     }
 
