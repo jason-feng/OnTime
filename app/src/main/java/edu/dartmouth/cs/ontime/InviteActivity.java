@@ -232,9 +232,9 @@ public class InviteActivity extends Activity {
                             ArrayList<ParseGeoPoint> user_locations = event.getUserLocations();
                             user_locations.add(new ParseGeoPoint(0.0,0.0));
                             ArrayList<Double> init_distances = event.getInitDistances();
-                            init_distances.add(-1.0);
+                            init_distances.add(-1.1);
                             ArrayList<Double> user_distances = event.getUserDistances();
-                            user_distances.add(-1.0);
+                            user_distances.add(-1.1);
                             event.setInitDistances(init_distances);
                             event.setUserLocations(user_locations);
                             event.setUserDistances(user_distances);
