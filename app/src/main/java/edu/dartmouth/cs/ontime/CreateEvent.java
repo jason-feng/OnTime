@@ -116,6 +116,7 @@ public class CreateEvent extends ListActivity {
 
                     }
                 }
+                CreateEvent.setDialogField(4,true);
             }
         }
         else if (resultCode == 14){
@@ -198,46 +199,43 @@ public class CreateEvent extends ListActivity {
                             }
                         });
 
-                        // save the event in accepted for the current user
-                        ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
-                            public void done(ParseObject object, ParseException e) {
-                                ParseUser me = (ParseUser) object;
-                                // Check if there is current user info
-                                if (me != null) {
-                                    ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
-                                    updatedEvents.add(eventId);
-                                    me.put("accepted", updatedEvents);
-                                    try{
-                                        me.save();
-                                    }
-                                    catch (ParseException k){
-
-                                    }
-                                    // when everything is done, prompt main activity to update
-                                    ((CreateFinished) App.getContext()).createEventDone();
-                                }
-                                else {
-                                }
-                            }
-                        });;
-
-                        // create installation query
-                        ParseQuery installationQuery = ParseInstallation.getQuery();
-                        installationQuery.whereContainedIn("installationId", installationIDs);
-
-                        // Send push notification to query
-                        ParsePush push = new ParsePush();
-                        push.setQuery(installationQuery); // Set our Installation query
-                        JSONObject jsonObj = new JSONObject();
                         try{
-                            jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
-                            jsonObj.put("title", event.getTitle());
-                            jsonObj.put("objectId", event.getObjectId());
+                            // save the event in accepted for the current user
+                            ParseUser me = ParseUser.getCurrentUser().fetch();
+                            // Check if there is current user info
+                            ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
+                            updatedEvents.add(eventId);
+                            me.put("accepted", updatedEvents);
+
+                            me.save();
+
+                            // when everything is done, prompt main activity to update
+                            ((CreateFinished) App.getContext()).createEventDone();
+
+
+                            // create installation query
+                            ParseQuery installationQuery = ParseInstallation.getQuery();
+                            installationQuery.whereContainedIn("installationId", installationIDs);
+
+                            // Send push notification to query
+                            ParsePush push = new ParsePush();
+                            push.setQuery(installationQuery); // Set our Installation query
+                            JSONObject jsonObj = new JSONObject();
+                            try{
+                                jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
+                                jsonObj.put("title", event.getTitle());
+                                jsonObj.put("objectId", event.getObjectId());
+                            }
+                            catch (JSONException j){
+                            }
+                            push.setData(jsonObj);
+                            push.send();
                         }
-                        catch (JSONException j){
+                        catch (ParseException k){
+                            Log.d(TAG, "failed to save!");
                         }
-                        push.setData(jsonObj);
-                        push.sendInBackground();
+
+
                     } else {
                         Log.d(TAG, "failed to save!");
                     }

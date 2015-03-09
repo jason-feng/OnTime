@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -25,8 +26,18 @@ public class DispatchActivity extends Activity {
             ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
                 public void done(ParseObject object, ParseException e) {
                     ParseUser currUser = (ParseUser) object;
+
                     // Check if there is current user info
                     if (currUser != null) {
+                        try{
+                            ParseInstallation installation = ParseInstallation.getCurrentInstallation().fetch();
+                            String id = installation.getInstallationId();
+                            currUser.put("installation_id", id);
+                            currUser.save();
+                        }
+                        catch (ParseException k){
+
+                        }
                         // Start an intent for the logged in activity
                         Log.d("F8Debug", "onCreate, got user,  "
                                 + ParseUser.getCurrentUser().getUsername());

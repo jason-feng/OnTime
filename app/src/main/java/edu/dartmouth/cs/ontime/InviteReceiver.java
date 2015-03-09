@@ -55,7 +55,6 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
 
             }
 
-
             PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, new Intent(App.getContext(), MainActivity.class), 0);
 
             Notification notification = new Notification.Builder(App.getContext())
@@ -100,7 +99,6 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
                     .addAction(R.drawable.ic_accept, "Accept", acceptIntent)
                     .addAction(R.drawable.ic_cancel, "Decline", declineIntent)
                     .setContentIntent(contentIntent).build();
-
 
             NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(0, notification);
