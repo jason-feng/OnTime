@@ -26,16 +26,18 @@ public class DispatchActivity extends Activity {
             ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
                 public void done(ParseObject object, ParseException e) {
                     ParseInstallation installation = null;
-                    try{
-                        installation = ParseInstallation.getCurrentInstallation().fetch();
-                    }
-                    catch (ParseException k){
-
-                    }
                     ParseUser currUser = (ParseUser) object;
+
                     // Check if there is current user info
                     if (currUser != null) {
-                        currUser.put("installationId", installation);
+                        try{
+                            installation = ParseInstallation.getCurrentInstallation().fetch();
+                            currUser.put("installationId", installation);
+                            currUser.save();
+                        }
+                        catch (ParseException k){
+
+                        }
                         // Start an intent for the logged in activity
                         Log.d("F8Debug", "onCreate, got user,  "
                                 + ParseUser.getCurrentUser().getUsername());
