@@ -84,9 +84,11 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
      */
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
+        userLocations = displayedEvent.getUserLocations();
+        userDistances = displayedEvent.getUserDistances();
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
         Log.d(TAG, userDistances.toString());
-        if ((Double)userDistances.get(position) == -1.1) {
+        if (userDistances.get(position) == -1.1) {
             Log.d(TAG, "INIT LOCATIONS");
             distance = current_location.distanceInMilesTo(finalGeoPoint);
             init_distances.set(position, distance);
@@ -100,6 +102,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             userDistances.set(position, distance);
         }
 
+        // Save distances to cloud
         displayedEvent.setUserLocations(userLocations);
         displayedEvent.setUserDistances(userDistances);
         try {
@@ -108,6 +111,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         catch (ParseException e) {
 
         }
+
+        //
         for (int i = 0; i < userDistances.size(); i++) {
             ProgressBar currentUserBar = progBarArrayList.get(position);
 
