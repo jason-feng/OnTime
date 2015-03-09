@@ -116,6 +116,7 @@ public class CreateEvent extends ListActivity {
 
                     }
                 }
+                CreateEvent.setDialogField(4,true);
             }
         }
         else if (resultCode == 14){
@@ -231,7 +232,7 @@ public class CreateEvent extends ListActivity {
                             push.send();
                         }
                         catch (ParseException k){
-
+                            Log.d(TAG, "failed to save!");
                         }
 
 
