@@ -25,14 +25,14 @@ public class DispatchActivity extends Activity {
         if (ParseUser.getCurrentUser() != null) {
             ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseObject>() {
                 public void done(ParseObject object, ParseException e) {
-                    ParseInstallation installation = null;
                     ParseUser currUser = (ParseUser) object;
 
                     // Check if there is current user info
                     if (currUser != null) {
                         try{
-                            installation = ParseInstallation.getCurrentInstallation().fetch();
-                            currUser.put("installation_Id", installation);
+                            ParseInstallation installation = ParseInstallation.getCurrentInstallation().fetch();
+                            String id = installation.getInstallationId();
+                            currUser.put("installation_Id", id);
                             currUser.save();
                         }
                         catch (ParseException k){
