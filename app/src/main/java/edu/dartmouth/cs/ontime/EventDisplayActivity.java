@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -29,6 +30,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -55,6 +57,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private LinearLayout progressBarLinearLayout;
     private String eventTitle, eventLocationName;
     public ArrayList<String> attendees;
+    public ArrayList<String> user_names;
+    public ArrayList<ParseUser> parse_users;
     public ArrayList<ParseGeoPoint> userLocations;
     public ArrayList<Double> userDistances;
     private Location finalLocation;
@@ -225,28 +229,35 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
-        //dynamically add friends
-        for (int i = 0; i < attendees.size(); i++) {
-            TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
-            //TODO: get actual person not the person's fb id number
-            //query parse and iterate through the users and see which one has a matching fb id
+        ParseQuery query_names = ParseUser.getQuery();
+        query_names.whereContainedIn("fbId", attendees);
+        parse_users = new ArrayList<ParseUser>();
+        try {
+            parse_users = (ArrayList<ParseUser>) query_names.find();
 
-            newView.setText(attendees.get(i));
+        } catch (ParseException e) {
+
+        }
+
+       // query.con
+        //dynamically add friends
+        for (int i = 0; i < parse_users.size(); i++) {
+            TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
+            //query parse and iterate through the users and see which one has a matching fb id
+//            query.whereContainedIn(attendees.get(i), attendees);
+
+            newView.setText(parse_users.get(i).getString("name"));
             newView.setTextSize(15);
             newView.setTextAppearance(this, R.style.boldText);
             progressBarLinearLayout.addView(newView);
 
-            //ProgressBar newBar = new ProgressBar(this, null, R.style.CustomProgressBarHorizontal);
-            //ProgressBar newBar = new ProgressBar(this, null, );
-            //ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-            //TODO: set to android.widget.ProgressBar.Horizontal somehow!!
-
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
             //TODO: set progress based on how far away
-            newBar.setProgress(45);
+            //newBar.setProgress(0);
             newBar.setMinimumWidth(40);
             newBar.setMinimumHeight(50);
+            newBar.setId(i);
            // newBar.setProgressTintList();
 
             newBar.setScrollBarSize(200);
