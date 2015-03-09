@@ -1,8 +1,5 @@
 package edu.dartmouth.cs.ontime;
 
-/**
- * Created by jasonfeng on 3/1/15.
- */
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,6 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+/*
+ * Code credit to George Matthew: wptrafficanalyzer.in
+ */
 public class PlaceDetailsJSONParser {
 
     /** Receives a JSONObject and returns a list */

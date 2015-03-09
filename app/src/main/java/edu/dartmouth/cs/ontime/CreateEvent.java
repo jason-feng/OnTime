@@ -32,6 +32,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Creates an event through dialog fragments and a map search activity
+ */
 public class CreateEvent extends ListActivity {
 
     public static final String[] FACULTY = new String[] { "Title","Date", "Time", "Location", "Invitees"};
@@ -53,6 +56,10 @@ public class CreateEvent extends ListActivity {
     public Event getEvent() { return event; }
     public boolean[] getDialogFields() { return dialogFields; }
 
+    /**
+     * Checks if all of the fields are true
+     * @return false if there exists a false field
+     */
     public boolean allEventFields() {
         for (int i = 0; i < dialogFields.length; i++) {
             if (dialogFields[i] != true) {
@@ -62,6 +69,11 @@ public class CreateEvent extends ListActivity {
         return true;
     }
 
+    /**
+     * Set a dialog to true
+     * @param index - position
+     * @param value - true or false
+     */
     public static void setDialogField(int index, boolean value) {
         if (index > dialogFields.length || index < 0) {
             return;
@@ -72,8 +84,8 @@ public class CreateEvent extends ListActivity {
     }
 
     @Override
+    // Get the return from either the map or the invite
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode == RESULT_OK) {
 
             if (requestCode == MAP_REQUEST) {
@@ -140,6 +152,11 @@ public class CreateEvent extends ListActivity {
         setListAdapter(mAdapter);
     }
 
+    /**
+     * Saves the event. It first checks if all the fields are saved, then it sends out push
+     * notifications for the invited users.
+     * @param v
+     */
     public void onSaveClicked(View v) {
         event.put("accepted", new ArrayList<Integer>());;
         if (allEventFields()) {
@@ -213,6 +230,7 @@ public class CreateEvent extends ListActivity {
             finish();
         }
 
+        // If not all of the fields are saved, then create toast saying which one isnt saved
         else {
             for (int i = 0; i < dialogFields.length; i++) {
                 if (dialogFields[i] == false) {

@@ -12,9 +12,11 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
-import com.parse.PushService;
 import com.parse.SaveCallback;
 
+/**
+ * Application
+ */
 public class App extends Application {
 
     private String mSearchText;
@@ -37,6 +39,9 @@ public class App extends Application {
         this.mSearchText = searchText;
     }
 
+    /**
+     * Setup parse
+     */
     @Override public void onCreate() {
         Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Event.class);

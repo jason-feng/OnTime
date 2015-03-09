@@ -22,7 +22,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -30,7 +29,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,6 +73,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private boolean mRequestingLocationUpdates;
 
     @Override
+    /**
+     * When the location is changed, update the locations and distances on the cloud
+     */
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
@@ -145,7 +146,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         initLocationTracking();
 
-        //query the database for specific event. not sure if this works yet...
+        //Gets event information from the MainActivity
         if (savedInstanceState == null) {
             object_id = getIntent().getStringExtra(OBJECT_ID);
             title = getIntent().getStringExtra(TITLE);
@@ -341,6 +342,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         }
     }
 
+    /**
+     * Start location tracking
+     */
     private void initLocationTracking() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)

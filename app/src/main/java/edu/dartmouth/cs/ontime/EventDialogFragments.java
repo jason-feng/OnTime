@@ -28,6 +28,11 @@ public class EventDialogFragments extends DialogFragment {
     public static final int DIALOG_ID_LOCATION = 3;
     public static final int DIALOG_ID_INVITES = 4;
 
+    /**
+     * Creates a dialog fragment depending on the item you click
+     * @param savedInstanceState
+     * @return Corresponding dialog
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG, "onCreateDialog()");
@@ -57,7 +62,6 @@ public class EventDialogFragments extends DialogFragment {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                // Create a new instance of DatePickerDialog and return it
                 return new DatePickerDialog(getActivity(), onDateSet, year, month, day);
             case DIALOG_ID_TIME:
                 TimePickerDialog.OnTimeSetListener onTimeSet = new TimePickerDialog.OnTimeSetListener() {
@@ -73,7 +77,7 @@ public class EventDialogFragments extends DialogFragment {
                 int hour = c.get(Calendar.HOUR);
                 int minute = c.get(Calendar.MINUTE);
                 boolean twentyfour = false;
-                // Create a new instance of DatePickerDialog and return it
+
                 return new TimePickerDialog(getActivity(), onTimeSet, hour, minute, twentyfour);
             case DIALOG_ID_TITLE:
                 Log.d(TAG, "TITLE fragment");
@@ -98,28 +102,19 @@ public class EventDialogFragments extends DialogFragment {
                 return builder.create();
             case DIALOG_ID_INVITES:
                 builder.setTitle("Choose Friends")
-                        // Specify the list array, the items to be selected by default (null for none),
-                        // and the listener through which to receive callbacks when items are selected
                         .setMultiChoiceItems(R.array.names_array, null,
                                 new DialogInterface.OnMultiChoiceClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which,
                                                         boolean isChecked) {
                                         if (isChecked) {
-                                            // If the user checked the item, add it to the selected items
                                             mInvitees.add(which);
-                                        } //else if (mSelectedItems.contains(which)) {
-                                        // Else, if the item is already in the array, remove it
-                                        // mSelectedItems.remove(Integer.valueOf(which));
-                                        //}
+                                        }
                                     }
                                 })
-                                // Set the action buttons
                         .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK, so save the mSelectedItems results somewhere
-                                // or return them to the component that opened the dialog
                                 CreateEvent.setDialogField(4,true);
                             }
                         })

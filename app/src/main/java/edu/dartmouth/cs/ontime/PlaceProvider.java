@@ -26,6 +26,9 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
+/*
+ * Code credit to George Matthew: wptrafficanalyzer.in
+ */
 public class PlaceProvider extends ContentProvider {
 
     public static final String AUTHORITY = "edu.dartmouth.cs.ontime.provider.PlaceProvider";
