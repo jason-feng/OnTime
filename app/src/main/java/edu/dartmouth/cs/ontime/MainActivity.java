@@ -49,7 +49,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "oncreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -78,7 +77,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         invitesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "invites");
                 Intent intent = new Intent(mContext, InviteActivity.class);
                 startActivity(intent);
             }
@@ -88,7 +86,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "CreateEvent");
                 Intent intent = new Intent(mContext, CreateEvent.class);
                 startActivity(intent);
             }
@@ -96,8 +93,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
 
 
         App.setContext(this);
-
-        Log.d(TAG, "createEvent init");
 
         todayArray = new ArrayList<>();
         tomorrowArray = new ArrayList<>();
@@ -108,7 +103,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume()");
         super.onResume();
         query();
     }
@@ -121,7 +115,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
      * Queries all of the upcoming events corresponding to that user.
      */
     public void query() {
-        Log.d(TAG, "query()");
         ParseUser me = ParseUser.getCurrentUser();
         ArrayList<String> upcomingString = (ArrayList<String>) me.get("accepted");
 
@@ -137,9 +130,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
     }
 
     public void loadEvents() {
-        Log.d(TAG, "loadEvents");
-        Log.d(TAG, "list size: " + upcomingEvents.size());
-        //for each event in upcoming events list
 
         todayArray.clear();
         tomorrowArray.clear();
@@ -156,11 +146,9 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
             }
             else {
                 if (date.get(Calendar.DATE) == today.get(Calendar.DATE)) {
-                    Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE));
                     todayArray.add(event);
                 }
                 else if (date.get(Calendar.DATE) == today.get(Calendar.DATE) +1) {
-                    Log.d(TAG, "COMPARING DATES: " + date.get(Calendar.DATE) + today.get(Calendar.DATE)+1);
                     tomorrowArray.add(event);
                 }
                 //this line will return -1 if today.getTime is before the last day of the week
@@ -233,12 +221,10 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         SimpleDateFormat formatter = new SimpleDateFormat("ddMMM yyyy"); // PST`
         Date startDate = calendar.getTime();
         String startDateInStr = formatter.format(startDate);
-        System.out.println("...date..."+startDateInStr);
 
         calendar.add(Calendar.DATE, 6);
         Date enddate = calendar.getTime();
         String endDaString = formatter.format(enddate);
-        System.out.println("...date..."+endDaString);
 
         return enddate;
 
@@ -247,11 +233,8 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
     private Intent createIntentFromEvent(Event event) {
         String objectId = event.getObjectId();
         String title = event.getTitle();
-        Log.d("title", title);
         ArrayList<String> attendees = event.getAcceptedList();
-        for (int i = 0; i < attendees.size(); i ++) {
-            Log.d("attendees", attendees.get(i).toString());
-        }
+
         ParseGeoPoint location = event.getLocation();
         Location sendLoc = new Location("any string");
         sendLoc.setLatitude(location.getLatitude());
@@ -263,7 +246,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         Date eventTime = event.getTime();
         String stringEventTime = eventTime.toString();
 
-        //String title = ((Event) parent.getAdapter().getItem(position)).getTitle();
         Intent intent = new Intent(getApplicationContext(), EventDisplayActivity.class);
         intent.putExtra(EventDisplayActivity.OBJECT_ID, objectId);
         intent.putExtra(EventDisplayActivity.TITLE, title);
