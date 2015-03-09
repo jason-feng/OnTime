@@ -85,7 +85,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-        if (userDistances.get(position) == -1.0) {
+        Log.d(TAG, userDistances.toString());
+        if ((Double)userDistances.get(position) == -1.1) {
             distance = current_location.distanceInMilesTo(finalGeoPoint);
             init_distances.set(position,distance);
             userLocations.set(position, current_location);
@@ -178,7 +179,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             userLocations = displayedEvent.getUserLocations();
             userDistances = displayedEvent.getUserDistances();
             init_distances = displayedEvent.getInitDistances();
-
 
 
     }
