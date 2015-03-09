@@ -120,6 +120,7 @@ public class InviteActivity extends Activity {
                             jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
                             jsonObj.put("title", event.getTitle());
                             jsonObj.put("objectId", null);
+                            jsonObj.put("accepted", true);
                         }
                         catch (JSONException j){
                         }
@@ -175,6 +176,7 @@ public class InviteActivity extends Activity {
                             jsonObj.put("name", ParseUser.getCurrentUser().get("name"));
                             jsonObj.put("title", event.getTitle());
                             jsonObj.put("objectId", null);
+                            jsonObj.put("accepted", false);
                         }
                         catch (JSONException j){
                         }
