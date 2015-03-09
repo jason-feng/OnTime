@@ -79,7 +79,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         }
         distance = current_location.distanceInMilesTo(finalGeoPoint);
         userLocations.set(position, current_location);
-        userDistances.set(position,distance);
+        userDistances.set(position, distance);
 
         displayedEvent.setUserLocations(userLocations);
         try {
@@ -114,6 +114,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 userDistances.add(i,-1.0);
             }
             displayedEvent.setUserLocations(userLocations);
+            displayedEvent.setUserDistances(userDistances);
             try {
                 displayedEvent.save();
             }
