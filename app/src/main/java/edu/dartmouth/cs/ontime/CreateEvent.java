@@ -174,12 +174,19 @@ public class CreateEvent extends ListActivity {
                                     ArrayList<String> updatedEvents = (ArrayList<String>) me.get("accepted");
                                     updatedEvents.add(eventId);
                                     me.put("accepted", updatedEvents);
-                                    me.saveInBackground();
+                                    try{
+                                        me.save();
+                                    }
+                                    catch (ParseException k){
+
+                                    }
+                                    ((CreateFinished) App.getContext()).createEventDone();
                                 }
                                 else {
                                 }
                             }
                         });;
+
 
                         // create installation query
                         ParseQuery installationQuery = ParseInstallation.getQuery();
@@ -204,8 +211,6 @@ public class CreateEvent extends ListActivity {
 
                 }
             });
-
-            ((CreateFinished) App.getContext()).createEventDone();
 
             finish();
         }
