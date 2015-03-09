@@ -169,12 +169,13 @@ public class CreateEvent extends ListActivity {
             ArrayList<ParseGeoPoint> user_locations = new ArrayList<ParseGeoPoint>();
             user_locations.add(new ParseGeoPoint(0.0,0.0));
             ArrayList<Double> init_distances = new ArrayList<Double>();
-            init_distances.add(-1.0);
+            init_distances.add(-1.10);
+            Log.d(TAG, "initDIST: " + init_distances.toString());
             ArrayList<Double> user_distances = new ArrayList<Double>();
-            user_distances.add(-1.0);
+            user_distances.add(-1.10);
             event.setInitDistances(init_distances);
-            event.setUserLocations(user_locations);
             event.setUserDistances(user_distances);
+            event.setUserLocations(user_locations);
             event.put("accepted", accepted);
             event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
 
