@@ -59,7 +59,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private String eventTitle, eventLocationName;
     public ArrayList<String> attendees;
     public ArrayList<String> user_names;
-//    private OnLocationChangedTask mAsyncTask;
     public ArrayList<ParseUser> parse_users;
     public ArrayList<ParseGeoPoint> userLocations;
     public ArrayList<Double> userDistances;
@@ -69,7 +68,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private ParseGeoPoint current_location;
     private LatLng latLngLocation;
     private double latitude, longitude;
-    private int LOCATION_REFRESH_TIME = 1000;
+    private int LOCATION_REFRESH_TIME = 10000;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private ParseUser currentUser;
@@ -84,6 +83,14 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
      */
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
+        ParseQuery<Event> currentEventQuery = ParseQuery.getQuery("event");
+        currentEventQuery.whereEqualTo("objectId", object_id);
+        try{
+            displayedEvent = currentEventQuery.getFirst();
+        }
+        catch (ParseException e){
+        }
+        init_distances = displayedEvent.getInitDistances();
         userLocations = displayedEvent.getUserLocations();
         userDistances = displayedEvent.getUserDistances();
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
@@ -96,7 +103,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             userDistances.set(position, distance);
         }
         else {
-            Log.d(TAG, "UPDATE LOCATIONS");
+            Log.d(TAG, "UPDATE LOCATIONS and POSITION: " + position);
             distance = current_location.distanceInMilesTo(finalGeoPoint);
             userLocations.set(position, current_location);
             userDistances.set(position, distance);
@@ -114,7 +121,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         //
         for (int i = 0; i < userDistances.size(); i++) {
-            ProgressBar currentUserBar = progBarArrayList.get(position);
+            ProgressBar currentUserBar = progBarArrayList.get(i);
 
             double status = userDistances.get(i) / init_distances.get(i);
             if (status > 1){
@@ -125,54 +132,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             currentUserBar.setProgress(intStatus);
         }
     }
-
-//    public void updateProgressBars() {
-//        //query distances
-//
-//        ParseQuery<Event> distancesQuery = ParseQuery.getQuery("event");
-//        distancesQuery.whereEqualTo("objectId", object_id);
-//        try{
-//            Event distancesEvent = distancesQuery.getFirst();
-//        }
-//        catch (ParseException e){
-//        }
-//
-//        for (int i = 0; i < queriedDistances.size(); i++) {
-//            int curPosition = queriedDistances.get(position);
-//
-//            ProgressBar currentUserBar = progBarArrayList.get(position);
-//
-//            double status = distance / initialDist;
-//            int intStatus = 1 - ((int) status * 100);
-//            currentUserBar.setProgress(intStatus);
-//        }
-//
-//    }
-
-    //Function that is executed when location is changed.
-//    private class OnLocationChangedTask extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... arg0) {
-//            while (true) {
-//                try {
-//                    // need to check if the AsyncTask is cancelled or not in the while loop
-//                    if (isCancelled() == true) {
-//                        return null;
-//                    }
-//                    ProgressBar currentUserBar = progBarArrayList.get(position);
-//
-//                    double status = distance / initialDist;
-//                    int intStatus = 1 - ((int) status * 100);
-//                    currentUserBar.setProgress(intStatus);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
-
-
 
     /**
      * Gets the necessary information from the cloud including the corresponding position on the
@@ -253,29 +212,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         eventDisplayDate = (TextView) findViewById(R.id.event_display_date);
         eventDisplayDate.setTextColor(Color.BLACK);
 
-        //TODO: get this working to make date prettier if possible
-//        Calendar cal = Calendar.getInstance();
-//        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-//        try {
-//            cal.setTime(sdf.parse(date));
-//        } catch (java.text.ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String displayTime = "";
-//        displayTime += cal.get(Calendar.DAY_OF_WEEK);
-//        displayTime += ", ";
-//        displayTime += cal.get(Calendar.MONTH);
-//        displayTime += " ";
-//        displayTime += cal.get(Calendar.DATE);
-//        displayTime += ", at ";
-//        displayTime += cal.get(Calendar.HOUR);
-//        displayTime += ":";
-//        displayTime += cal.get(Calendar.MINUTE);
-//        displayTime += cal.get(Calendar.AM_PM);
-
-       // String displayTime = cal.get(Calendar.DATE) + " " + cal.get(Calendar.HOUR) + cal.get(Calendar.MINUTE);
-
         eventDisplayDate.setText(date);
 
         //set event location
@@ -292,6 +228,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         progressBarLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_linear_layout);
 
+        // get events corresponding to attendees
         ParseQuery query_names = ParseUser.getQuery();
         query_names.whereContainedIn("fbId", attendees);
         parse_users = new ArrayList<ParseUser>();
@@ -302,9 +239,20 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         }
 
+        //rearrange progress bar according to invite order
+        for (int a = 0; a < parse_users.size(); a++) {
+            String fbId = parse_users.get(a).getString("fbId");
+            for (int b = 0; b < attendees.size(); b++) {
+                if (attendees.get(b).equals(fbId)) {
+                    ParseUser tmp = parse_users.get(b);
+                    parse_users.set(b,parse_users.get(a));
+                    parse_users.set(a,tmp);
+                }
+            }
+        }
+
         progBarArrayList = new ArrayList<ProgressBar>();
 
-       // query.con
         //dynamically add friends
         for (int i = 0; i < parse_users.size(); i++) {
             TextView newView = new TextView(this, null, R.style.CustomTextViewDani);
@@ -397,8 +345,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
-
-
 
     @Override
     protected void onResume() {

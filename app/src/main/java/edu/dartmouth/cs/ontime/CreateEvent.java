@@ -97,7 +97,7 @@ public class CreateEvent extends ListActivity {
                         data.getDoubleExtra("LONG", 0)
                 );
                 event.setLocation(point);
-                CreateEvent.setDialogField(4,true);
+                CreateEvent.setDialogField(3,true);
             }
 
             // get the list of invitee installation ids from the fb ids
