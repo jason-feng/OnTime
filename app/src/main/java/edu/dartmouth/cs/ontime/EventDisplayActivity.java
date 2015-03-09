@@ -68,7 +68,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private ParseGeoPoint current_location;
     private LatLng latLngLocation;
     private double latitude, longitude;
-    private int LOCATION_REFRESH_TIME = 10000;
+    private int LOCATION_REFRESH_TIME = 10100;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private ParseUser currentUser;
