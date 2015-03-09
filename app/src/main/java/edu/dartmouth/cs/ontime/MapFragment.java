@@ -1,10 +1,5 @@
 package edu.dartmouth.cs.ontime;
 
-
-/**
- * A fragment that launches other parts of the demo application.
- */
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +23,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
+/**
+ * MapFragment that allows you to search through a map and select a pin corresponding to a location
+ * to set as the event location
+ *
+ * Code credit to George Matthew: wptrafficanalyzer.in
+ */
 public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MapFragment";
@@ -81,6 +81,7 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
             intent.putExtra("LONG", mMarker.getPosition().longitude);
             setResult(RESULT_OK, intent);
         }
+        CreateEvent.setDialogField(3,true);
         finish();
     }
 
@@ -182,7 +183,6 @@ public class MapFragment extends FragmentActivity implements LoaderCallbacks<Cur
     @Override
     protected void onNewIntent(Intent intent) {
         Log.d(TAG, "onNewIntent");
-//        super.onNewIntent(intent);
         setIntent(intent);
         handleIntent(intent);
     }

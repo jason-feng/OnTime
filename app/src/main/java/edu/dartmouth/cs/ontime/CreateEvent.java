@@ -32,6 +32,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Creates an event through dialog fragments and a map search activity
+ */
 public class CreateEvent extends ListActivity {
 
     public static final String[] FACULTY = new String[] { "Title","Date", "Time", "Location", "Invitees"};
@@ -53,6 +56,10 @@ public class CreateEvent extends ListActivity {
     public Event getEvent() { return event; }
     public boolean[] getDialogFields() { return dialogFields; }
 
+    /**
+     * Checks if all of the fields are true
+     * @return false if there exists a false field
+     */
     public boolean allEventFields() {
         for (int i = 0; i < dialogFields.length; i++) {
             if (dialogFields[i] != true) {
@@ -62,6 +69,11 @@ public class CreateEvent extends ListActivity {
         return true;
     }
 
+    /**
+     * Set a dialog to true
+     * @param index - position
+     * @param value - true or false
+     */
     public static void setDialogField(int index, boolean value) {
         if (index > dialogFields.length || index < 0) {
             return;
@@ -72,8 +84,8 @@ public class CreateEvent extends ListActivity {
     }
 
     @Override
+    // Get the return from either the map or the invite
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode == RESULT_OK) {
 
             if (requestCode == MAP_REQUEST) {
@@ -140,9 +152,14 @@ public class CreateEvent extends ListActivity {
         setListAdapter(mAdapter);
     }
 
+    /**
+     * Saves the event. It first checks if all the fields are saved, then it sends out push
+     * notifications for the invited users.
+     * @param v
+     */
     public void onSaveClicked(View v) {
         event.put("accepted", new ArrayList<Integer>());;
-        if (installationIDs.size() != 0 && event.getTitle() != null && event.getTime() != null && event.getDate() != null) {
+        if (allEventFields()) {
             ArrayList<String> accepted = new ArrayList<String>();
             accepted.add(ParseUser.getCurrentUser().getString("fbId"));
             event.put("accepted", accepted);
@@ -213,34 +230,40 @@ public class CreateEvent extends ListActivity {
             finish();
         }
 
-        else if (installationIDs.size() == 0 ){
-            Toast.makeText(getApplicationContext(),
-                    "Please select friends to invite",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getTitle() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a title for your event",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getDate() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a date for your event",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getTime() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a time for your event",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        else if (event.getLocation() == null){
-            Toast.makeText(getApplicationContext(),
-                    "Please set a location for your event",
-                    Toast.LENGTH_SHORT).show();
+        // If not all of the fields are saved, then create toast saying which one isnt saved
+        else {
+            for (int i = 0; i < dialogFields.length; i++) {
+                if (dialogFields[i] == false) {
+                    switch (i) {
+                        case 0:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a title for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a date for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a time for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 3:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please set a location for your event",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 4:
+                            Toast.makeText(getApplicationContext(),
+                                    "Please select friends to invite",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    break;
+                }
+            }
         }
     }
 

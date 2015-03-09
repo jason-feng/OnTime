@@ -28,6 +28,11 @@ public class EventDialogFragments extends DialogFragment {
     public static final int DIALOG_ID_LOCATION = 3;
     public static final int DIALOG_ID_INVITES = 4;
 
+    /**
+     * Creates a dialog fragment depending on the item you click
+     * @param savedInstanceState
+     * @return Corresponding dialog
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG, "onCreateDialog()");
@@ -49,7 +54,7 @@ public class EventDialogFragments extends DialogFragment {
                         Log.d(TAG, "onDateSet()");
                         cal.set(year, month, day);
                         ((CreateEvent)getActivity()).getEvent().setDate(cal.getTime());
-                        CreateEvent.setDialogField(0,true);
+                        CreateEvent.setDialogField(1,true);
                     }
                 };
 
@@ -57,7 +62,6 @@ public class EventDialogFragments extends DialogFragment {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                // Create a new instance of DatePickerDialog and return it
                 return new DatePickerDialog(getActivity(), onDateSet, year, month, day);
             case DIALOG_ID_TIME:
                 TimePickerDialog.OnTimeSetListener onTimeSet = new TimePickerDialog.OnTimeSetListener() {
@@ -66,14 +70,14 @@ public class EventDialogFragments extends DialogFragment {
                         Log.d(TAG, "onTimeSet()");
                         cal.set(hour, minute);
                         ((CreateEvent)getActivity()).getEvent().setTime(cal.getTime());
-                        CreateEvent.setDialogField(1,true);
+                        CreateEvent.setDialogField(2,true);
                     }
                 };
                 // Use the current date as the default date in the picker
                 int hour = c.get(Calendar.HOUR);
                 int minute = c.get(Calendar.MINUTE);
                 boolean twentyfour = false;
-                // Create a new instance of DatePickerDialog and return it
+
                 return new TimePickerDialog(getActivity(), onTimeSet, hour, minute, twentyfour);
             case DIALOG_ID_TITLE:
                 Log.d(TAG, "TITLE fragment");
@@ -85,7 +89,7 @@ public class EventDialogFragments extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 ((CreateEvent)getActivity()).getEvent().setTitle(et.getText().toString());
-                                CreateEvent.setDialogField(2,true);
+                                CreateEvent.setDialogField(0,true);
                                 dialog.cancel();
                             }
                         });
@@ -98,29 +102,20 @@ public class EventDialogFragments extends DialogFragment {
                 return builder.create();
             case DIALOG_ID_INVITES:
                 builder.setTitle("Choose Friends")
-                        // Specify the list array, the items to be selected by default (null for none),
-                        // and the listener through which to receive callbacks when items are selected
                         .setMultiChoiceItems(R.array.names_array, null,
                                 new DialogInterface.OnMultiChoiceClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which,
                                                         boolean isChecked) {
                                         if (isChecked) {
-                                            // If the user checked the item, add it to the selected items
                                             mInvitees.add(which);
-                                        } //else if (mSelectedItems.contains(which)) {
-                                        // Else, if the item is already in the array, remove it
-                                        // mSelectedItems.remove(Integer.valueOf(which));
-                                        //}
+                                        }
                                     }
                                 })
-                                // Set the action buttons
                         .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK, so save the mSelectedItems results somewhere
-                                // or return them to the component that opened the dialog
-                                CreateEvent.setDialogField(3,true);
+                                CreateEvent.setDialogField(4,true);
                             }
                         })
                         .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {

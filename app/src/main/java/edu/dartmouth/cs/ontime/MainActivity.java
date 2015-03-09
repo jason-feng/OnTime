@@ -275,38 +275,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         return intent;
     }
 
-/*    *//**
-     * Display a notification in the notification bar.
-     *//*
-    private void showNotification(String inviter) {
-
-        // If notification pressed but not a button
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, InviteActivity.class), 0);
-
-        // If accept is pressed
-        PendingIntent acceptIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, InviteActivity.class), 0);
-
-        // If decline is pressed
-        PendingIntent declineIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, InviteActivity.class), 0);
-
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(this.getString(R.string.service_label))
-                .setContentText(
-                        getResources().getString(R.string.service_started) + " " + inviter + "!")
-                .setSmallIcon(R.drawable.notify)
-                .setOngoing(true)
-                .setAutoCancel(true)
-                .addAction(R.drawable.ic_accept, "Accept", acceptIntent)
-                .addAction(R.drawable.ic_cancel, "Decline", declineIntent)
-                .setContentIntent(contentIntent).build();
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        mNotificationManager.notify(0, notification);
-    }*/
-
     public static class ListUtils {
         public static void setDynamicHeight(ListView mListView) {
             ListAdapter mListAdapter = mListView.getAdapter();
