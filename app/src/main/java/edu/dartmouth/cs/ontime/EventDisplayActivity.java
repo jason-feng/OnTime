@@ -3,6 +3,7 @@ package edu.dartmouth.cs.ontime;
 import android.app.ActionBar;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private String eventTitle, eventLocationName;
     public ArrayList<String> attendees;
     public ArrayList<String> user_names;
+//    private OnLocationChangedTask mAsyncTask;
     public ArrayList<ParseUser> parse_users;
     public ArrayList<ParseGeoPoint> userLocations;
     public ArrayList<Double> userDistances;
@@ -70,7 +72,9 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private ParseUser currentUser;
     private String currentFbId;
     private int position;
+    private double initialDist;
     private boolean mRequestingLocationUpdates;
+    private ArrayList<ProgressBar> progBarArrayList;
 
     @Override
     /**
@@ -80,11 +84,20 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         Log.d(TAG, "onLocationChanged");
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
         if (distance == -1.0) {
-            // TODO INIT STATUS BARS;
+            initialDist = distance;
+
         }
         distance = current_location.distanceInMilesTo(finalGeoPoint);
         userLocations.set(position, current_location);
         userDistances.set(position, distance);
+
+        for (int i = 0; i < userDistances.size(); i++) {
+            ProgressBar currentUserBar = progBarArrayList.get(position);
+
+            double status = userDistances.get(i) / initialDist;
+            int intStatus = 1 - ((int) status * 100);
+            currentUserBar.setProgress(intStatus);
+        }
 
         displayedEvent.setUserLocations(userLocations);
         displayedEvent.setUserDistances(userDistances);
@@ -94,7 +107,56 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         catch (ParseException e) {
 
         }
+//        updateProgressBars();
     }
+
+//    public void updateProgressBars() {
+//        //query distances
+//
+//        ParseQuery<Event> distancesQuery = ParseQuery.getQuery("event");
+//        distancesQuery.whereEqualTo("objectId", object_id);
+//        try{
+//            Event distancesEvent = distancesQuery.getFirst();
+//        }
+//        catch (ParseException e){
+//        }
+//
+//        for (int i = 0; i < queriedDistances.size(); i++) {
+//            int curPosition = queriedDistances.get(position);
+//
+//            ProgressBar currentUserBar = progBarArrayList.get(position);
+//
+//            double status = distance / initialDist;
+//            int intStatus = 1 - ((int) status * 100);
+//            currentUserBar.setProgress(intStatus);
+//        }
+//
+//    }
+
+    //Function that is executed when location is changed.
+//    private class OnLocationChangedTask extends AsyncTask<Void, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Void... arg0) {
+//            while (true) {
+//                try {
+//                    // need to check if the AsyncTask is cancelled or not in the while loop
+//                    if (isCancelled() == true) {
+//                        return null;
+//                    }
+//                    ProgressBar currentUserBar = progBarArrayList.get(position);
+//
+//                    double status = distance / initialDist;
+//                    int intStatus = 1 - ((int) status * 100);
+//                    currentUserBar.setProgress(intStatus);
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+
+
 
     /**
      * Gets the necessary information from the cloud including the corresponding position on the
@@ -240,6 +302,8 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         }
 
+        progBarArrayList = new ArrayList<ProgressBar>();
+
        // query.con
         //dynamically add friends
         for (int i = 0; i < parse_users.size(); i++) {
@@ -254,6 +318,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
+
             //newBar.setProgress(0);
             newBar.setMinimumWidth(40);
             newBar.setMinimumHeight(50);
@@ -262,7 +327,10 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
             newBar.setScrollBarSize(200);
             progressBarLinearLayout.addView(newBar);
+            progBarArrayList.add(newBar);
         }
+
+
     }
 
     public static Calendar DateToCalendar(Date date){
