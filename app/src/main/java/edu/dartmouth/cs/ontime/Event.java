@@ -16,6 +16,10 @@ import java.util.List;
  * Created by jasonfeng on 3/1/15.
  */
 @ParseClassName("event")
+
+/**
+ * Event Model
+ */
 public class Event extends ParseObject {
 
     public static final String TAG = "Event";
@@ -65,9 +69,13 @@ public class Event extends ParseObject {
         put("accepted", invitees);
     }
 
-    public ArrayList<ParseGeoPoint> getUserLocations() { return (ArrayList<ParseGeoPoint>) get("distances"); }
+    public ArrayList<ParseGeoPoint> getUserLocations() { return (ArrayList<ParseGeoPoint>) get("user_locations"); }
 
     public void setUserLocations(ArrayList<ParseGeoPoint> user_locations) { put("user_locations", user_locations);}
+
+    public ArrayList<Double> getUserDistances() { return (ArrayList<Double>) get("user_distances"); }
+
+    public void setUserDistances(ArrayList<Double> user_distances) { put("user_distances", user_distances);}
 
     public static List<ParseObject> query() {
         Log.d(TAG, "query()");

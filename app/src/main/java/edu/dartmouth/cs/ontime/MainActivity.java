@@ -30,6 +30,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * This is the mainActivity, it will be a listview of all the current events corresponding to that
+ * user. You can also navigate to the other activities such as CreateEvent, Invites, and Settings
+ */
 public class MainActivity extends Activity implements CreateEvent.CreateFinished{
 
     public static final String TAG = "MainActivity";
@@ -58,7 +62,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.hide();
 
-        //upcomingEvents = person.getEvents()
         upcomingEvents = new ArrayList<Event>();
         mContext = this;
 
@@ -114,6 +117,25 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         query();
     }
 
+    /**
+     * Queries all of the upcoming events corresponding to that user.
+     */
+    public void query() {
+        Log.d(TAG, "query()");
+        ParseUser me = ParseUser.getCurrentUser();
+        ArrayList<String> upcomingString = (ArrayList<String>) me.get("accepted");
+
+        ParseQuery query = ParseQuery.getQuery("event");
+        query.whereContainedIn("objectId", upcomingString);
+        try{
+            upcomingEvents = (ArrayList<Event>) query.find();
+        }
+        catch (ParseException e){
+        }
+
+        loadEvents();
+    }
+
     public void loadEvents() {
         Log.d(TAG, "loadEvents");
         Log.d(TAG, "list size: " + upcomingEvents.size());
@@ -159,7 +181,8 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
         mListThisweek = (ListView)findViewById(R.id.listTw);
         mListThisweek.setBackgroundColor(Color.WHITE);
 
-        mListToday.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, todayArray));
+        mListToday.setAdapter(new EventAdapter
+                (this, android.R.layout.simple_list_item_1, todayArray));
         mListTomorrow.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, tomorrowArray));
         mListThisweek.setAdapter(new EventAdapter(this, android.R.layout.simple_list_item_1, thisWeekArray));
 
@@ -198,22 +221,6 @@ public class MainActivity extends Activity implements CreateEvent.CreateFinished
                 startActivity(intent);
             }
         });
-    }
-
-    public void query() {
-        Log.d(TAG, "query()");
-        ParseUser me = ParseUser.getCurrentUser();
-        ArrayList<String> upcomingString = (ArrayList<String>) me.get("accepted");
-
-        ParseQuery query = ParseQuery.getQuery("event");
-        query.whereContainedIn("objectId", upcomingString);
-        try{
-            upcomingEvents = (ArrayList<Event>) query.find();
-        }
-        catch (ParseException e){
-        }
-
-        loadEvents();
     }
 
     public Date getStartEndOFWeek(int enterWeek, int enterYear){
