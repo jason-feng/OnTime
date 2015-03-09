@@ -52,8 +52,8 @@ public class InviteReceiver extends ParsePushBroadcastReceiver{
 
         else{
             Intent mIntent = new Intent(App.getContext(), InviteActivity.class);
-            Intent mIntent2 = new Intent(App.getContext(), InviteActivity.class);
-            Intent mIntent3 = new Intent(App.getContext(), InviteActivity.class);
+            Intent mIntent2 = new Intent(App.getContext(), MainActivity.class);
+            Intent mIntent3 = new Intent(App.getContext(), MainActivity.class);
 
             // If notification pressed but not a button
             PendingIntent contentIntent = PendingIntent.getActivity(App.getContext(), 0, mIntent, 0);
