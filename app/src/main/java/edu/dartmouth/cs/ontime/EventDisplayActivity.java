@@ -88,7 +88,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         Log.d(TAG, userDistances.toString());
         if ((Double)userDistances.get(position) == -1.1) {
             distance = current_location.distanceInMilesTo(finalGeoPoint);
-            init_distances.set(position,distance);
+            init_distances.set(position, distance);
             userLocations.set(position, current_location);
             userDistances.set(position, distance);
         }
@@ -101,7 +101,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             ProgressBar currentUserBar = progBarArrayList.get(position);
 
             double status = userDistances.get(i) / init_distances.get(i);
-            int intStatus = 1 - ((int) status * 100);
+            int intStatus = (int) status * 100;
             currentUserBar.setProgress(intStatus);
         }
 
@@ -179,7 +179,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             userLocations = displayedEvent.getUserLocations();
             userDistances = displayedEvent.getUserDistances();
             init_distances = displayedEvent.getInitDistances();
-
 
     }
     @Override
@@ -312,6 +311,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             newBar.setMinimumWidth(40);
             newBar.setMinimumHeight(50);
             newBar.setId(i);
+            newBar.setMax(100);
            // newBar.setProgressTintList();
 
             newBar.setScrollBarSize(200);
