@@ -252,7 +252,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
             ProgressBar newBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 
-            //TODO: set progress based on how far away
             //newBar.setProgress(0);
             newBar.setMinimumWidth(40);
             newBar.setMinimumHeight(50);
