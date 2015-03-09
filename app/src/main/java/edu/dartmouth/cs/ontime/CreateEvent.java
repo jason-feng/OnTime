@@ -171,10 +171,10 @@ public class CreateEvent extends ListActivity {
             ArrayList<Double> init_distances = new ArrayList<Double>();
             init_distances.add(-1.0);
             ArrayList<Double> user_distances = new ArrayList<Double>();
-            init_distances.add(-1.0);
-            event.put("user_locations", user_locations);
-            event.put("user_distances", user_distances);
-            event.put("init_distances", init_distances);
+            user_distances.add(-1.0);
+            event.setInitDistances(init_distances);
+            event.setUserLocations(user_locations);
+            event.setUserDistances(user_distances);
             event.put("accepted", accepted);
             event.put("host", ParseInstallation.getCurrentInstallation().getInstallationId());
 

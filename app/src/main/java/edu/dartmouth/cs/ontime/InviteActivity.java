@@ -229,15 +229,15 @@ public class InviteActivity extends Activity {
 
                             // update event accepted list
                             ArrayList<String> invitees = event.getAcceptedList();
-                            ArrayList<ParseGeoPoint> user_locations = event.getUserLocations();
+                            ArrayList<ParseGeoPoint> user_locations = new ArrayList<ParseGeoPoint>();
                             user_locations.add(new ParseGeoPoint(0.0,0.0));
-                            ArrayList<Double> init_distances = event.getInitDistances();
+                            ArrayList<Double> init_distances = new ArrayList<Double>();
                             init_distances.add(-1.0);
-                            ArrayList<Double> user_distances = event.getUserDistances();
-                            init_distances.add(-1.0);
-                            event.put("user_locations", user_locations);
-                            event.put("user_distances", user_distances);
-                            event.put("init_distances", init_distances);
+                            ArrayList<Double> user_distances = new ArrayList<Double>();
+                            user_distances.add(-1.0);
+                            event.setInitDistances(init_distances);
+                            event.setUserLocations(user_locations);
+                            event.setUserDistances(user_distances);
                             invitees.add(ParseUser.getCurrentUser().getString("fbId"));
                             event.setAcceptedList(invitees);
                             event.saveInBackground();
