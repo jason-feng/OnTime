@@ -32,6 +32,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * This is the eventDisplayActivity, it displays a specific event's information along with each
+ * invitee's current status with regard to reaching the final location.
+ */
 public class EventDisplayActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
