@@ -89,6 +89,7 @@ public class FriendList extends Activity {
                Intent intent = new Intent();
                intent.putStringArrayListExtra("selected_friends", selectedFriends);
                setResult(RESULT_OK, intent);
+               CreateEvent.setDialogField(4,true);
                finish();
            }
         });

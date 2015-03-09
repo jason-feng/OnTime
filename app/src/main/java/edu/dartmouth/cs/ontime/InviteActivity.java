@@ -264,7 +264,6 @@ public class InviteActivity extends Activity {
 
                             mAdapter = new InviteAdapter(mContext, android.R.layout.simple_list_item_1, invitedEvents);
                             mList.setAdapter(mAdapter);
-                            CreateEvent.setDialogField(4,true);
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:
