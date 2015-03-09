@@ -77,6 +77,10 @@ public class Event extends ParseObject {
 
     public void setUserDistances(ArrayList<Double> user_distances) { put("user_distances", user_distances);}
 
+    public ArrayList<Double> getInitDistances() { return (ArrayList<Double>) get("init_distances"); }
+
+    public void setInitDistances(ArrayList<Double> init_distances) { put("init_distances", init_distances);}
+
     public static List<ParseObject> query() {
         Log.d(TAG, "query()");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Friend");

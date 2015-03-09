@@ -3,7 +3,6 @@ package edu.dartmouth.cs.ontime;
 import android.app.ActionBar;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -60,6 +59,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public ArrayList<ParseUser> parse_users;
     public ArrayList<ParseGeoPoint> userLocations;
     public ArrayList<Double> userDistances;
+    public ArrayList<Double> init_distances;
     private Location finalLocation;
     private ParseGeoPoint finalGeoPoint;
     private ParseGeoPoint current_location;
@@ -71,7 +71,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private ParseUser currentUser;
     private String currentFbId;
     private int position;
-    private double initialDist;
     private boolean mRequestingLocationUpdates;
     private ArrayList<ProgressBar> progBarArrayList;
 
@@ -83,17 +82,20 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         Log.d(TAG, "onLocationChanged");
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
         if (distance == -1.0) {
-            initialDist = distance;
-
+            distance = current_location.distanceInMilesTo(finalGeoPoint);
+            init_distances.set(position,distance);
+            userLocations.set(position, current_location);
+            userDistances.set(position, distance);
         }
-        distance = current_location.distanceInMilesTo(finalGeoPoint);
-        userLocations.set(position, current_location);
-        userDistances.set(position, distance);
-
+        else {
+            distance = current_location.distanceInMilesTo(finalGeoPoint);
+            userLocations.set(position, current_location);
+            userDistances.set(position, distance);
+        }
         for (int i = 0; i < userDistances.size(); i++) {
             ProgressBar currentUserBar = progBarArrayList.get(position);
 
-            double status = userDistances.get(i) / initialDist;
+            double status = userDistances.get(i) / init_distances.get(i);
             int intStatus = 1 - ((int) status * 100);
             currentUserBar.setProgress(intStatus);
         }
@@ -169,20 +171,25 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
                 position = i;
         }
 
-        if (displayedEvent.getUserLocations() != null && displayedEvent.getUserDistances() != null) {
+        if (displayedEvent.getUserLocations() != null && displayedEvent.getUserDistances() != null && displayedEvent.getInitDistances() != null) {
             userLocations = displayedEvent.getUserLocations();
             userDistances = displayedEvent.getUserDistances();
+            init_distances = displayedEvent.getInitDistances();
         }
         else {
             Log.d(TAG, "new Parse Stuff");
             userLocations = new ArrayList<ParseGeoPoint>();
             userDistances = new ArrayList<Double>();
+            init_distances = new ArrayList<Double>();
             for (int i = 0; i < attendees.size(); i++) {
                 userLocations.add(i, null);
                 userDistances.add(i,-1.0);
+                init_distances.add(i,-1.0);
+                distance = -1.0;
             }
             displayedEvent.setUserLocations(userLocations);
             displayedEvent.setUserDistances(userDistances);
+            displayedEvent.setInitDistances(init_distances);
             try {
                 displayedEvent.save();
             }
