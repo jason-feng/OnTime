@@ -83,22 +83,17 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
         Log.d(TAG, userDistances.toString());
         if ((Double)userDistances.get(position) == -1.1) {
+            Log.d(TAG, "INIT LOCATIONS");
             distance = current_location.distanceInMilesTo(finalGeoPoint);
-            init_distances.set(position,distance);
+            init_distances.set(position, distance);
             userLocations.set(position, current_location);
             userDistances.set(position, distance);
         }
         else {
+            Log.d(TAG, "UPDATE LOCATIONS");
             distance = current_location.distanceInMilesTo(finalGeoPoint);
             userLocations.set(position, current_location);
             userDistances.set(position, distance);
-        }
-        for (int i = 0; i < userDistances.size(); i++) {
-            ProgressBar currentUserBar = progBarArrayList.get(position);
-
-            double status = userDistances.get(i) / init_distances.get(i);
-            int intStatus = 1 - ((int) status * 100);
-            currentUserBar.setProgress(intStatus);
         }
 
         displayedEvent.setUserLocations(userLocations);
@@ -109,7 +104,13 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         catch (ParseException e) {
 
         }
-//        updateProgressBars();
+        for (int i = 0; i < userDistances.size(); i++) {
+            ProgressBar currentUserBar = progBarArrayList.get(position);
+
+            double status = userDistances.get(i) / init_distances.get(i);
+            int intStatus = 1 - ((int) status * 100);
+            currentUserBar.setProgress(intStatus);
+        }
     }
 
 //    public void updateProgressBars() {
@@ -170,6 +171,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         for (int i = 0; i < attendees.size(); i++) {
             if (attendees.get(i) == currentFbId)
                 position = i;
+                Log.d(TAG, "POSITION: " + Integer.toString(position));
         }
 
         userLocations = displayedEvent.getUserLocations();
