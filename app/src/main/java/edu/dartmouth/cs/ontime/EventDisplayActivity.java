@@ -56,6 +56,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     private String eventTitle, eventLocationName;
     public ArrayList<String> attendees;
     public ArrayList<ParseGeoPoint> userLocations;
+    public ArrayList<Double> userDistances;
     private Location finalLocation;
     private ParseGeoPoint finalGeoPoint;
     private ParseGeoPoint current_location;
@@ -73,8 +74,13 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
         current_location = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+        if (distance == -1.0) {
+            // TODO INIT STATUS BARS;
+        }
         distance = current_location.distanceInMilesTo(finalGeoPoint);
         userLocations.set(position, current_location);
+        userDistances.set(position,distance);
+
         displayedEvent.setUserLocations(userLocations);
         try {
             displayedEvent.save();
@@ -82,6 +88,40 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
         catch (ParseException e) {
 
         }
+    }
+
+    /**
+     * Gets the necessary information from the cloud including the corresponding position on the
+     * array list and the userlocations. If userlocations don't exist, init a new one
+     */
+    private void getParseInformation() {
+        currentUser = ParseUser.getCurrentUser();
+        currentFbId = currentUser.getString("fbId");
+        for (int i = 0; i < attendees.size(); i++) {
+            if (attendees.get(i) == currentFbId)
+                position = i;
+        }
+
+        if (displayedEvent.getUserLocations() != null) {
+            userLocations = displayedEvent.getUserLocations();
+            userDistances = displayedEvent.getUserDistances();
+        }
+        else {
+            userLocations = new ArrayList<ParseGeoPoint>();
+            userDistances = new ArrayList<Double>();
+            for (int i = 0; i < attendees.size(); i++) {
+                userLocations.add(i, null);
+                userDistances.add(i,-1.0);
+            }
+            displayedEvent.setUserLocations(userLocations);
+            try {
+                displayedEvent.save();
+            }
+            catch (ParseException e) {
+
+            }
+        }
+
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,13 +164,6 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
             }
         }
 
-        currentUser = ParseUser.getCurrentUser();
-        currentFbId = currentUser.getString("fbId");
-        for (int i = 0; i < attendees.size(); i++) {
-            if (attendees.get(i) == currentFbId)
-                position = i;
-        }
-
         if (savedInstanceState != null) {
             attendees = savedInstanceState.getStringArrayList(ATTENDEES_INSTANCE_STATE_KEY);
             title = savedInstanceState.getString(EVENT_TITLE_INSTANCE_STATE_KEY);
@@ -139,22 +172,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
 
         }
 
-        if (displayedEvent.getUserLocations() != null) {
-            userLocations = displayedEvent.getUserLocations();
-        }
-        else {
-            userLocations = new ArrayList<ParseGeoPoint>();
-            for (int i = 0; i < attendees.size(); i++) {
-                userLocations.add(i, null);
-            }
-            displayedEvent.setUserLocations(userLocations);
-            try {
-                displayedEvent.save();
-            }
-            catch (ParseException e) {
-
-            }
-        }
+        getParseInformation();
 
         //get event title
         eventDisplayTextView = (TextView) findViewById(R.id.event_display_text_view);
@@ -282,7 +300,7 @@ public class EventDisplayActivity extends FragmentActivity implements OnMapReady
     public void onConnected(Bundle bundle) {
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(1000); // Update location every second
+        mLocationRequest.setInterval(LOCATION_REFRESH_TIME); // Update location every second
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }
