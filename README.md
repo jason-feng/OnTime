@@ -1,5 +1,5 @@
 # OnTime
-## Jason Feng, Dani Gnibus, Emily Greene, Nick Fiacco
+## Jason Feng, Nick Fiacco, Dani Gnibus, Emily Greene
 ### Dartmouth College
 ### Winter 2015
 
